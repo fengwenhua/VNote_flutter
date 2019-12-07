@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vnote/utils/global.dart';
 
 class DirectoryPage extends StatefulWidget{
   @override
@@ -10,6 +12,9 @@ class _DirectoryPageState extends State<DirectoryPage>{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('我是目录', style: TextStyle(fontSize: fontSize40)),
+      ),
       body: Center(
         child: Text("目录"),
       ),

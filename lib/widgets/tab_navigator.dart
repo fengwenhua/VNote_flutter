@@ -4,6 +4,8 @@ import 'package:vnote/pages/directory_page.dart';
 import 'package:vnote/pages/label_page.dart';
 import 'package:vnote/pages/note_page.dart';
 import 'package:vnote/pages/search_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vnote/utils/global.dart';
 
 class TabNavigator extends StatefulWidget {
   @override
@@ -43,6 +45,9 @@ class _TabNavigatorState extends State<TabNavigator>
 
   @override
   Widget build(BuildContext context) {
+    //设置适配尺寸 (填入设计稿中设备的屏幕尺寸) 假如设计稿是按iPhone6的尺寸设计的(iPhone6 750*1334)
+    ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex, // 当前选中的是哪个页面
