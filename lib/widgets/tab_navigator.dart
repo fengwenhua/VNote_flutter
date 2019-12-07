@@ -52,12 +52,12 @@ class _TabNavigatorState extends State<TabNavigator>
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex, // 当前选中的是哪个页面
         onTap: (index) {
-          _tabController.animateTo(index,
-              duration: Duration(milliseconds: 300),
-              curve: Curves.ease); // 调用controller切换页面
           setState(() {
             _currentIndex = index; // 更新页面
           });
+          _tabController.animateTo(index,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.ease); // 调用controller切换页面
         },
         type: BottomNavigationBarType.fixed, // 默认显示文字
         items: [
