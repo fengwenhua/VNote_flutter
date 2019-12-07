@@ -151,6 +151,7 @@ class _TabNavigatorState extends State<TabNavigator> {
         onPageChanged: _pageChange,
         controller: _controller,
         children: _pages,
+        physics: new NeverScrollableScrollPhysics(),//禁止滑动
       ),
     );
   }
