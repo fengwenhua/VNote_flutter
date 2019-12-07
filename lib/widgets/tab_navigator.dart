@@ -13,16 +13,13 @@ class TabNavigator extends StatefulWidget {
 }
 
 // 前面加下划线即为内部类, 不能为外部访问
-class _TabNavigatorState extends State<TabNavigator>
-    with SingleTickerProviderStateMixin {
-  // 这里声明一个控制器
-  TabController _tabController;
+class _TabNavigatorState extends State<TabNavigator> {
   // 没选中状态是灰色
   final _defaultColor = Colors.grey;
   // 选中状态是蓝色
   final _activeColor = Colors.blue;
   // 五个页面
-  List _pages = [
+  List<Widget> _pages = [
     NotePage(),
     DirectoryPage(),
     CreatePage(),
@@ -32,15 +29,14 @@ class _TabNavigatorState extends State<TabNavigator>
   // 默认是笔记
   int _currentIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(vsync: this, length: _pages.length)
-      ..addListener(() {
-        setState(() {
-          _currentIndex = _tabController.index;
-        });
-      });
+  final PageController _controller = PageController(
+    initialPage: 0, // 初始状态下显示第0个tab
+  );
+
+  void _pageChange(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   @override
@@ -52,12 +48,10 @@ class _TabNavigatorState extends State<TabNavigator>
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex, // 当前选中的是哪个页面
         onTap: (index) {
+          _controller.jumpToPage(index); // 调用controller切换页面
           setState(() {
             _currentIndex = index; // 更新页面
           });
-          _tabController.animateTo(index,
-              duration: Duration(milliseconds: 300),
-              curve: Curves.ease); // 调用controller切换页面
         },
         type: BottomNavigationBarType.fixed, // 默认显示文字
         items: [
@@ -153,25 +147,10 @@ class _TabNavigatorState extends State<TabNavigator>
               )),
         ],
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: <Widget>[
-          Container(
-            child: _pages[0],
-          ),
-          Container(
-            child: _pages[1],
-          ),
-          Container(
-            child: _pages[2],
-          ),
-          Container(
-            child: _pages[3],
-          ),
-          Container(
-            child: _pages[4],
-          )
-        ],
+      body: PageView(
+        onPageChanged: _pageChange,
+        controller: _controller,
+        children: _pages,
       ),
     );
   }
