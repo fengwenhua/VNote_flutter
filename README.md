@@ -1,2 +1,3 @@
-# VNote_flutter
-VNote flutter!
+# vnote
+
+A Flutter application for VNote.
