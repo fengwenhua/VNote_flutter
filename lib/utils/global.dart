@@ -13,3 +13,6 @@ double fontSize24 = ScreenUtil.getInstance().setSp(24);
 double fontSize40 = ScreenUtil.getInstance().setSp(40);
 double fontSize100 = ScreenUtil.getInstance().setSp(100);
 double fontSize200 = ScreenUtil.getInstance().setSp(200);
+
+final String CLIENT_ID = "fd49989c-b57c-49a4-9832-8172ae6a4162";
+final String REDIRECT_URL = "https://login.microsoftonline.com/common/oauth2/nativeclient";
