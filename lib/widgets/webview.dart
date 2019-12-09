@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:vnote/utils/global.dart';
+import 'package:vnote/utils/net_utils.dart';
 
 class WebView extends StatefulWidget {
   final String url;
@@ -39,15 +40,37 @@ class _WebViewState extends State<WebView> {
     // 页面url变化监听
     _onUrlChanged = webviewReference.onUrlChanged.listen((String url) {
       print("url变了: " + url);
-      if(url.contains("code=")){
+      if (url.contains("code=")) {
         // 这里要解析code出来
-        print(url?.split("code=")[1]);
+        String code = url?.split("code=")[1];
+        print(code);
+        if (code != null) {
+          Map<String, String> params = {
+            "client_id": CLIENT_ID,
+            "redirect_uri": REDIRECT_URL,
+            "code": code,
+            "grant_type":"authorization_code"
+          };
+
+          HttpCore.instance.post(
+              "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+              (data) {
+                print("返回来的数据如下: " + data);
+              },
+              params: params,
+              errorCallBack: (errorMsg) {
+                print("error: " + errorMsg);
+                return null;
+              });
+        } else {
+          print("code 没有解析出来? " + url);
+          return null;
+        }
       }
     });
 
     _onStateChanged =
-        webviewReference.onStateChanged.listen((WebViewStateChanged state) {
-    });
+        webviewReference.onStateChanged.listen((WebViewStateChanged state) {});
 
     // url打开错误或网络发生问题监听
     _onHttpError =
