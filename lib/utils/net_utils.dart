@@ -1,6 +1,11 @@
+import 'dart:io';
+
+import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 
 import 'dart:convert';
+
+import 'package:path_provider/path_provider.dart';
 
 class HttpCore {
   static final String baseurl =
@@ -22,6 +27,8 @@ class HttpCore {
 
   static const String GET = "get";
   static const String POST = "post";
+
+  CookieJar cj = PersistCookieJar(dir: "./cookies");
 
   var dio = new Dio(new BaseOptions(
     connectTimeout: 5000,
