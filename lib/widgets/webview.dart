@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:vnote/models/get_token_model.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
 
@@ -56,7 +58,10 @@ class _WebViewState extends State<WebView> {
           HttpCore.instance.post(
               "https://login.microsoftonline.com/common/oauth2/v2.0/token",
               (data) {
-                print("返回来的数据如下: " + data);
+                GetTokenModel model= GetTokenModel.fromJson(json.decode(data));
+                print('解析出来的结果如下:');
+                print("access_token: " + model.accessToken);
+                print("refresh_token: " + model.refreshToken);
               },
               params: params,
               errorCallBack: (errorMsg) {
@@ -93,14 +98,6 @@ class _WebViewState extends State<WebView> {
 
   @override
   Widget build(BuildContext context) {
-    String statusBarColorStr = widget.statusBarColor ?? 'ffffff';
-    // 返回按钮颜色
-    Color backButtonColor;
-    if (statusBarColorStr == 'ffffff') {
-      backButtonColor = Colors.black;
-    } else {
-      backButtonColor = Colors.white;
-    }
     return Scaffold(
         body: WebviewScaffold(
       url: widget.url,
