@@ -28,8 +28,6 @@ class HttpCore {
   static const String GET = "get";
   static const String POST = "post";
 
-  CookieJar cj = PersistCookieJar(dir: "./cookies");
-
   var dio = new Dio(new BaseOptions(
     connectTimeout: 5000,
     receiveTimeout: 10000,

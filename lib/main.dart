@@ -1,8 +1,11 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/route/application.dart';
 import 'package:vnote/route/routes.dart';
 import 'package:vnote/utils/log_util.dart';
+import 'package:vnote/utils/net_utils.dart';
 import 'package:vnote/widgets/tab_navigator.dart';
 
 void main() {
@@ -11,7 +14,14 @@ void main() {
   Routes.configureRoutes(router);
   Application.router = router;
   LogUtil.init(tag: "VNote");
-  runApp(MyApp());
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<TokenModel>(
+        create: (context)=>TokenModel(),
+      )
+    ],
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

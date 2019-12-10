@@ -34,6 +34,7 @@ class _WebViewState extends State<WebView> {
   @override
   void initState() {
     super.initState();
+    //HttpCore.init();
     // 防止页面重新打开
     webviewReference.close();
 
