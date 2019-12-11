@@ -99,7 +99,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
     return childDocuments.map((document) {
       if (!document.isFile) {
         return Container(
-          margin: EdgeInsets.only(left: 8),
+          margin: EdgeInsets.only(left: 16),
           child: TreeViewChild(
             parent: _getDocumentWidget(document: document),
             children: _getChildList(document.childData),
