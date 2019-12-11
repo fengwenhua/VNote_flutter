@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/onedrive_token_model.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
@@ -48,26 +49,7 @@ class _WebViewState extends State<WebView> {
         String code = url?.split("code=")[1];
         print(code);
         if (code != null) {
-          Map<String, String> params = {
-            "client_id": CLIENT_ID,
-            "redirect_uri": REDIRECT_URL,
-            "code": code,
-            "grant_type": "authorization_code"
-          };
-
-          HttpCore.instance.post(
-              "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-              (data) {
-                OnedriveTokenModel model = OnedriveTokenModel.fromJson(json.decode(data));
-                print('解析出来的结果如下:');
-                print("access_token: " + model.accessToken);
-                print("refresh_token: " + model.refreshToken);
-              },
-              params: params,
-              errorCallBack: (errorMsg) {
-                print("error: " + errorMsg);
-                return null;
-              });
+          OnedriveTokenDao.getToken(code);
         } else {
           print("code 没有解析出来? " + url);
           return null;
@@ -104,7 +86,7 @@ class _WebViewState extends State<WebView> {
       appBar: AppBar(
         title: Text("Widget Webview"),
       ),
-      withZoom: true,
+      withZoom: false,
       withLocalStorage: true,
       hidden: true,
       initialChild: Container(

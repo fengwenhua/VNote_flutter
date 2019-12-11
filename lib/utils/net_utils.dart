@@ -28,22 +28,20 @@ class HttpCore {
   static const String GET = "get";
   static const String POST = "post";
 
-  var dio = new Dio(new BaseOptions(
-    connectTimeout: 5000,
-    receiveTimeout: 10000,
-    contentType: "application/x-www-form-urlencoded",
-  ));
-
   //get请求
   void get(String url, Function callBack,
-      {Map<String, String> params, Function errorCallBack}) async {
+      {Map<String, String> params,
+      Map<String, dynamic> headers,
+      Function errorCallBack}) async {
     _request(url, callBack,
         method: GET, params: params, errorCallBack: errorCallBack);
   }
 
   //post请求
   void post(String url, Function callBack,
-      {Map<String, String> params, Function errorCallBack}) async {
+      {Map<String, String> params,
+      Map<String, dynamic> headers,
+      Function errorCallBack}) async {
     _request(url, callBack,
         method: POST, params: params, errorCallBack: errorCallBack);
   }
@@ -51,12 +49,29 @@ class HttpCore {
   void _request(String url, Function callBack,
       {String method,
       Map<String, String> params,
+      Map<String, dynamic> headers,
       Function errorCallBack}) async {
     print("传进来的url: " + url);
     String errorMsg = "";
     int statusCode;
     try {
       Response response;
+      var dio;
+      if (headers != null) {
+        dio = new Dio(new BaseOptions(
+          connectTimeout: 5000,
+          receiveTimeout: 10000,
+          headers: headers,
+          contentType: "application/x-www-form-urlencoded",
+        ));
+      } else {
+        dio = new Dio(new BaseOptions(
+          connectTimeout: 5000,
+          receiveTimeout: 10000,
+          contentType: "application/x-www-form-urlencoded",
+        ));
+      }
+
       if (method == GET) {
         if (params != null && params.isNotEmpty) {
           StringBuffer sb = new StringBuffer("?");
