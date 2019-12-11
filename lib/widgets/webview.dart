@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
-import 'package:vnote/models/get_token_model.dart';
+import 'package:vnote/models/onedrive_token_model.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
 
@@ -58,7 +58,7 @@ class _WebViewState extends State<WebView> {
           HttpCore.instance.post(
               "https://login.microsoftonline.com/common/oauth2/v2.0/token",
               (data) {
-                GetTokenModel model = GetTokenModel.fromJson(json.decode(data));
+                OnedriveTokenModel model = OnedriveTokenModel.fromJson(json.decode(data));
                 print('解析出来的结果如下:');
                 print("access_token: " + model.accessToken);
                 print("refresh_token: " + model.refreshToken);

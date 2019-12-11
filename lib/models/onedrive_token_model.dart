@@ -1,4 +1,4 @@
-class GetTokenModel {
+class OnedriveTokenModel {
 	String accessToken;
 	String refreshToken;
 	String scope;
@@ -6,9 +6,9 @@ class GetTokenModel {
 	String tokenType;
 	int expiresIn;
 
-	GetTokenModel({this.accessToken, this.refreshToken, this.scope, this.extExpiresIn, this.tokenType, this.expiresIn});
+	OnedriveTokenModel({this.accessToken, this.refreshToken, this.scope, this.extExpiresIn, this.tokenType, this.expiresIn});
 
-	GetTokenModel.fromJson(Map<String, dynamic> json) {
+	OnedriveTokenModel.fromJson(Map<String, dynamic> json) {
 		accessToken = json['access_token'];
 		refreshToken = json['refresh_token'];
 		scope = json['scope'];
