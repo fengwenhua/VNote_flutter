@@ -97,6 +97,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
 
   List<Widget> _getChildList(List<Document> childDocuments) {
     return childDocuments.map((document) {
+      // 目录
       if (!document.isFile) {
         return Container(
           margin: EdgeInsets.only(left: 16),
@@ -106,6 +107,8 @@ class _DirectoryPageState extends State<DirectoryPage> {
           ),
         );
       }
+
+      // 文件
       return Container(
         margin: const EdgeInsets.only(left: 4.0),
         child: _getDocumentWidget(document: document),
@@ -121,6 +124,9 @@ class _DirectoryPageState extends State<DirectoryPage> {
       DirectoryWidget(
         directoryName: document.name,
         lastModified: document.dateModified,
+        onPressedNext: (){
+          print("点开目录, 然后显示该目录下的所有文件");
+        },
       );
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(

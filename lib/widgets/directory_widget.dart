@@ -17,30 +17,21 @@ class DirectoryWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     Widget titleWidget = GestureDetector(
       child: Text(directoryName),
-      onTap: (){
-        print("点击了大标题");
-      },
+      onTap: onPressedNext,
     );
     //Icon folderIcon = Icon(Icons.folder);
     IconButton folderIcon = IconButton(
       icon: Icon(Icons.folder),
-      onPressed: (){
-        print("点击了左边的图标");
-      },
-    );
-
-    IconButton expandButton = IconButton(
-      icon: Icon(Icons.keyboard_arrow_down),
       onPressed: onPressedNext,
     );
+
+    Icon expandButton = Icon(Icons.keyboard_arrow_down);
 
     Widget lastModifiedWidget = GestureDetector(
       child: Text(
         Utils.getFormattedDateTime(dateTime: lastModified),
       ),
-      onTap: (){
-        print("点击了子标题");
-      },
+      onTap: onPressedNext,
     );
 
     return Card(
