@@ -52,13 +52,13 @@ class _WebViewState extends State<WebView> {
             "client_id": CLIENT_ID,
             "redirect_uri": REDIRECT_URL,
             "code": code,
-            "grant_type":"authorization_code"
+            "grant_type": "authorization_code"
           };
 
           HttpCore.instance.post(
               "https://login.microsoftonline.com/common/oauth2/v2.0/token",
               (data) {
-                GetTokenModel model= GetTokenModel.fromJson(json.decode(data));
+                GetTokenModel model = GetTokenModel.fromJson(json.decode(data));
                 print('解析出来的结果如下:');
                 print("access_token: " + model.accessToken);
                 print("refresh_token: " + model.refreshToken);
