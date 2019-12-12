@@ -1,11 +1,11 @@
-class OnedriveDataModel {
+class OneDriveDataModel {
   String odataContext;
   String odataDeltaLink;
   List<Value> value;
 
-  OnedriveDataModel({this.odataContext, this.odataDeltaLink, this.value});
+  OneDriveDataModel({this.odataContext, this.odataDeltaLink, this.value});
 
-  OnedriveDataModel.fromJson(Map<String, dynamic> json) {
+  OneDriveDataModel.fromJson(Map<String, dynamic> json) {
     odataContext = json['@odata.context'];
     odataDeltaLink = json['@odata.deltaLink'];
     if (json['value'] != null) {

@@ -2,25 +2,24 @@ import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'dart:convert';
 
 import 'package:path_provider/path_provider.dart';
 
-class HttpCore {
-  static final String baseurl =
-      "https://login.microsoftonline.com/common/oauth2/v2.0/token";
+class NetUtils {
 
-  factory HttpCore() => _getInstance();
+  factory NetUtils() => _getInstance();
 
-  static HttpCore get instance => _getInstance();
-  static HttpCore _instance;
+  static NetUtils get instance => _getInstance();
+  static NetUtils _instance;
 
-  HttpCore._internal();
+  NetUtils._internal();
 
-  static HttpCore _getInstance() {
+  static NetUtils _getInstance() {
     if (_instance == null) {
-      _instance = new HttpCore._internal();
+      _instance = new NetUtils._internal();
     }
     return _instance;
   }

@@ -1,15 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:vnote/application.dart';
+import 'package:vnote/models/onedrive_token_model.dart';
 
 class TokenModel with ChangeNotifier{
-  String _accessToken="";
-  String _refreshToken="";
-  String get accessToken => _accessToken;
-  String get refreshToken => _refreshToken;
+  OneDriveTokenModel _token;
+  OneDriveTokenModel get token => _token;
 
-  // 更新两个token的值
-  void updateValue(String p_accessToken, String p_refreshToken){
-    _accessToken = p_accessToken;
-    _refreshToken = p_refreshToken;
-    notifyListeners();
+  // 初始化token, 即读取本地存储的token
+  void initToken(){
+    if(Application.sp.containsKey("onedrive_token")){
+      String s = Application.sp.getString("onedrive_token");
+      _token = OneDriveTokenModel.fromJson(json.decode(s));
+    }
+  }
+
+  // 保存token信息到 sp
+  _saveTokenInfo(OneDriveTokenModel token){
+    _token = token;
+    Application.sp.setString("onedrive_token", json.encode(token.toJson()));
   }
 }

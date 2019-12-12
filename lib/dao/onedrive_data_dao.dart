@@ -5,10 +5,10 @@ import 'package:vnote/models/onedrive_data_model.dart';
 const ONEDRIVE_ALL_DATA_URL =
     "https://graph.microsoft.com/v1.0/drive/special/approot/delta?select=id,name,lastModifiedDateTime,parentReference,file,folder";
 
-class OnedriveDataModel {
+class OneDriveDataModel {
   static void getAllData(String p_token) {
     Map<String, dynamic> headers = {"Authorization": p_token};
-    HttpCore.instance.get(
+    NetUtils.instance.get(
         ONEDRIVE_ALL_DATA_URL,
         (data) {
           print('返回的数据如下:');

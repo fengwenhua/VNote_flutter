@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
+import 'package:vnote/dao/onedrive_token_dao.dart';
+import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/global.dart';
 
 class SplashScreenPage extends StatefulWidget {
@@ -31,21 +34,33 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       _logoController.forward();
     });
 
-    //animation第一种创建方式：
     _logoAnimation =
         new Tween<double>(begin: 0, end: 0.8).animate(_logoController)
           ..addListener(() {
             setState(() {});
           })
           ..addStatusListener((AnimationStatus status) {
-            //执行完成后反向执行
             if (status == AnimationStatus.completed) {
               Future.delayed(Duration(milliseconds: 500), () {
-                print("跳转到引导页面");
+                goPage();
               });
             }
           });
 
+  }
+
+  void goPage() async{
+    // 初始化shared_preferences
+    await Application.initSp();
+    TokenModel tokenModel = Provider.of<TokenModel>(context);
+    // 从本地存储中读取token
+    tokenModel.initToken();
+    if(tokenModel.token != null){
+      // 本地有token, 应该刷新一下token, 然后跳到主页
+      OnedriveTokenDao.refreshToken(tokenModel.token.refreshToken);
+    }else{
+      // 否则跳到微软登录界面
+    }
   }
 
   @override
