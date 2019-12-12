@@ -88,7 +88,9 @@ class _WebViewState extends State<WebView> {
         body: WebviewScaffold(
       url: widget.url,
       withZoom: false,
-      withLocalStorage: true,
+      withLocalStorage: false,
+      clearCache: true,
+      clearCookies: true,
       hidden: true,
       initialChild: Container(
         color: Colors.white,

@@ -6,6 +6,7 @@ import 'package:vnote/pages/note_page.dart';
 import 'package:vnote/pages/search_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vnote/utils/global.dart';
+import 'package:vnote/utils/navigator_util.dart';
 
 class TabNavigator extends StatefulWidget {
   @override
@@ -67,6 +68,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                     // 关闭侧滑菜单
                     Navigator.of(context).pop();
                     // 执行清除token的操作, 并且进入登录界面
+                    NavigatorUtil.goLoginPage(context);
                   },
                 )
               ],
