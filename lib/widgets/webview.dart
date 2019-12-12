@@ -7,6 +7,7 @@ import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/onedrive_token_model.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
+import 'package:vnote/utils/storage_utils.dart';
 
 class WebView extends StatefulWidget {
   final String url;
@@ -50,6 +51,8 @@ class _WebViewState extends State<WebView> {
         print(code);
         if (code != null) {
           OnedriveTokenDao.getToken(code);
+
+          Navigator.pop(context);
         } else {
           print("code 没有解析出来? " + url);
           return null;

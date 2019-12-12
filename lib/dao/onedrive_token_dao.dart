@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:vnote/models/onedrive_token_model.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
+import 'package:vnote/utils/storage_utils.dart';
 
 const ONEDRIVE_TOKEN_URL =
     'https://login.microsoftonline.com/common/oauth2/v2.0/token';
 
-class OnedriveTokenDao{
-  static void getToken(String code){
+class OnedriveTokenDao {
+  static void getToken(String code) {
     Map<String, String> params = {
       "client_id": CLIENT_ID,
       "redirect_uri": REDIRECT_URL,
@@ -18,11 +19,14 @@ class OnedriveTokenDao{
 
     HttpCore.instance.post(
         ONEDRIVE_TOKEN_URL,
-            (data) {
-          OnedriveTokenModel model = OnedriveTokenModel.fromJson(json.decode(data));
+        (data) {
+          OnedriveTokenModel model =
+              OnedriveTokenModel.fromJson(json.decode(data));
           print('解析出来的结果如下:');
           print("access_token: " + model.accessToken);
           print("refresh_token: " + model.refreshToken);
+          StorageUtils.save("access_token", model.accessToken);
+          StorageUtils.save("refresh_token", model.refreshToken);
         },
         params: params,
         errorCallBack: (errorMsg) {
