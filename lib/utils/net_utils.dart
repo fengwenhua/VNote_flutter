@@ -9,7 +9,6 @@ import 'dart:convert';
 import 'package:path_provider/path_provider.dart';
 
 class NetUtils {
-
   factory NetUtils() => _getInstance();
 
   static NetUtils get instance => _getInstance();
@@ -28,24 +27,24 @@ class NetUtils {
   static const String POST = "post";
 
   //get请求
-  void get(String url, Function callBack,
+  Future<Response> get(BuildContext context, String url, Function callBack,
       {Map<String, String> params,
       Map<String, dynamic> headers,
       Function errorCallBack}) async {
-    _request(url, callBack,
+    return await _request(context, url, callBack,
         method: GET, params: params, errorCallBack: errorCallBack);
   }
 
   //post请求
-  void post(String url, Function callBack,
+  Future<Response> post(BuildContext context, String url, Function callBack,
       {Map<String, String> params,
       Map<String, dynamic> headers,
       Function errorCallBack}) async {
-    _request(url, callBack,
+    return await _request(context, url, callBack,
         method: POST, params: params, errorCallBack: errorCallBack);
   }
 
-  void _request(String url, Function callBack,
+  Future<Response> _request(BuildContext context, String url, Function callBack,
       {String method,
       Map<String, String> params,
       Map<String, dynamic> headers,
@@ -85,8 +84,6 @@ class NetUtils {
       } else if (method == POST) {
         if (params != null && params.isNotEmpty) {
           response = await dio.post(url, data: params);
-          print("返回数据如下:");
-          print(response);
         } else {
           response = await dio.post(url);
         }
@@ -96,7 +93,6 @@ class NetUtils {
       if (statusCode < 0) {
         errorMsg = "网络请求错误,状态码:" + statusCode.toString();
         _handError(errorCallBack, errorMsg);
-        return;
       }
       if (callBack != null) {
 //        String res2Json = json.encode(response.data);
@@ -104,6 +100,7 @@ class NetUtils {
 //        callBack(map["data"]);
         callBack(response.toString());
       }
+      return response;
     } catch (exception) {
       _handError(errorCallBack, exception.toString());
     }

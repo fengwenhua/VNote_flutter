@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
+import 'package:vnote/utils/navigator_util.dart';
 
 class WebView extends StatefulWidget {
   final String url;
@@ -46,9 +47,7 @@ class _WebViewState extends State<WebView> {
         String code = url?.split("code=")[1];
         print(code);
         if (code != null) {
-          OnedriveTokenDao.getToken(code);
-
-          Navigator.pop(context);
+          getTokenAndGoHomePage(code);
         } else {
           print("code 没有解析出来? " + url);
           return null;
@@ -67,6 +66,12 @@ class _WebViewState extends State<WebView> {
     });
   }
 
+  void getTokenAndGoHomePage(String code) async {
+    await OnedriveTokenDao.getToken(context, code).then((value) {
+      NavigatorUtil.goHomePage(context);
+    });
+  }
+
   @override
   void dispose() {
     super.dispose();
@@ -82,9 +87,6 @@ class _WebViewState extends State<WebView> {
     return Scaffold(
         body: WebviewScaffold(
       url: widget.url,
-      appBar: AppBar(
-        title: Text("Widget Webview"),
-      ),
       withZoom: false,
       withLocalStorage: true,
       hidden: true,

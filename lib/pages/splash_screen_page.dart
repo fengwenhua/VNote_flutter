@@ -7,6 +7,7 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/global.dart';
+import 'package:vnote/utils/navigator_util.dart';
 
 class SplashScreenPage extends StatefulWidget {
   SplashScreenPage({Key key}) : super(key: key);
@@ -57,9 +58,17 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     tokenModel.initToken();
     if(tokenModel.token != null){
       // 本地有token, 应该刷新一下token, 然后跳到主页
-      OnedriveTokenDao.refreshToken(tokenModel.token.refreshToken);
+      await OnedriveTokenDao.refreshToken(context, tokenModel.token.refreshToken).then((value){
+        if(value.data != -1){
+          // 跳转到主页
+          print("跳转到主页");
+          NavigatorUtil.goHomePage(context);
+        }
+      });
     }else{
       // 否则跳到微软登录界面
+      print("跳转到微软登录界面");
+      NavigatorUtil.goLoginPage(context);
     }
   }
 

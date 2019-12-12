@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:vnote/models/onedrive_token_model.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
@@ -9,10 +11,8 @@ import '../application.dart';
 const ONEDRIVE_TOKEN_URL =
     'https://login.microsoftonline.com/common/oauth2/v2.0/token';
 
-const ONEDRIVE_REFRESH_TOKEN_URL = "";
-
 class OnedriveTokenDao {
-  static void getToken(String code) {
+  static Future<Response> getToken(BuildContext context, String code) {
     Map<String, String> params = {
       "client_id": CLIENT_ID,
       "redirect_uri": REDIRECT_URL,
@@ -20,14 +20,16 @@ class OnedriveTokenDao {
       "grant_type": "authorization_code"
     };
 
-    NetUtils.instance.post(
+    return NetUtils.instance.post(
+        context,
         ONEDRIVE_TOKEN_URL,
         (data) {
           OneDriveTokenModel model =
               OneDriveTokenModel.fromJson(json.decode(data));
           print('获取token, 解析出来的结果如下:');
           print("access_token: " + model.accessToken);
-          Application.sp.setString("onedrive_token", json.encode(model.toJson()));
+          Application.sp
+              .setString("onedrive_token", json.encode(model.toJson()));
         },
         params: params,
         errorCallBack: (errorMsg) {
@@ -36,7 +38,8 @@ class OnedriveTokenDao {
         });
   }
 
-  static void refreshToken(String refreshToken){
+  static Future<Response> refreshToken(
+      BuildContext context, String refreshToken) {
     Map<String, String> params = {
       "client_id": CLIENT_ID,
       "redirect_uri": REDIRECT_URL,
@@ -44,19 +47,20 @@ class OnedriveTokenDao {
       "grant_type": "refresh_token"
     };
 
-    NetUtils.instance.post(
-        ONEDRIVE_REFRESH_TOKEN_URL,
-            (data) {
+    return NetUtils.instance.post(
+        context,
+        ONEDRIVE_TOKEN_URL,
+        (data) {
           OneDriveTokenModel model =
-          OneDriveTokenModel.fromJson(json.decode(data));
+              OneDriveTokenModel.fromJson(json.decode(data));
           print('刷新token, 解析出来的结果如下:');
           print("access_token: " + model.accessToken);
-          Application.sp.setString("onedrive_token", json.encode(model.toJson()));
+          Application.sp
+              .setString("onedrive_token", json.encode(model.toJson()));
         },
         params: params,
         errorCallBack: (errorMsg) {
           print("error: " + errorMsg);
-          return null;
         });
   }
 }

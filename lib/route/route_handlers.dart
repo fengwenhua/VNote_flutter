@@ -1,44 +1,27 @@
 // 用于初始化跳转到各个页面的handle, 并获取到上个页面传递过来的值, 然后在初始化要跳转到的页面
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:vnote/pages/create_page.dart';
-import 'package:vnote/pages/directory_page.dart';
-import 'package:vnote/pages/label_page.dart';
-import 'package:vnote/pages/note_page.dart';
-import 'package:vnote/pages/search_page.dart';
+import 'package:vnote/pages/login_page.dart';
+import 'package:vnote/pages/splash_screen_page.dart';
+import 'package:vnote/widgets/tab_navigator.dart';
 
-// create 页面
-var createHandler = new Handler(
-  handlerFunc: (BuildContext context, Map<String, List<Object>> params){
-    return CreatePage();
-  }
-);
-
-// directory 页面
-var directoryHandler = new Handler(
+// splash 页面
+var splashHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params){
-      return DirectoryPage();
+      return SplashScreenPage();
     }
 );
 
-// label 页面
-var labelHandler = new Handler(
+// login 页面
+var loginHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params){
-      return LabelPage();
+      return LoginPage();
     }
 );
 
-// note 页面
-var noteHandler = new Handler(
+// home 页面
+var homeHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params){
-      return NotePage();
+      return TabNavigator();
     }
 );
-
-// search 页面
-var searchHandler = new Handler(
-    handlerFunc: (BuildContext context, Map<String, List<Object>> params){
-      return SearchPage();
-    }
-);
-
