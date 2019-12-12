@@ -1,8 +1,9 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:vnote/pages/splash_screen_page.dart';
 import 'package:vnote/provider/token_model.dart';
-import 'package:vnote/route/application.dart';
+import 'package:vnote/application.dart';
 import 'package:vnote/route/routes.dart';
 import 'package:vnote/utils/log_util.dart';
 import 'package:vnote/utils/net_utils.dart';
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: TabNavigator(),
+      home: SplashScreenPage(),
       // 初始化路由
       onGenerateRoute: Application.router.generator,
     );
