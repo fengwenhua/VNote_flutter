@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vnote/models/onedrive_token_model.dart';
+import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
 
@@ -28,8 +30,8 @@ class OnedriveTokenDao {
               OneDriveTokenModel.fromJson(json.decode(data));
           print('获取token, 解析出来的结果如下:');
           print("access_token: " + model.accessToken);
-          Application.sp
-              .setString("onedrive_token", json.encode(model.toJson()));
+          TokenModel tokenModel = Provider.of<TokenModel>(context);
+          tokenModel.updateToken(model);
         },
         params: params,
         errorCallBack: (errorMsg) {
@@ -53,10 +55,12 @@ class OnedriveTokenDao {
         (data) {
           OneDriveTokenModel model =
               OneDriveTokenModel.fromJson(json.decode(data));
+
           print('刷新token, 解析出来的结果如下:');
           print("access_token: " + model.accessToken);
-          Application.sp
-              .setString("onedrive_token", json.encode(model.toJson()));
+
+          TokenModel tokenModel = Provider.of<TokenModel>(context);
+          tokenModel.updateToken(model);
         },
         params: params,
         errorCallBack: (errorMsg) {
