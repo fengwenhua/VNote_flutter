@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
@@ -7,9 +8,9 @@ const ONEDRIVE_ALL_DATA_URL =
     "https://graph.microsoft.com/v1.0/drive/special/approot/delta?select=id,name,lastModifiedDateTime,parentReference,file,folder";
 
 class OneDriveDataModel {
-  static void getAllData(BuildContext context, String p_token) {
+  static Future<Response> getAllData(BuildContext context, String p_token) {
     Map<String, dynamic> headers = {"Authorization": p_token};
-    NetUtils.instance.get(
+    return NetUtils.instance.get(
         context,
         ONEDRIVE_ALL_DATA_URL,
         (data) {

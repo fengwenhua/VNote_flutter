@@ -45,6 +45,30 @@ class _TabNavigatorState extends State<TabNavigator> {
     ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
 
     return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountName: Text("江南小虫虫"),
+              accountEmail: Text("807296772@qq.com"),
+              currentAccountPicture: GestureDetector(
+                child: CircleAvatar(
+                  backgroundImage: ExactAssetImage('images/vnote.png'),
+                ),
+              ),
+            ),
+            ListTile(
+              title: Text("退出登录"),
+              trailing: Icon(Icons.keyboard_arrow_left),
+              onTap: (){
+                // 关闭侧滑菜单
+                Navigator.of(context).pop();
+                // 执行清除token的操作, 并且进入登录界面
+              },
+            )
+          ],
+        )
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex, // 当前选中的是哪个页面
         onTap: (index) {
