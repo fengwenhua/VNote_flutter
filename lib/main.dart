@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       navigatorKey: Application.getIt<NavigateService>().key,
       theme: ThemeData(
           brightness: Brightness.light,
-          primaryColor: Colors.white,
+          primaryColor: Colors.blue,
           splashColor: Colors.transparent,
           tooltipTheme: TooltipThemeData(verticalOffset: -100000)),
       home: SplashScreenPage(),

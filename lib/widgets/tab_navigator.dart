@@ -46,28 +46,32 @@ class _TabNavigatorState extends State<TabNavigator> {
 
     return Scaffold(
       drawer: Drawer(
-        child: ListView(
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountName: Text("江南小虫虫"),
-              accountEmail: Text("807296772@qq.com"),
-              currentAccountPicture: GestureDetector(
-                child: CircleAvatar(
-                  backgroundImage: ExactAssetImage('images/vnote.png'),
+        child: MediaQuery.removePadding(
+            context: context,
+            removeTop: true,
+            child: ListView(
+              children: <Widget>[
+                UserAccountsDrawerHeader(
+                  accountName: Text("江南小虫虫"),
+                  accountEmail: Text("807296772@qq.com"),
+                  currentAccountPicture: GestureDetector(
+                    child: CircleAvatar(
+                      backgroundImage: ExactAssetImage('images/vnote.png'),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            ListTile(
-              title: Text("退出登录"),
-              trailing: Icon(Icons.keyboard_arrow_left),
-              onTap: (){
-                // 关闭侧滑菜单
-                Navigator.of(context).pop();
-                // 执行清除token的操作, 并且进入登录界面
-              },
+                ListTile(
+                  title: Text("退出登录"),
+                  leading: Icon(Icons.arrow_drop_down_circle, color: Colors.orange,),
+                  onTap: (){
+                    // 关闭侧滑菜单
+                    Navigator.of(context).pop();
+                    // 执行清除token的操作, 并且进入登录界面
+                  },
+                )
+              ],
             )
-          ],
-        )
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex, // 当前选中的是哪个页面
