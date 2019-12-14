@@ -61,6 +61,9 @@ class _DirectoryPageState extends State<DirectoryPage> {
           child: TreeViewChild(
             parent: _getDocumentWidget(document: document),
             children: _getChildList(document.childData),
+            onTap: (){
+              print("自定义的方法");
+            },
           ),
         );
       }
@@ -83,7 +86,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
         lastModified: document.dateModified,
         onPressedNext: (){
           print("点开目录, 然后显示该目录下的所有文件");
-        },
+        }
       );
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(

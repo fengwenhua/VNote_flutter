@@ -64,17 +64,17 @@ class DocumentListUtil {
     }
     print(pathsSet.toList());
     pathsListSet = pathsSet.toList();
-    print("排序后:");
+    //print("排序后:");
     // List排序排序
     pathsListSet.sort();
-    pathsListSet.forEach((i) => print(i));
+    //pathsListSet.forEach((i) => print(i));
 
     // 遍历生成result
-    print("\n");
+    //print("\n");
     for (var p in pathsListSet) {
-      print("开始处理: " + p);
+      //print("开始处理: " + p);
       go(p, result);
-      print("\n");
+      //print("\n");
     }
 
     // 写到本地
@@ -94,12 +94,12 @@ class DocumentListUtil {
     bool skip = false;
     int count = 0;
 
-    print("要处理的节点: " + tempStr);
+    //print("要处理的节点: " + tempStr);
     // 应该先查一下该节点是否存在
 
     for (Document d in result) {
       if (d.name == tempStr) {
-        print("跳过该节点: " + tempStr);
+        //print("跳过该节点: " + tempStr);
         skip = true;
         break;
       }
@@ -109,7 +109,7 @@ class DocumentListUtil {
     // 删除提取出来的字符串, 包括/
     if (path.split("/").length > 1) {
       newStr = path.substring(tempStr.length + 1);
-      print("剩下的数据: " + newStr);
+      //print("剩下的数据: " + newStr);
     } else {
       newStr = "";
     }
@@ -126,7 +126,7 @@ class DocumentListUtil {
     }
 
     if (newStr != "") {
-      print("Count: " + count.toString());
+      //print("Count: " + count.toString());
       go(newStr, result[count].childData);
     }
   }

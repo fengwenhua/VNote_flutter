@@ -110,7 +110,7 @@ class TreeViewChildState extends State<TreeViewChild> {
       children: <Widget>[
         GestureDetector(
           child: widget.parent,
-          onTap: widget.onTap ?? () => toggleExpanded(),
+          onTap: () => toggleExpanded() //widget.onTap ?? () => toggleExpanded()
         ),
         AnimatedContainer(
           duration: Duration(milliseconds: 2000),
@@ -126,6 +126,10 @@ class TreeViewChildState extends State<TreeViewChild> {
   }
 
   void toggleExpanded() {
+    // 执行我们自定义的方法
+    widget.onTap();
+    // 展开控件
+    print("展开控件");
     setState(() {
       this.isExpanded = !this.isExpanded;
     });
