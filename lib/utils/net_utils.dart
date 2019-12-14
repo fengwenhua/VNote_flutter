@@ -32,7 +32,7 @@ class NetUtils {
       Map<String, dynamic> headers,
       Function errorCallBack}) async {
     return await _request(context, url, callBack,
-        method: GET, params: params, errorCallBack: errorCallBack);
+        method: GET, params: params, headers: headers,errorCallBack: errorCallBack);
   }
 
   //post请求

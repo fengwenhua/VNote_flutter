@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:vnote/application.dart';
+import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
+import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/directory_widget.dart';
 import 'package:vnote/widgets/file_widget.dart';
@@ -17,6 +22,15 @@ class _DirectoryPageState extends State<DirectoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final tokenModel = Provider.of<TokenModel>(context);
+    String token = tokenModel.token.accessToken;
+    print("这里获得的token是: " + token);
+    DocumentListUtil.instance.getDirectoryList(context, token, (list){
+      documentList = list;
+      print("获取了List");
+      documentList.forEach((i) => print(i.name));
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text('我是目录', style: TextStyle(fontSize: fontSize40)),

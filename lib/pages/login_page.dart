@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/webview.dart';
 
@@ -18,9 +19,9 @@ class _LoginPageState extends State<LoginPage> {
               Icons.arrow_back,
               color: Colors.white,
             ),
-            onPressed: () {
-              // 回到上一页
-              Navigator.of(context).pop();
+            onPressed: () async {
+              // 退出应用
+              await pop();
             },
           )),
       body: WebView(
@@ -31,4 +32,8 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+}
+
+ Future<void> pop() async {
+await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
 }

@@ -20,5 +20,6 @@ class TokenModel with ChangeNotifier{
   void updateToken(OneDriveTokenModel token){
     _token = token;
     Application.sp.setString("onedrive_token", json.encode(token.toJson()));
+    notifyListeners();
   }
 }
