@@ -85,7 +85,6 @@ class DocumentListUtil {
   }
 
   void go(String path, List<Document> result) {
-
     if (path.isEmpty) {
       return;
     }
@@ -94,26 +93,26 @@ class DocumentListUtil {
     String newStr;
     bool skip = false;
     int count = 0;
-    // 删除提取出来的字符串, 包括/
-    if (path.split("/").length > 1) {
-      newStr = path.substring(tempStr.length+1);
-      print("剩下的数据: "+newStr);
-    } else {
-      newStr = "";
-    }
 
     print("要处理的节点: " + tempStr);
     // 应该先查一下该节点是否存在
 
-      for (Document d in result) {
-        if (d.name == tempStr) {
-          print("跳过该节点: "+tempStr);
-          skip = true;
-          break;
-        }
-        count++;
+    for (Document d in result) {
+      if (d.name == tempStr) {
+        print("跳过该节点: " + tempStr);
+        skip = true;
+        break;
       }
+      count++;
+    }
 
+    // 删除提取出来的字符串, 包括/
+    if (path.split("/").length > 1) {
+      newStr = path.substring(tempStr.length + 1);
+      print("剩下的数据: " + newStr);
+    } else {
+      newStr = "";
+    }
 
     if (!skip) {
       List<Document> l = new List<Document>();

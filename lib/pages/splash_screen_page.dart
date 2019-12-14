@@ -5,7 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
+import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/navigator_util.dart';
 
@@ -60,6 +62,13 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       // 本地有token, 应该刷新一下token, 然后跳到主页
       await OnedriveTokenDao.refreshToken(context, tokenModel.token.refreshToken).then((value){
         if(value.data != -1){
+          DocumentListUtil.instance.getDirectoryList(context, tokenModel.token.accessToken, (list){
+            print("获取了List, 如下:");
+            list.forEach((i) => print(i.name));
+            DataListModel dataListModel = Provider.of<DataListModel>(context);
+            dataListModel.updateValue(list);
+          });
+
           // 跳转到主页
           print("跳转到主页");
           NavigatorUtil.goHomePage(context);

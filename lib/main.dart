@@ -2,6 +2,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/pages/splash_screen_page.dart';
+import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/route/navigate_service.dart';
@@ -22,6 +23,9 @@ void main() {
     providers: [
       ChangeNotifierProvider<TokenModel>(
         create: (context) => TokenModel(),
+      ),
+      ChangeNotifierProvider<DataListModel>(
+        create: (context) => DataListModel(),
       )
     ],
     child: MyApp(),

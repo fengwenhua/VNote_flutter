@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
+import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
@@ -18,18 +19,19 @@ class DirectoryPage extends StatefulWidget {
 
 // 前面加下划线即为内部类, 不能为外部访问
 class _DirectoryPageState extends State<DirectoryPage> {
-  List<Document> documentList = [];
+
 
   @override
   Widget build(BuildContext context) {
-    final tokenModel = Provider.of<TokenModel>(context);
-    String token = tokenModel.token.accessToken;
-    print("这里获得的token是: " + token);
-    DocumentListUtil.instance.getDirectoryList(context, token, (list){
-      documentList = list;
-      print("获取了List");
-      documentList.forEach((i) => print(i.name));
-    });
+//    final tokenModel = Provider.of<TokenModel>(context);
+//    String token = tokenModel.token.accessToken;
+//    print("这里获得的token是: " + token);
+//    DocumentListUtil.instance.getDirectoryList(context, token, (list){
+//      documentList = list;
+//      print("获取了List, 如下:");
+//      documentList.forEach((i) => print(i.name));
+//    });
+    DataListModel dataListModel = Provider.of<DataListModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -45,7 +47,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
       ),
       body: TreeView(
         startExpanded: false,
-        children: _getChildList(documentList),
+        children: _getChildList(dataListModel.dataList),
       ),
     );
   }
