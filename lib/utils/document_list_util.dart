@@ -41,39 +41,45 @@ class DocumentListUtil {
 
     // 解析json,  获取所有的路径
 
-    List pathsList = [];
-    var pathsSet = new Set();
-    List pathsListSet = [];
+    var pathsList = <Item>[];
+    var pathsListSet = <Item>[];
+    //List pathsList = [];
+    //List pathsListSet = [];
+
+    var pathsSet = new Set<Item>();
 
     // 路径
     for (Value value in oneDriveDataModel.value) {
       //print(value.parentReference.path);
-      String p = value.parentReference.path;
-      if (p == "/drive/root:/应用") {
+      String id = value.parentReference.id;
+      String path = value.parentReference.path;
+      if (path == "/drive/root:/应用") {
         continue;
-      } else if (p == "/drive/root:/应用/VNote") {
+      } else if (path == "/drive/root:/应用/VNote") {
         continue;
       }
-      p = p.replaceAll("/drive/root:/应用/VNote/", "");
-      pathsList.add(p);
+      path = path.replaceAll("/drive/root:/应用/VNote/", "");
+
+      pathsList.add(Item(id: id, path: path, fullPath: path));
     }
     // pathsList.forEach((i) => print(i));
 
+    // 去重
     for (var p in pathsList) {
       pathsSet.add(p);
     }
-    print(pathsSet.toList());
+    //print(pathsSet.toList());
     pathsListSet = pathsSet.toList();
     //print("排序后:");
-    // List排序排序
-    pathsListSet.sort();
+    // List 按照 path 排序
+    pathsListSet.sort((a, b) => b.path.compareTo(a.path));
     //pathsListSet.forEach((i) => print(i));
 
     // 遍历生成result
     //print("\n");
     for (var p in pathsListSet) {
       //print("开始处理: " + p);
-      go(p, result);
+      go(p, result, null);
       //print("\n");
     }
 
@@ -82,14 +88,19 @@ class DocumentListUtil {
     if (callBack != null) {
       callBack(result);
     }
+
+//    // 测试List是否构建成功
+//    print("测试List是否构建成功");
+//    print(result[0].name);
+//    print(result[0].childData[0].name);
   }
 
-  void go(String path, List<Document> result) {
-    if (path.isEmpty) {
+  void go(Item item, List<Document> result, Document parent) {
+    if (item.path.isEmpty) {
       return;
     }
     // 临时字符串
-    String tempStr = path.split("/")[0];
+    String tempStr = item.path.split("/")[0];
     String newStr;
     bool skip = false;
     int count = 0;
@@ -107,8 +118,8 @@ class DocumentListUtil {
     }
 
     // 删除提取出来的字符串, 包括/
-    if (path.split("/").length > 1) {
-      newStr = path.substring(tempStr.length + 1);
+    if (item.path.split("/").length > 1) {
+      newStr = item.path.substring(tempStr.length + 1);
       //print("剩下的数据: " + newStr);
     } else {
       newStr = "";
@@ -117,17 +128,23 @@ class DocumentListUtil {
     if (!skip) {
       List<Document> l = new List<Document>();
       Document document = new Document(
-          name: tempStr, dateModified: DateTime.now(), childData: l);
+          id: item.id,
+          name: tempStr,
+          dateModified: DateTime.now(),
+          path: item.fullPath,
+          parent: parent,
+          childData: l);
       if (result == null) {
         result = List<Document>();
       }
-      print("添加一个节点: " + tempStr);
+      //print("添加一个节点: " + tempStr);
       result.add(document);
     }
 
     if (newStr != "") {
       //print("Count: " + count.toString());
-      go(newStr, result[count].childData);
+      item.path = newStr;
+      go(item, result[count].childData, result[count]);
     }
   }
 
@@ -164,4 +181,11 @@ class DocumentListUtil {
     return OneDriveDataModel.fromJson(
         json.decode(Application.sp.getString("raw_data")));
   }
+}
+
+class Item {
+  Item({this.id = '', this.path = '', this.fullPath = ''});
+  String id;
+  String path;
+  String fullPath;
 }

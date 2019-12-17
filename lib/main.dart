@@ -26,7 +26,7 @@ void main() {
       ),
       ChangeNotifierProvider<DataListModel>(
         create: (context) => DataListModel(),
-      )
+      ),
     ],
     child: MyApp(),
   ));

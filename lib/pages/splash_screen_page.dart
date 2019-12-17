@@ -63,8 +63,11 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       await OnedriveTokenDao.refreshToken(context, tokenModel.token.refreshToken).then((value){
         if(value.data != -1){
           DocumentListUtil.instance.getDirectoryList(context, tokenModel.token.accessToken, (list){
-//            print("获取了List, 如下:");
-//            list.forEach((i) => print(i.name));
+            print("获取了List, 如下:");
+            list.forEach((i) {
+              print(i.name);
+              print(i.childData[0].name);
+            });
             DataListModel dataListModel = Provider.of<DataListModel>(context);
             dataListModel.updateValue(list);
           });

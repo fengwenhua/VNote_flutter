@@ -1,25 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:vnote/application.dart';
-import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
-import 'package:vnote/provider/token_model.dart';
-import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/directory_widget.dart';
 import 'package:vnote/widgets/file_widget.dart';
 import 'package:vnote/widgets/tree_view.dart';
 
 class DirectoryPage extends StatefulWidget {
+  int level;
+  List<Document> documents;
+
+  DirectoryPage(
+      {Key key, @required int level, @required List<Document> documents})
+      : this.level = level,
+        this.documents = documents,
+        super(key: key);
+
   @override
   _DirectoryPageState createState() => _DirectoryPageState();
 }
 
 // 前面加下划线即为内部类, 不能为外部访问
 class _DirectoryPageState extends State<DirectoryPage> {
+  ScrollController controller = ScrollController();
+  List<double> position = [];
+  List<Document> documents = <Document>[];
 
+  @override
+  void initState() {
+    super.initState();
+    documents = widget.documents;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,23 +45,97 @@ class _DirectoryPageState extends State<DirectoryPage> {
 //    });
     DataListModel dataListModel = Provider.of<DataListModel>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('我是目录', style: TextStyle(fontSize: fontSize40)),
-          leading: IconButton(
-            icon: Icon(Icons.dehaze, color: Colors.white,),
-            onPressed: (){
-              // 打开Drawer抽屉菜单
-              print("点击了侧滑按钮");
-              Scaffold.of(context).openDrawer();
-            },
-          )
-      ),
-      body: TreeView(
-        startExpanded: false,
-        children: _getChildList(dataListModel.dataList),
-      ),
+    return WillPopScope(
+      onWillPop: onWillPop,
+      child: Scaffold(
+          appBar: AppBar(
+              title: Text('我是目录', style: TextStyle(fontSize: fontSize40)),
+              leading: IconButton(
+                icon: Icon(
+                  Icons.dehaze,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  // 打开Drawer抽屉菜单
+                  print("点击了侧滑按钮");
+                  Scaffold.of(context).openDrawer();
+                },
+              )),
+          body: documents.length == 0
+              ? Center(
+                  child: Text("The folder is empty"),
+                )
+              : Scrollbar(
+                  child: ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    controller: controller,
+                    itemCount: documents.length,
+                    itemBuilder: (context, index) {
+                      return getListWidget(widget.level, documents)
+                          .elementAt(index);
+                    },
+                  ),
+                )
+//      TreeView(
+//        startExpanded: false,
+//        children: _getChildList(widget.documents),
+//      ),
+          ),
     );
+  }
+
+  Future<bool> onWillPop() async {
+    if (documents[0].path != null) {
+      initPathFiles(documents[0].parent.parent.childData);
+      jumpToPosition(false);
+    } else {
+      Navigator.pop(context);
+    }
+    return false;
+  }
+
+  void jumpToPosition(bool isEnter) async {
+    if (isEnter)
+      controller.jumpTo(0.0);
+    else {
+      try {
+        await Future.delayed(Duration(milliseconds: 1));
+        controller?.jumpTo(position[position.length - 1]);
+      } catch (e) {}
+      position.removeLast();
+    }
+  }
+
+  // 初始化该路径下的文件、文件夹
+  void initPathFiles(List<Document> list) {
+    try {
+      setState(() {
+        print("进入了, 第一项是:");
+
+        documents = list;
+        print(documents[0].name);
+      });
+    } catch (e) {
+      print(e);
+      print("Directory does not exist！");
+    }
+  }
+
+  List<Widget> getListWidget(int level, List<Document> childDocuments) {
+    ///print("展开的内容如下:");
+    List<Document> newDocument = new List<Document>();
+    childDocuments.forEach((i) {
+      Document d =
+          new Document(id: i.id, name: i.name, dateModified: i.dateModified, childData: i.childData);
+      newDocument.add(d);
+    });
+
+    return newDocument.map((document) {
+      return Container(
+        margin: const EdgeInsets.only(left: 4.0),
+        child: _getDirectoryWidget(document: document),
+      );
+    }).toList();
   }
 
   List<Widget> _getChildList(List<Document> childDocuments) {
@@ -57,37 +143,35 @@ class _DirectoryPageState extends State<DirectoryPage> {
       // 目录
       if (!document.isFile) {
         return Container(
-          margin: EdgeInsets.only(left: 16),
-          child: TreeViewChild(
-            parent: _getDocumentWidget(document: document),
-            children: _getChildList(document.childData),
-            onTap: (){
-              print("自定义的方法");
-            },
-          ),
-        );
+            margin: EdgeInsets.only(left: 16),
+            child: TreeViewChild(
+              parent: _getDirectoryWidget(document: document),
+              children: _getChildList(document.childData),
+              onTap: () {
+                print("要展开的是: " + document.name);
+              },
+            ));
       }
 
       // 文件
       return Container(
         margin: const EdgeInsets.only(left: 4.0),
-        child: _getDocumentWidget(document: document),
+        child: _getFileWidget(document: document),
       );
     }).toList();
   }
 
-  Widget _getDocumentWidget({@required Document document}) => document.isFile
-      ? _getFileWidget(document: document)
-      : _getDirectoryWidget(document: document);
-
-  DirectoryWidget _getDirectoryWidget({@required Document document}) =>
-      DirectoryWidget(
-        directoryName: document.name,
-        lastModified: document.dateModified,
-        onPressedNext: (){
-          print("点开目录, 然后显示该目录下的所有文件");
-        }
-      );
+  Widget _getDirectoryWidget({@required Document document}) => DirectoryWidget(
+      directoryName: document.name,
+      lastModified: document.dateModified,
+      onPressedNext: () {
+        print("点开 ${document.name} 目录, 然后显示该目录下的所有文件");
+        print("第一个目录是: ");
+        print(document.childData[0].name);
+        position.add(controller.offset);
+        initPathFiles(document.childData);
+        jumpToPosition(true);
+      });
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
         fileName: document.name,
