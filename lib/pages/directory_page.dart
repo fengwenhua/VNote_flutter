@@ -51,7 +51,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
       onWillPop: onWillPop,
       child: Scaffold(
           appBar: AppBar(
-              title: documents[0]?.parent == null
+              title: documents.length>0&&documents[0]?.parent == null
                   ? Text('目录', style: TextStyle(fontSize: fontSize40))
                   : Text(documents[0].parent.name, style: TextStyle(fontSize: fontSize40)),
               leading: documents[0]?.parent == null
@@ -141,10 +141,19 @@ class _DirectoryPageState extends State<DirectoryPage> {
     });
 
     return newDocument.map((document) {
-      return Container(
-        margin: const EdgeInsets.only(left: 4.0),
-        child: _getDirectoryWidget(document: document),
-      );
+      if (!document.isFile){
+        return Container(
+          margin: const EdgeInsets.only(left: 4.0),
+          child: _getDirectoryWidget(document: document),
+        );
+      }else{
+        // 文件
+        return Container(
+          margin: const EdgeInsets.only(left: 4.0),
+          child: _getFileWidget(document: document),
+        );
+      }
+
     }).toList();
   }
 
@@ -176,11 +185,13 @@ class _DirectoryPageState extends State<DirectoryPage> {
       lastModified: document.dateModified,
       onPressedNext: () {
         print("点开 ${document.name} 目录, 然后显示该目录下的所有文件");
-        print("第一个目录是: ");
-        print(document.childData[0].name);
-        position.add(controller.offset);
-        initPathFiles(document.childData);
-        jumpToPosition(true);
+        //print("第一个目录是: ");
+        //print(document.childData[0].name);
+        if(document.childData.length>0){
+          position.add(controller.offset);
+          initPathFiles(document.childData);
+          jumpToPosition(true);
+        }
       });
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
