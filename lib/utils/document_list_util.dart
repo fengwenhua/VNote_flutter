@@ -60,7 +60,7 @@ class DocumentListUtil {
       }
       path = path.replaceAll("/drive/root:/应用/VNote/", "");
 
-      pathsList.add(Item(id: id, path: path, fullPath: path));
+      pathsList.add(Item(id: id, path: path));
     }
     // pathsList.forEach((i) => print(i));
 
@@ -131,13 +131,13 @@ class DocumentListUtil {
           id: item.id,
           name: tempStr,
           dateModified: DateTime.now(),
-          path: item.fullPath,
           parent: parent,
           childData: l);
       if (result == null) {
         result = List<Document>();
       }
-      //print("添加一个节点: " + tempStr);
+      print("添加一个节点: " + tempStr);
+      print("路径: " + item.path);
       result.add(document);
     }
 
@@ -184,8 +184,7 @@ class DocumentListUtil {
 }
 
 class Item {
-  Item({this.id = '', this.path = '', this.fullPath = ''});
+  Item({this.id = '', this.path = ''});
   String id;
   String path;
-  String fullPath;
 }

@@ -51,7 +51,9 @@ class _DirectoryPageState extends State<DirectoryPage> {
       onWillPop: onWillPop,
       child: Scaffold(
           appBar: AppBar(
-              title: Text('我是目录', style: TextStyle(fontSize: fontSize40)),
+              title: documents[0]?.parent == null
+                  ? Text('目录', style: TextStyle(fontSize: fontSize40))
+                  : Text(documents[0].parent.name, style: TextStyle(fontSize: fontSize40)),
               leading: documents[0]?.parent == null
                   ? IconButton(
                       icon: Icon(
@@ -90,8 +92,8 @@ class _DirectoryPageState extends State<DirectoryPage> {
   }
 
   Future<bool> onWillPop() async {
-    if (documents[0].path != null) {
-      initPathFiles(documents[0].parent.parent?.childData??rootDocuments);
+    if (documents[0].parent != null) {
+      initPathFiles(documents[0].parent.parent?.childData ?? rootDocuments);
       jumpToPosition(false);
     } else {
       Navigator.pop(context);
