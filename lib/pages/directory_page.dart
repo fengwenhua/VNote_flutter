@@ -26,11 +26,13 @@ class _DirectoryPageState extends State<DirectoryPage> {
   ScrollController controller = ScrollController();
   List<double> position = [];
   List<Document> documents = <Document>[];
+  List<Document> rootDocuments = <Document>[];
 
   @override
   void initState() {
     super.initState();
     documents = widget.documents;
+    rootDocuments = documents;
   }
 
   @override
@@ -50,17 +52,25 @@ class _DirectoryPageState extends State<DirectoryPage> {
       child: Scaffold(
           appBar: AppBar(
               title: Text('我是目录', style: TextStyle(fontSize: fontSize40)),
-              leading: IconButton(
-                icon: Icon(
-                  Icons.dehaze,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  // 打开Drawer抽屉菜单
-                  print("点击了侧滑按钮");
-                  Scaffold.of(context).openDrawer();
-                },
-              )),
+              leading: documents[0]?.parent == null
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.dehaze,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        // 打开Drawer抽屉菜单
+                        print("点击了侧滑按钮");
+                        Scaffold.of(context).openDrawer();
+                      },
+                    )
+                  : IconButton(
+                      icon: Icon(
+                        Icons.keyboard_arrow_left,
+                        color: Colors.white,
+                      ),
+                      onPressed: onWillPop,
+                    )),
           body: documents.length == 0
               ? Center(
                   child: Text("The folder is empty"),
@@ -75,18 +85,13 @@ class _DirectoryPageState extends State<DirectoryPage> {
                           .elementAt(index);
                     },
                   ),
-                )
-//      TreeView(
-//        startExpanded: false,
-//        children: _getChildList(widget.documents),
-//      ),
-          ),
+                )),
     );
   }
 
   Future<bool> onWillPop() async {
     if (documents[0].path != null) {
-      initPathFiles(documents[0].parent.parent.childData);
+      initPathFiles(documents[0].parent.parent?.childData??rootDocuments);
       jumpToPosition(false);
     } else {
       Navigator.pop(context);
@@ -110,10 +115,10 @@ class _DirectoryPageState extends State<DirectoryPage> {
   void initPathFiles(List<Document> list) {
     try {
       setState(() {
-        print("进入了, 第一项是:");
+        //print("进入了, 第一项是:");
 
         documents = list;
-        print(documents[0].name);
+        //print(documents[0].name);
       });
     } catch (e) {
       print(e);
@@ -125,8 +130,11 @@ class _DirectoryPageState extends State<DirectoryPage> {
     ///print("展开的内容如下:");
     List<Document> newDocument = new List<Document>();
     childDocuments.forEach((i) {
-      Document d =
-          new Document(id: i.id, name: i.name, dateModified: i.dateModified, childData: i.childData);
+      Document d = new Document(
+          id: i.id,
+          name: i.name,
+          dateModified: i.dateModified,
+          childData: i.childData);
       newDocument.add(d);
     });
 
