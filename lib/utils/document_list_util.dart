@@ -22,22 +22,23 @@ class DocumentListUtil {
     return _instance;
   }
 
-  void getDirectoryList(BuildContext context, String token, Function callBack,
+  Future<List<Document>> getDirectoryList(BuildContext context, String token, Function callBack,
       {bool fromNetwork = false}) async {
     List<Document> result = new List<Document>();
 
     OneDriveDataModel oneDriveDataModel;
     // 先拿到json, 应该先从本地拿, 再从网络拿, 看情况
-    if (fromNetwork || !_hasRawData()) {
-      oneDriveDataModel = await _getDataFromNetwork(context, token);
-    } else {
-      if (!_hasRawData()) {
-        // 本地没有数据
-        oneDriveDataModel = await _getDataFromNetwork(context, token);
-      } else {
-        oneDriveDataModel = await _getDataFromLocal();
-      }
-    }
+    oneDriveDataModel = await _getDataFromNetwork(context, token);
+//    if (fromNetwork || !_hasRawData()) {
+//      oneDriveDataModel = await _getDataFromNetwork(context, token);
+//    } else {
+//      if (!_hasRawData()) {
+//        // 本地没有数据
+//        oneDriveDataModel = await _getDataFromNetwork(context, token);
+//      } else {
+//        oneDriveDataModel = await _getDataFromLocal();
+//      }
+//    }
 
     // 解析json,  获取所有的路径
 
@@ -48,19 +49,25 @@ class DocumentListUtil {
 
     var pathsSet = new Set<Item>();
 
+    print("开始打印每一项, 检查是否缺少");
     // 路径
     for (Value value in oneDriveDataModel.value) {
+      print(value.name+"  "+value.id);
       //print(value.parentReference.path);
       String id = value.parentReference.id;
       String path = value.parentReference.path;
+      String name = value.parentReference.name;
       if (path == "/drive/root:/应用") {
         continue;
       } else if (path == "/drive/root:/应用/VNote") {
         continue;
+      }else if(path.contains("_v_recycle_bin") || path.contains("_v_images")|| path.contains("_v_attachments")){
+        continue;
       }
       path = path.replaceAll("/drive/root:/应用/VNote/", "");
 
-      pathsList.add(Item(id: id, path: path));
+      pathsList.add(Item(id: id, path: path,name: name));
+
     }
     // pathsList.forEach((i) => print(i));
 
@@ -79,7 +86,7 @@ class DocumentListUtil {
     //print("\n");
     for (var p in pathsListSet) {
       //print("开始处理: " + p);
-      go(p, result, null);
+      go(p, result, null,oneDriveDataModel);
       //print("\n");
     }
 
@@ -93,13 +100,30 @@ class DocumentListUtil {
 //    print("测试List是否构建成功");
 //    print(result[0].name);
 //    print(result[0].childData[0].name);
+    // 遍历插入文件
+//    result.forEach((i){
+//      for (Value value in oneDriveDataModel.value){
+//        if(value.parentReference.id == i.id){
+//          print("处理id: " + i.id);
+//          print("给 "+i.name + "增加文件: " + value.name);
+//          Document document = new Document(
+//              id: value.id,
+//              name: value.name,
+//              dateModified: DateTime.parse(value.lastModifiedDateTime),
+//          isFile: true);
+//          i.childData.add(document);
+//        }
+//      }
+//    });
+  return result;
   }
 
-  void go(Item item, List<Document> result, Document parent) {
+  void go(Item item, List<Document> result, Document parent, OneDriveDataModel oneDriveDataModel) {
     if (item.path.isEmpty) {
       return;
     }
     // 临时字符串
+    //print("传入路径: "+item.path);
     String tempStr = item.path.split("/")[0];
     String newStr;
     bool skip = false;
@@ -120,6 +144,7 @@ class DocumentListUtil {
     // 删除提取出来的字符串, 包括/
     if (item.path.split("/").length > 1) {
       newStr = item.path.substring(tempStr.length + 1);
+      item.fullPath = item.fullPath+tempStr+"/";
       //print("剩下的数据: " + newStr);
     } else {
       newStr = "";
@@ -127,8 +152,9 @@ class DocumentListUtil {
 
     if (!skip) {
       List<Document> l = new List<Document>();
+      String id = getId(tempStr, oneDriveDataModel);
       Document document = new Document(
-          id: item.id,
+          id: id,
           name: tempStr,
           dateModified: DateTime.now(),
           parent: parent,
@@ -136,15 +162,15 @@ class DocumentListUtil {
       if (result == null) {
         result = List<Document>();
       }
-      print("添加一个节点: " + tempStr);
-      print("路径: " + item.path);
+      print("添加一个节点: " + tempStr + " id值为: " + id);
+      //print("路径: " + item.path);
       result.add(document);
     }
 
     if (newStr != "") {
       //print("Count: " + count.toString());
       item.path = newStr;
-      go(item, result[count].childData, result[count]);
+      go(item, result[count].childData, result[count], oneDriveDataModel);
     }
   }
 
@@ -184,7 +210,19 @@ class DocumentListUtil {
 }
 
 class Item {
-  Item({this.id = '', this.path = ''});
+  Item({this.id = '', this.path = '', this.name='',this.fullPath=''});
   String id;
   String path;
+  String name;
+  String fullPath;
+}
+
+// 根据完整路径获取对应的id
+String getId(String name, OneDriveDataModel oneDriveDataModel){
+  for (Value value in oneDriveDataModel.value){
+    if(value.parentReference.name == name){
+      return value.parentReference.id;
+    }
+  }
+  return null;
 }

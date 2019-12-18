@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
+import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
@@ -52,6 +53,18 @@ class _SplashScreenPageState extends State<SplashScreenPage>
 
   }
 
+  Future<List<Document>> getData(String accessToken) async{
+    return await DocumentListUtil.instance.getDirectoryList(context, accessToken, (list){
+      print("获取了List, 如下:");
+      list.forEach((i) {
+        print(i.name);
+        print(i.childData[0].name);
+      });
+      DataListModel dataListModel = Provider.of<DataListModel>(context);
+      dataListModel.updateValue(list);
+    });
+  }
+
   void goPage() async{
     // 初始化shared_preferences
     await Application.initSp();
@@ -60,21 +73,15 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     tokenModel.initToken();
     if(tokenModel.token != null){
       // 本地有token, 应该刷新一下token, 然后跳到主页
-      await OnedriveTokenDao.refreshToken(context, tokenModel.token.refreshToken).then((value){
-        if(value.data != -1){
-          DocumentListUtil.instance.getDirectoryList(context, tokenModel.token.accessToken, (list){
-            print("获取了List, 如下:");
-            list.forEach((i) {
-              print(i.name);
-              print(i.childData[0].name);
-            });
-            DataListModel dataListModel = Provider.of<DataListModel>(context);
-            dataListModel.updateValue(list);
-          });
+      await OnedriveTokenDao.refreshToken(context, tokenModel.token.refreshToken).then((value) async {
+        if(value.data != -1) {
 
+          await getData(tokenModel.token.accessToken).then((data){
+            print("跳转到主页");
+            NavigatorUtil.goHomePage(context);
+          });
           // 跳转到主页
-          print("跳转到主页");
-          NavigatorUtil.goHomePage(context);
+
         }
       });
     }else{

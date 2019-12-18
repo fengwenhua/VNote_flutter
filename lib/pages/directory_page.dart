@@ -157,28 +157,6 @@ class _DirectoryPageState extends State<DirectoryPage> {
     }).toList();
   }
 
-  List<Widget> _getChildList(List<Document> childDocuments) {
-    return childDocuments.map((document) {
-      // 目录
-      if (!document.isFile) {
-        return Container(
-            margin: EdgeInsets.only(left: 16),
-            child: TreeViewChild(
-              parent: _getDirectoryWidget(document: document),
-              children: _getChildList(document.childData),
-              onTap: () {
-                print("要展开的是: " + document.name);
-              },
-            ));
-      }
-
-      // 文件
-      return Container(
-        margin: const EdgeInsets.only(left: 4.0),
-        child: _getFileWidget(document: document),
-      );
-    }).toList();
-  }
 
   Widget _getDirectoryWidget({@required Document document}) => DirectoryWidget(
       directoryName: document.name,
