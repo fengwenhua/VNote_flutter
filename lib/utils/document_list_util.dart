@@ -86,7 +86,7 @@ class DocumentListUtil {
     //print("\n");
     for (var p in pathsListSet) {
       //print("开始处理: " + p);
-      go(p, result, null,oneDriveDataModel);
+      go(p, result, null);
       //print("\n");
     }
 
@@ -118,7 +118,7 @@ class DocumentListUtil {
   return result;
   }
 
-  void go(Item item, List<Document> result, Document parent, OneDriveDataModel oneDriveDataModel) {
+  void go(Item item, List<Document> result, Document parent) {
     if (item.path.isEmpty) {
       return;
     }
@@ -152,9 +152,7 @@ class DocumentListUtil {
 
     if (!skip) {
       List<Document> l = new List<Document>();
-      String id = getId(tempStr, oneDriveDataModel);
       Document document = new Document(
-          id: id,
           name: tempStr,
           dateModified: DateTime.now(),
           parent: parent,
@@ -162,7 +160,7 @@ class DocumentListUtil {
       if (result == null) {
         result = List<Document>();
       }
-      print("添加一个节点: " + tempStr + " id值为: " + id);
+      print("添加一个节点: " + tempStr);
       //print("路径: " + item.path);
       result.add(document);
     }
@@ -170,7 +168,7 @@ class DocumentListUtil {
     if (newStr != "") {
       //print("Count: " + count.toString());
       item.path = newStr;
-      go(item, result[count].childData, result[count], oneDriveDataModel);
+      go(item, result[count].childData, result[count]);
     }
   }
 

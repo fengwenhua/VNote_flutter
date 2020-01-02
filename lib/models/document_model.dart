@@ -10,7 +10,7 @@ class Document {
   //final List<Document> childFiles;
 
   Document({
-    @required this.id,
+    this.id,
     @required this.name,
     this.dateModified,
     this.isFile = false,
