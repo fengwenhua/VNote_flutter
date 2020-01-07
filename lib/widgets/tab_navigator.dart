@@ -181,7 +181,7 @@ class _TabNavigatorState extends State<TabNavigator> {
             controller: _controller,
             children: <Widget>[
               NotePage(),
-              DirectoryPage(level: level, documents: model.dataList),
+              DirectoryPage(documents: model.dataList),
               CreatePage(),
               LabelPage(),
               SearchPage()

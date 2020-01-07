@@ -53,12 +53,12 @@ class _SplashScreenPageState extends State<SplashScreenPage>
 
   }
 
-  Future<List<Document>> getData(String accessToken) async{
-    return await DocumentListUtil.instance.getDirectoryList(context, accessToken, (list){
+  /// 趁播放 logo 的时候, 将一级目录(笔记本)下载下来
+  Future<List<Document>> getNotebook(String accessToken) async{
+    return await DocumentListUtil.instance.getNotebookList(context, accessToken, (list){
       print("获取了List, 如下:");
       list.forEach((i) {
         print(i.name);
-        print(i.childData[0].name);
       });
       DataListModel dataListModel = Provider.of<DataListModel>(context);
       dataListModel.updateValue(list);
@@ -76,7 +76,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       await OnedriveTokenDao.refreshToken(context, tokenModel.token.refreshToken).then((value) async {
         if(value.data != -1) {
 
-          await getData(tokenModel.token.accessToken).then((data){
+          await getNotebook(tokenModel.token.accessToken).then((data){
             print("跳转到主页");
             NavigatorUtil.goHomePage(context);
           });

@@ -5,7 +5,7 @@ class Document {
   final String name;
   final bool isFile;
   final DateTime dateModified;
-  final List<Document> childData;
+  List<Document> childData;
   final Document parent;
   //final List<Document> childFiles;
 

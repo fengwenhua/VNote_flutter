@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/directory_widget.dart';
 import 'package:vnote/widgets/file_widget.dart';
@@ -12,9 +16,8 @@ class DirectoryPage extends StatefulWidget {
   List<Document> documents;
 
   DirectoryPage(
-      {Key key, @required int level, @required List<Document> documents})
-      : this.level = level,
-        this.documents = documents,
+      {Key key, @required List<Document> documents})
+      :this.documents = documents,
         super(key: key);
 
   @override
@@ -27,6 +30,44 @@ class _DirectoryPageState extends State<DirectoryPage> {
   List<double> position = [];
   List<Document> documents = <Document>[];
   List<Document> rootDocuments = <Document>[];
+
+  Future<dynamic> _myClick(Document document)  {
+    return showDialog<dynamic>(
+        context: context,
+        builder: (ctx){
+          return Center(
+            child: new ShowProgress(_postData(document)),
+          );
+        }
+    );
+  }
+
+  /// 趁播放 logo 的时候, 将一级目录(笔记本)下载下来
+  Future<List<Document>> getChildData(String accessToken, String id) async{
+    return await DocumentListUtil.instance.getChildList(context, accessToken, id, (list){
+      print("根据 id 获取了List, 如下:");
+      list.forEach((i) {
+        print(i.name);
+      });
+//      DataListModel dataListModel = Provider.of<DataListModel>(context);
+//      dataListModel.updateValue(list);
+    });
+  }
+
+  _postData(Document document) async{
+    TokenModel tokenModel = Provider.of<TokenModel>(context);
+    // 网络请求
+    await getChildData(tokenModel.token.accessToken, document.id).then((data){
+      document.childData  = data;
+      // 这里应该遍历里面的元素, 让他们的爸爸变成 document
+      // 显示
+      if(document.childData.length>0){
+        position.add(controller.offset);
+        initPathFiles(document.childData);
+        jumpToPosition(true);
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -51,7 +92,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
       onWillPop: onWillPop,
       child: Scaffold(
           appBar: AppBar(
-              title: documents.length>0&&documents[0]?.parent == null
+              title: documents.length>0 && documents[0]?.parent == null
                   ? Text('目录', style: TextStyle(fontSize: fontSize40))
                   : Text(documents[0].parent.name, style: TextStyle(fontSize: fontSize40)),
               leading: documents[0]?.parent == null
@@ -163,17 +204,39 @@ class _DirectoryPageState extends State<DirectoryPage> {
       lastModified: document.dateModified,
       onPressedNext: () {
         print("点开 ${document.name} 目录, 然后显示该目录下的所有文件");
-        //print("第一个目录是: ");
-        //print(document.childData[0].name);
-        if(document.childData.length>0){
-          position.add(controller.offset);
-          initPathFiles(document.childData);
-          jumpToPosition(true);
-        }
+
+        // 转圈圈和网络请求
+        _myClick(document);
+
+
       });
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
         fileName: document.name,
         lastModified: document.dateModified,
       );
+}
+
+class ShowProgress extends StatefulWidget {
+  ShowProgress(this.requestCallback);
+  final Future<dynamic> requestCallback;//这里Null表示回调的时候不指定类型
+  @override
+  _ShowProgressState createState() => new _ShowProgressState();
+}
+class _ShowProgressState extends State<ShowProgress> {
+  @override
+  initState() {
+    super.initState();
+    new Timer(new Duration(milliseconds: 10), () {//每隔10ms回调一次
+      widget.requestCallback.then((dynamic) {//这里Null表示回调的时候不指定类型
+        Navigator.of(context).pop();//所以pop()里面不需要传参,这里关闭对话框并获取回调的值
+      });
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return new Center(
+      child: new CircularProgressIndicator(),//获取控件实例
+    );
+  }
 }

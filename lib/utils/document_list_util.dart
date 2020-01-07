@@ -22,6 +22,51 @@ class DocumentListUtil {
     return _instance;
   }
 
+  Future<List<Document>> getNotebookList(BuildContext context, String token, Function callBack,{bool fromNetwork = false}) async {
+    List<Document> result = new List<Document>();
+    OneDriveDataModel oneDriveDataModel;
+    oneDriveDataModel = await _getNoteBookFromNetwork(context, token);
+
+    print("笔记本如下:");
+    // 路径
+
+    for (Value value in oneDriveDataModel.value) {
+      // print(value.id);
+      print(value.name);
+      Document temp = new Document(id:value.id, name: value.name, dateModified: DateTime.parse(value.lastModifiedDateTime));
+      result.add(temp);
+    }
+
+    if (callBack != null) {
+      callBack(result);
+    }
+
+    return result;
+  }
+
+  // 根据 id 获得儿子们
+  Future<List<Document>> getChildList(BuildContext context, String token, String id, Function callBack,{bool fromNetwork = false}) async {
+    List<Document> result = new List<Document>();
+    OneDriveDataModel oneDriveDataModel;
+    oneDriveDataModel = await _getChildFromNetwork(context, token, id);
+
+    print("目录如下:");
+    // 路径
+
+    for (Value value in oneDriveDataModel.value) {
+      // print(value.id);
+      print(value.name);
+      Document temp = new Document(id:value.id, name: value.name, dateModified: DateTime.parse(value.lastModifiedDateTime));
+      result.add(temp);
+    }
+
+    if (callBack != null) {
+      callBack(result);
+    }
+
+    return result;
+  }
+
   Future<List<Document>> getDirectoryList(BuildContext context, String token, Function callBack,
       {bool fromNetwork = false}) async {
     List<Document> result = new List<Document>();
@@ -183,6 +228,32 @@ class DocumentListUtil {
     print("从网络获得数据");
     OneDriveDataModel oneDriveDataModel;
     await OneDriveDataDao.getAllData(context, token).then((value) {
+      oneDriveDataModel =
+          OneDriveDataModel.fromJson(json.decode(value.toString()));
+      //print("Model内容如下:");
+      //print(json.encode(oneDriveDataModel));
+    });
+    return oneDriveDataModel;
+  }
+
+  /// 从网络获取笔记本, 即第一层文件夹
+  Future<OneDriveDataModel> _getNoteBookFromNetwork(BuildContext context, String token) async{
+    print("从网络获取文件夹");
+    OneDriveDataModel oneDriveDataModel;
+    await OneDriveDataDao.getNoteBookData(context, token).then((value) {
+      oneDriveDataModel =
+          OneDriveDataModel.fromJson(json.decode(value.toString()));
+      //print("Model内容如下:");
+      //print(json.encode(oneDriveDataModel));
+    });
+    return oneDriveDataModel;
+  }
+
+  /// 根据 id 从网络获取目录
+  Future<OneDriveDataModel> _getChildFromNetwork(BuildContext context, String token, String id) async{
+    print("根据 id 从网络获取文件夹");
+    OneDriveDataModel oneDriveDataModel;
+    await OneDriveDataDao.getChildData(context, token, id).then((value) {
       oneDriveDataModel =
           OneDriveDataModel.fromJson(json.decode(value.toString()));
       //print("Model内容如下:");
