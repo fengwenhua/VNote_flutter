@@ -30,12 +30,12 @@ class _DirectoryPageState extends State<DirectoryPage> {
   List<Document> documents = <Document>[];
   List<Document> rootDocuments = <Document>[];
 
-  Future<dynamic> _myClick(Document document, int count)  {
+  Future<dynamic> _myClick(Document document)  {
     return showDialog<dynamic>(
         context: context,
         builder: (ctx){
           return Center(
-            child: new ShowProgress(_postData(document, count)),
+            child: new ShowProgress(_postData(document)),
           );
         }
     );
@@ -53,7 +53,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
     });
   }
 
-  _postData(Document document, int count) async{
+  _postData(Document document) async{
     TokenModel tokenModel = Provider.of<TokenModel>(context);
     // 网络请求
     await getChildData(tokenModel.token.accessToken, document.id).then((data){
@@ -210,18 +210,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
         print("点开 ${document.name} 目录, 然后显示该目录下的所有文件");
 
         // 转圈圈和网络请求
-        // 试试将下标传进去
-        int count = 0;
-        for(Document d in documents){
-          if(d.id == document.id){
-            break;
-          }else{
-            count ++;
-          }
-        }
-        print("Click index: " + count.toString());
-        _myClick(document, count);
-
+        _myClick(document);
 
       });
 
