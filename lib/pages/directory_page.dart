@@ -9,7 +9,6 @@ import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/directory_widget.dart';
 import 'package:vnote/widgets/file_widget.dart';
-import 'package:vnote/widgets/tree_view.dart';
 
 class DirectoryPage extends StatefulWidget {
   int level;
@@ -28,10 +27,8 @@ class DirectoryPage extends StatefulWidget {
 class _DirectoryPageState extends State<DirectoryPage> {
   ScrollController controller = ScrollController();
   List<double> position = [];
-  List<Document> treeDocuments = <Document>[];
   List<Document> documents = <Document>[];
   List<Document> rootDocuments = <Document>[];
-  List<String> ids = []; // 存放 id
 
   Future<dynamic> _myClick(Document document, int count)  {
     return showDialog<dynamic>(
@@ -56,46 +53,20 @@ class _DirectoryPageState extends State<DirectoryPage> {
     });
   }
 
-  void addChild(List<String> ids, List<Document> treeDocuments, List<Document> childList){
-        int count = 0;
-        if(ids.length>0){
-          String id = ids[0];
-          ids.removeAt(0);
-          for(Document d in treeDocuments){
-            if(d.id == id){
-              break;
-            }else{
-              count++;
-            }
-          }
-        }else{
-          treeDocuments = childList;
-        }
-
-        addChild(ids, treeDocuments[count].childData, childList);
-  }
-
   _postData(Document document, int count) async{
     TokenModel tokenModel = Provider.of<TokenModel>(context);
     // 网络请求
     await getChildData(tokenModel.token.accessToken, document.id).then((data){
-      print("############");
-      print(document?.parent?.name);
-      print("当前处理的是 '"+ document.name + "'文件夹下的");
       document.childData  = data;
       // 这里应该遍历里面的元素, 让他们的爸爸变成 document
       data.forEach((i) {
         i.parent = document;
       });
-      print("第一个元素: '" + document.childData[0].name);
-      print("他的爸爸是: " + document.childData[0].parent.name);
-      print(document.childData[0]?.parent?.parent?.name);
-      print("############");
       // 显示
       if(document.childData.length>0){
         position.add(controller.offset);
-        anoInitPathFiles(document.childData, count);
-        //initPathFiles(document.childData);
+        //anoInitPathFiles(document.childData, count);
+        initPathFiles(document.childData);
         jumpToPosition(true);
       }
     });
@@ -106,7 +77,6 @@ class _DirectoryPageState extends State<DirectoryPage> {
     super.initState();
     documents = widget.documents;
     rootDocuments = documents;
-    treeDocuments = documents;
   }
 
   @override
@@ -167,16 +137,6 @@ class _DirectoryPageState extends State<DirectoryPage> {
 
   Future<bool> onWillPop() async {
     if (documents[0].parent != null) {
-      ids.removeLast(); // 回退一级就要将末尾的 id 值删掉
-      print("进来了");
-      print("当前: " + documents[0].name);
-      print("爸爸: " + documents[0].parent.name);
-      if(documents[0].parent.parent != null){
-        print("爷爷: " + documents[0].parent.parent.name);
-      }else{
-        print("没有爷爷");
-      }
-
       initPathFiles(documents[0].parent.parent?.childData ?? rootDocuments);
       jumpToPosition(false);
     } else {
@@ -205,27 +165,6 @@ class _DirectoryPageState extends State<DirectoryPage> {
         // 问题出现在这里, 所以他们只有爸爸
         documents = list;
         //print(documents[0].name);
-      });
-    } catch (e) {
-      print(e);
-      print("Directory does not exist！");
-    }
-  }
-
-  void anoInitPathFiles(List<Document> list, int count){
-    print("进入了另一个初始化的方法");
-    try {
-      setState(() {
-        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
-        print(documents[0].name);
-        print(documents[0].parent?.name);
-        print(documents[1].parent?.name);
-
-        documents = list;
-        print(documents[0].name);
-        print(documents[0].parent?.name);
-        print(documents[0].parent?.parent?.name);
-        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
       });
     } catch (e) {
       print(e);
@@ -280,7 +219,6 @@ class _DirectoryPageState extends State<DirectoryPage> {
             count ++;
           }
         }
-        ids.add(document.id);  // 将 id 加进来
         print("Click index: " + count.toString());
         _myClick(document, count);
 
