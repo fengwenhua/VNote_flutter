@@ -56,7 +56,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
   /// 趁播放 logo 的时候, 将一级目录(笔记本)下载下来
   Future<List<Document>> getNotebook(String accessToken) async{
     return await DocumentListUtil.instance.getNotebookList(context, accessToken, (list){
-      print("获取了List, 如下:");
+      print("获取了笔记本List, 如下:");
       list.forEach((i) {
         print(i.name);
       });

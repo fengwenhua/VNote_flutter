@@ -28,42 +28,74 @@ class DirectoryPage extends StatefulWidget {
 class _DirectoryPageState extends State<DirectoryPage> {
   ScrollController controller = ScrollController();
   List<double> position = [];
+  List<Document> treeDocuments = <Document>[];
   List<Document> documents = <Document>[];
   List<Document> rootDocuments = <Document>[];
+  List<String> ids = []; // 存放 id
 
-  Future<dynamic> _myClick(Document document)  {
+  Future<dynamic> _myClick(Document document, int count)  {
     return showDialog<dynamic>(
         context: context,
         builder: (ctx){
           return Center(
-            child: new ShowProgress(_postData(document)),
+            child: new ShowProgress(_postData(document, count)),
           );
         }
     );
   }
 
-  /// 趁播放 logo 的时候, 将一级目录(笔记本)下载下来
+  /// 根据点击的 id 来查找目录
   Future<List<Document>> getChildData(String accessToken, String id) async{
     return await DocumentListUtil.instance.getChildList(context, accessToken, id, (list){
-      print("根据 id 获取了List, 如下:");
-      list.forEach((i) {
-        print(i.name);
-      });
+//      print("根据 id 获取了List, 如下:");
+//      list.forEach((i) {
+//        print(i.name);
+//      });
 //      DataListModel dataListModel = Provider.of<DataListModel>(context);
 //      dataListModel.updateValue(list);
     });
   }
 
-  _postData(Document document) async{
+  void addChild(List<String> ids, List<Document> treeDocuments, List<Document> childList){
+        int count = 0;
+        if(ids.length>0){
+          String id = ids[0];
+          ids.removeAt(0);
+          for(Document d in treeDocuments){
+            if(d.id == id){
+              break;
+            }else{
+              count++;
+            }
+          }
+        }else{
+          treeDocuments = childList;
+        }
+
+        addChild(ids, treeDocuments[count].childData, childList);
+  }
+
+  _postData(Document document, int count) async{
     TokenModel tokenModel = Provider.of<TokenModel>(context);
     // 网络请求
     await getChildData(tokenModel.token.accessToken, document.id).then((data){
+      print("############");
+      print(document?.parent?.name);
+      print("当前处理的是 '"+ document.name + "'文件夹下的");
       document.childData  = data;
       // 这里应该遍历里面的元素, 让他们的爸爸变成 document
+      data.forEach((i) {
+        i.parent = document;
+      });
+      print("第一个元素: '" + document.childData[0].name);
+      print("他的爸爸是: " + document.childData[0].parent.name);
+      print(document.childData[0]?.parent?.parent?.name);
+      print("############");
       // 显示
       if(document.childData.length>0){
         position.add(controller.offset);
-        initPathFiles(document.childData);
+        anoInitPathFiles(document.childData, count);
+        //initPathFiles(document.childData);
         jumpToPosition(true);
       }
     });
@@ -74,6 +106,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
     super.initState();
     documents = widget.documents;
     rootDocuments = documents;
+    treeDocuments = documents;
   }
 
   @override
@@ -134,9 +167,20 @@ class _DirectoryPageState extends State<DirectoryPage> {
 
   Future<bool> onWillPop() async {
     if (documents[0].parent != null) {
+      ids.removeLast(); // 回退一级就要将末尾的 id 值删掉
+      print("进来了");
+      print("当前: " + documents[0].name);
+      print("爸爸: " + documents[0].parent.name);
+      if(documents[0].parent.parent != null){
+        print("爷爷: " + documents[0].parent.parent.name);
+      }else{
+        print("没有爷爷");
+      }
+
       initPathFiles(documents[0].parent.parent?.childData ?? rootDocuments);
       jumpToPosition(false);
     } else {
+      print("打开侧滑菜单");
       Navigator.pop(context);
     }
     return false;
@@ -158,10 +202,30 @@ class _DirectoryPageState extends State<DirectoryPage> {
   void initPathFiles(List<Document> list) {
     try {
       setState(() {
-        //print("进入了, 第一项是:");
-
+        // 问题出现在这里, 所以他们只有爸爸
         documents = list;
         //print(documents[0].name);
+      });
+    } catch (e) {
+      print(e);
+      print("Directory does not exist！");
+    }
+  }
+
+  void anoInitPathFiles(List<Document> list, int count){
+    print("进入了另一个初始化的方法");
+    try {
+      setState(() {
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
+        print(documents[0].name);
+        print(documents[0].parent?.name);
+        print(documents[1].parent?.name);
+
+        documents = list;
+        print(documents[0].name);
+        print(documents[0].parent?.name);
+        print(documents[0].parent?.parent?.name);
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~');
       });
     } catch (e) {
       print(e);
@@ -177,6 +241,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
           id: i.id,
           name: i.name,
           dateModified: i.dateModified,
+          parent: i.parent,
           childData: i.childData);
       newDocument.add(d);
     });
@@ -206,7 +271,18 @@ class _DirectoryPageState extends State<DirectoryPage> {
         print("点开 ${document.name} 目录, 然后显示该目录下的所有文件");
 
         // 转圈圈和网络请求
-        _myClick(document);
+        // 试试将下标传进去
+        int count = 0;
+        for(Document d in documents){
+          if(d.id == document.id){
+            break;
+          }else{
+            count ++;
+          }
+        }
+        ids.add(document.id);  // 将 id 加进来
+        print("Click index: " + count.toString());
+        _myClick(document, count);
 
 
       });
@@ -217,12 +293,14 @@ class _DirectoryPageState extends State<DirectoryPage> {
       );
 }
 
+/// 加载的圈圈
 class ShowProgress extends StatefulWidget {
   ShowProgress(this.requestCallback);
   final Future<dynamic> requestCallback;//这里Null表示回调的时候不指定类型
   @override
   _ShowProgressState createState() => new _ShowProgressState();
 }
+
 class _ShowProgressState extends State<ShowProgress> {
   @override
   initState() {

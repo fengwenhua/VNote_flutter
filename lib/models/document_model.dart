@@ -6,7 +6,7 @@ class Document {
   final bool isFile;
   final DateTime dateModified;
   List<Document> childData;
-  final Document parent;
+  Document parent;
   //final List<Document> childFiles;
 
   Document({

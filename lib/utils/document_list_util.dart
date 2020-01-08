@@ -33,6 +33,7 @@ class DocumentListUtil {
     for (Value value in oneDriveDataModel.value) {
       // print(value.id);
       print(value.name);
+      Document parent  = new Document(id:value.parentReference.id, name: "VNote");
       Document temp = new Document(id:value.id, name: value.name, dateModified: DateTime.parse(value.lastModifiedDateTime));
       result.add(temp);
     }
