@@ -14,9 +14,8 @@ class DirectoryPage extends StatefulWidget {
   int level;
   List<Document> documents;
 
-  DirectoryPage(
-      {Key key, @required List<Document> documents})
-      :this.documents = documents,
+  DirectoryPage({Key key, @required List<Document> documents})
+      : this.documents = documents,
         super(key: key);
 
   @override
@@ -27,23 +26,22 @@ class DirectoryPage extends StatefulWidget {
 class _DirectoryPageState extends State<DirectoryPage> {
   ScrollController controller = ScrollController();
   List<double> position = [];
-  List<Document> documents = <Document>[];
   List<Document> rootDocuments = <Document>[];
 
-  Future<dynamic> _myClick(Document document)  {
+  Future<dynamic> _myClick(Document document) {
     return showDialog<dynamic>(
         context: context,
-        builder: (ctx){
+        builder: (ctx) {
           return Center(
             child: new ShowProgress(_postData(document)),
           );
-        }
-    );
+        });
   }
 
   /// 根据点击的 id 来查找目录
-  Future<List<Document>> getChildData(String accessToken, String id) async{
-    return await DocumentListUtil.instance.getChildList(context, accessToken, id, (list){
+  Future<List<Document>> getChildData(String accessToken, String id) async {
+    return await DocumentListUtil.instance
+        .getChildList(context, accessToken, id, (list) {
 //      print("根据 id 获取了List, 如下:");
 //      list.forEach((i) {
 //        print(i.name);
@@ -53,20 +51,37 @@ class _DirectoryPageState extends State<DirectoryPage> {
     });
   }
 
-  _postData(Document document) async{
+  _postData(Document document) async {
+//    print("#################################");
+//    print("要处理的是: " + document.name);
+//    for (Document p in documents) {
+//      if (p.id == document.id) {
+//        print("找到了! 看看有没有儿子");
+//        if (p.childData != null) {
+//          print(p.childData[0].name);
+//        }
+//      }
+//    }
+//    print("#################################");
     TokenModel tokenModel = Provider.of<TokenModel>(context);
     // 网络请求
-    await getChildData(tokenModel.token.accessToken, document.id).then((data){
-      document.childData  = data;
+    await getChildData(tokenModel.token.accessToken, document.id).then((data) {
+      document.childData = data;
       // 这里应该遍历里面的元素, 让他们的爸爸变成 document
       data.forEach((i) {
         i.parent = document;
       });
       // 显示
-      if(document.childData.length>0){
+      if (document.childData.length > 0) {
+        print("#################################");
+        print("偏移值: " + controller.offset.toString());
+        print("#################################");
         position.add(controller.offset);
-        //anoInitPathFiles(document.childData, count);
-        initPathFiles(document.childData);
+
+        DataListModel dataListModel = Provider.of<DataListModel>(context);
+        dataListModel.updateValue(document.childData);
+        //initPathFiles(document.childData);
+
         jumpToPosition(true);
       }
     });
@@ -75,8 +90,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
   @override
   void initState() {
     super.initState();
-    documents = widget.documents;
-    rootDocuments = documents;
+    rootDocuments = widget.documents;
   }
 
   @override
@@ -92,52 +106,57 @@ class _DirectoryPageState extends State<DirectoryPage> {
     DataListModel dataListModel = Provider.of<DataListModel>(context);
 
     return WillPopScope(
-      onWillPop: onWillPop,
-      child: Scaffold(
-          appBar: AppBar(
-              title: documents.length>0 && documents[0]?.parent == null
-                  ? Text('目录', style: TextStyle(fontSize: fontSize40))
-                  : Text(documents[0].parent.name, style: TextStyle(fontSize: fontSize40)),
-              leading: documents[0]?.parent == null
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.dehaze,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        // 打开Drawer抽屉菜单
-                        print("点击了侧滑按钮");
-                        Scaffold.of(context).openDrawer();
+        onWillPop: onWillPop,
+        child: Consumer<DataListModel>(
+          builder: (context, DataListModel model, _) => Scaffold(
+            appBar: AppBar(
+                title: model.dataList.length > 0 && model.dataList[0]?.parent == null
+                    ? Text('目录', style: TextStyle(fontSize: fontSize40))
+                    : Text(model.dataList[0].parent.name,
+                        style: TextStyle(fontSize: fontSize40)),
+                leading: model.dataList[0]?.parent == null
+                    ? IconButton(
+                        icon: Icon(
+                          Icons.dehaze,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          // 打开Drawer抽屉菜单
+                          print("点击了侧滑按钮");
+                          Scaffold.of(context).openDrawer();
+                        },
+                      )
+                    : IconButton(
+                        icon: Icon(
+                          Icons.keyboard_arrow_left,
+                          color: Colors.white,
+                        ),
+                        onPressed: onWillPop,
+                      )),
+            body: model.dataList.length == 0
+                ? Center(
+                    child: Text("The folder is empty"),
+                  )
+                : Scrollbar(
+                    child: ListView.builder(
+                      physics: BouncingScrollPhysics(),
+                      controller: controller,
+                      itemCount: model.dataList.length,
+                      itemBuilder: (context, index) {
+                        return getListWidget(widget.level, model.dataList)
+                            .elementAt(index);
                       },
-                    )
-                  : IconButton(
-                      icon: Icon(
-                        Icons.keyboard_arrow_left,
-                        color: Colors.white,
-                      ),
-                      onPressed: onWillPop,
-                    )),
-          body: documents.length == 0
-              ? Center(
-                  child: Text("The folder is empty"),
-                )
-              : Scrollbar(
-                  child: ListView.builder(
-                    physics: BouncingScrollPhysics(),
-                    controller: controller,
-                    itemCount: documents.length,
-                    itemBuilder: (context, index) {
-                      return getListWidget(widget.level, documents)
-                          .elementAt(index);
-                    },
+                    ),
                   ),
-                )),
-    );
+          ),
+        ));
   }
 
   Future<bool> onWillPop() async {
-    if (documents[0].parent != null) {
-      initPathFiles(documents[0].parent.parent?.childData ?? rootDocuments);
+    DataListModel dataListModel = Provider.of<DataListModel>(context);
+    if (dataListModel.dataList[0].parent != null) {
+      //initPathFiles(dataListModel.dataList[0].parent.parent?.childData ?? rootDocuments);
+      dataListModel.updateValue(dataListModel.dataList[0]?.parent?.parent?.childData ?? rootDocuments);
       jumpToPosition(false);
     } else {
       print("打开侧滑菜单");
@@ -158,19 +177,19 @@ class _DirectoryPageState extends State<DirectoryPage> {
     }
   }
 
-  // 初始化该路径下的文件、文件夹
-  void initPathFiles(List<Document> list) {
-    try {
-      setState(() {
-        // 问题出现在这里, 所以他们只有爸爸
-        documents = list;
-        //print(documents[0].name);
-      });
-    } catch (e) {
-      print(e);
-      print("Directory does not exist！");
-    }
-  }
+//  // 初始化该路径下的文件、文件夹
+//  void initPathFiles(List<Document> list) {
+//    try {
+//      setState(() {
+//        // 问题出现在这里, 所以他们只有爸爸
+//        documents = list;
+//        //print(documents[0].name);
+//      });
+//    } catch (e) {
+//      print(e);
+//      print("Directory does not exist！");
+//    }
+//  }
 
   List<Widget> getListWidget(int level, List<Document> childDocuments) {
     ///print("展开的内容如下:");
@@ -186,22 +205,20 @@ class _DirectoryPageState extends State<DirectoryPage> {
     });
 
     return newDocument.map((document) {
-      if (!document.isFile){
+      if (!document.isFile) {
         return Container(
           margin: const EdgeInsets.only(left: 4.0),
           child: _getDirectoryWidget(document: document),
         );
-      }else{
+      } else {
         // 文件
         return Container(
           margin: const EdgeInsets.only(left: 4.0),
           child: _getFileWidget(document: document),
         );
       }
-
     }).toList();
   }
-
 
   Widget _getDirectoryWidget({@required Document document}) => DirectoryWidget(
       directoryName: document.name,
@@ -211,7 +228,6 @@ class _DirectoryPageState extends State<DirectoryPage> {
 
         // 转圈圈和网络请求
         _myClick(document);
-
       });
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
@@ -223,7 +239,7 @@ class _DirectoryPageState extends State<DirectoryPage> {
 /// 加载的圈圈
 class ShowProgress extends StatefulWidget {
   ShowProgress(this.requestCallback);
-  final Future<dynamic> requestCallback;//这里Null表示回调的时候不指定类型
+  final Future<dynamic> requestCallback; //这里Null表示回调的时候不指定类型
   @override
   _ShowProgressState createState() => new _ShowProgressState();
 }
@@ -232,16 +248,19 @@ class _ShowProgressState extends State<ShowProgress> {
   @override
   initState() {
     super.initState();
-    new Timer(new Duration(milliseconds: 10), () {//每隔10ms回调一次
-      widget.requestCallback.then((dynamic) {//这里Null表示回调的时候不指定类型
-        Navigator.of(context).pop();//所以pop()里面不需要传参,这里关闭对话框并获取回调的值
+    new Timer(new Duration(milliseconds: 10), () {
+      //每隔10ms回调一次
+      widget.requestCallback.then((dynamic) {
+        //这里Null表示回调的时候不指定类型
+        Navigator.of(context).pop(); //所以pop()里面不需要传参,这里关闭对话框并获取回调的值
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return new Center(
-      child: new CircularProgressIndicator(),//获取控件实例
+      child: new CircularProgressIndicator(), //获取控件实例
     );
   }
 }
