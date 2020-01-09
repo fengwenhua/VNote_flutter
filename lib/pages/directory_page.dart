@@ -9,6 +9,7 @@ import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/directory_widget.dart';
 import 'package:vnote/widgets/file_widget.dart';
+import 'package:vnote/widgets/show_progress_widget.dart';
 
 class DirectoryPage extends StatefulWidget {
   int level;
@@ -27,6 +28,7 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
   ScrollController controller = ScrollController();
   List<double> position = [];
   List<Document> rootDocuments = <Document>[];
+
 
   Future<dynamic> _myClick(Document document) {
     return showDialog<dynamic>(
@@ -52,17 +54,19 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
   }
 
   _postData(Document document) async {
-//    print("#################################");
-//    print("要处理的是: " + document.name);
-//    for (Document p in documents) {
-//      if (p.id == document.id) {
-//        print("找到了! 看看有没有儿子");
-//        if (p.childData != null) {
-//          print(p.childData[0].name);
-//        }
-//      }
-//    }
-//    print("#################################");
+    DataListModel dataListModel = Provider.of<DataListModel>(context);
+    print("#################################");
+    print("要处理的是: " + document.name);
+    for (Document p in dataListModel.dataList) {
+      if (p.id == document.id) {
+        print("找到了! 看看有没有儿子");
+        if (p.childData != null) {
+          print(p.childData[0].name);
+        }
+        break;
+      }
+    }
+    print("#################################");
     TokenModel tokenModel = Provider.of<TokenModel>(context);
     // 网络请求
     await getChildData(tokenModel.token.accessToken, document.id).then((data) {
@@ -73,9 +77,6 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
       });
       // 显示
       if (document.childData.length > 0) {
-        print("#################################");
-        print("偏移值: " + controller.offset.toString());
-        print("#################################");
         position.add(controller.offset);
 
         DataListModel dataListModel = Provider.of<DataListModel>(context);
@@ -95,14 +96,7 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context) {
-//    final tokenModel = Provider.of<TokenModel>(context);
-//    String token = tokenModel.token.accessToken;
-//    print("这里获得的token是: " + token);
-//    DocumentListUtil.instance.getDirectoryList(context, token, (list){
-//      documentList = list;
-//      print("获取了List, 如下:");
-//      documentList.forEach((i) => print(i.name));
-//    });
+    super.build(context);
     DataListModel dataListModel = Provider.of<DataListModel>(context);
 
     return WillPopScope(
@@ -177,19 +171,6 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
     }
   }
 
-//  // 初始化该路径下的文件、文件夹
-//  void initPathFiles(List<Document> list) {
-//    try {
-//      setState(() {
-//        // 问题出现在这里, 所以他们只有爸爸
-//        documents = list;
-//        //print(documents[0].name);
-//      });
-//    } catch (e) {
-//      print(e);
-//      print("Directory does not exist！");
-//    }
-//  }
 
   List<Widget> getListWidget(int level, List<Document> childDocuments) {
     ///print("展开的内容如下:");
@@ -240,31 +221,5 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
   bool get wantKeepAlive => true;
 }
 
-/// 加载的圈圈
-class ShowProgress extends StatefulWidget {
-  ShowProgress(this.requestCallback);
-  final Future<dynamic> requestCallback; //这里Null表示回调的时候不指定类型
-  @override
-  _ShowProgressState createState() => new _ShowProgressState();
-}
 
-class _ShowProgressState extends State<ShowProgress> {
-  @override
-  initState() {
-    super.initState();
-    new Timer(new Duration(milliseconds: 10), () {
-      //每隔10ms回调一次
-      widget.requestCallback.then((dynamic) {
-        //这里Null表示回调的时候不指定类型
-        Navigator.of(context).pop(); //所以pop()里面不需要传参,这里关闭对话框并获取回调的值
-      });
-    });
-  }
 
-  @override
-  Widget build(BuildContext context) {
-    return new Center(
-      child: new CircularProgressIndicator(), //获取控件实例
-    );
-  }
-}

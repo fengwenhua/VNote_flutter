@@ -6,6 +6,7 @@ class DataListModel with ChangeNotifier{
   List<Document> get dataList => _list;
 
   void updateValue(List<Document> p){
+
     _list = p;
     // 这里可能会不生效
     notifyListeners();
