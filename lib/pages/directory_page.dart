@@ -12,7 +12,6 @@ import 'package:vnote/widgets/file_widget.dart';
 import 'package:vnote/widgets/show_progress_widget.dart';
 
 class DirectoryPage extends StatefulWidget {
-  int level;
   List<Document> documents;
 
   DirectoryPage({Key key, @required List<Document> documents})
@@ -55,18 +54,18 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
 
   _postData(Document document) async {
     DataListModel dataListModel = Provider.of<DataListModel>(context);
-    print("#################################");
-    print("要处理的是: " + document.name);
-    for (Document p in dataListModel.dataList) {
-      if (p.id == document.id) {
-        print("找到了! 看看有没有儿子");
-        if (p.childData != null) {
-          print(p.childData[0].name);
-        }
-        break;
-      }
-    }
-    print("#################################");
+//    print("#################################");
+//    print("要处理的是: " + document.name);
+//    for (Document p in dataListModel.dataList) {
+//      if (p.id == document.id) {
+//        print("找到了! 看看有没有儿子");
+//        if (p.childData != null) {
+//          print(p.childData[0].name);
+//        }
+//        break;
+//      }
+//    }
+//    print("#################################");
     TokenModel tokenModel = Provider.of<TokenModel>(context);
     // 网络请求
     await getChildData(tokenModel.token.accessToken, document.id).then((data) {
@@ -137,7 +136,7 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
                       controller: controller,
                       itemCount: model.dataList.length,
                       itemBuilder: (context, index) {
-                        return getListWidget(widget.level, model.dataList)
+                        return getListWidget(model.dataList)
                             .elementAt(index);
                       },
                     ),
@@ -172,13 +171,14 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
   }
 
 
-  List<Widget> getListWidget(int level, List<Document> childDocuments) {
+  List<Widget> getListWidget(List<Document> childDocuments) {
     ///print("展开的内容如下:");
     List<Document> newDocument = new List<Document>();
     childDocuments.forEach((i) {
       Document d = new Document(
           id: i.id,
           name: i.name,
+          isFile: i.isFile,
           dateModified: i.dateModified,
           parent: i.parent,
           childData: i.childData);
@@ -214,6 +214,9 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
         fileName: document.name,
         lastModified: document.dateModified,
+        onPressedNext: (){
+          print("点击了 ${document.name} 文件");
+        },
       );
 
   @override

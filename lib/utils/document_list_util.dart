@@ -7,6 +7,8 @@ import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
 
+import 'global.dart';
+
 class DocumentListUtil {
   factory DocumentListUtil() => _getInstance();
 
@@ -22,7 +24,9 @@ class DocumentListUtil {
     return _instance;
   }
 
-  Future<List<Document>> getNotebookList(BuildContext context, String token, Function callBack,{bool fromNetwork = false}) async {
+  Future<List<Document>> getNotebookList(
+      BuildContext context, String token, Function callBack,
+      {bool fromNetwork = false}) async {
     List<Document> result = new List<Document>();
     OneDriveDataModel oneDriveDataModel;
     oneDriveDataModel = await _getNoteBookFromNetwork(context, token);
@@ -33,8 +37,19 @@ class DocumentListUtil {
     for (Value value in oneDriveDataModel.value) {
       // print(value.id);
       print(value.name);
-      Document parent  = new Document(id:value.parentReference.id, name: "VNote");
-      Document temp = new Document(id:value.id, name: value.name, dateModified: DateTime.parse(value.lastModifiedDateTime));
+      Document parent =
+          new Document(id: value.parentReference.id, name: "VNote");
+      bool isFile = false;
+      for(String tmp in WHILE_NAME){
+        if(value.name.endsWith(tmp)){
+          isFile = true;
+        }
+      }
+      Document temp = new Document(
+          id: value.id,
+          name: value.name,
+          isFile: isFile,
+          dateModified: DateTime.parse(value.lastModifiedDateTime));
       result.add(temp);
     }
 
@@ -46,7 +61,9 @@ class DocumentListUtil {
   }
 
   // 根据 id 获得儿子们
-  Future<List<Document>> getChildList(BuildContext context, String token, String id, Function callBack,{bool fromNetwork = false}) async {
+  Future<List<Document>> getChildList(
+      BuildContext context, String token, String id, Function callBack,
+      {bool fromNetwork = false}) async {
     List<Document> result = new List<Document>();
     OneDriveDataModel oneDriveDataModel;
     oneDriveDataModel = await _getChildFromNetwork(context, token, id);
@@ -55,9 +72,19 @@ class DocumentListUtil {
     // 路径
 
     for (Value value in oneDriveDataModel.value) {
+      bool isFile = false;
+      for(String tmp in WHILE_NAME){
+        if(value.name.endsWith(tmp)){
+          isFile = true;
+        }
+      }
       // print(value.id);
       print(value.name);
-      Document temp = new Document(id:value.id, name: value.name, dateModified: DateTime.parse(value.lastModifiedDateTime));
+      Document temp = new Document(
+          id: value.id,
+          name: value.name,
+          isFile: isFile,
+          dateModified: DateTime.parse(value.lastModifiedDateTime));
       result.add(temp);
     }
 
@@ -68,7 +95,8 @@ class DocumentListUtil {
     return result;
   }
 
-  Future<List<Document>> getDirectoryList(BuildContext context, String token, Function callBack,
+  Future<List<Document>> getDirectoryList(
+      BuildContext context, String token, Function callBack,
       {bool fromNetwork = false}) async {
     List<Document> result = new List<Document>();
 
@@ -98,7 +126,7 @@ class DocumentListUtil {
     print("开始打印每一项, 检查是否缺少");
     // 路径
     for (Value value in oneDriveDataModel.value) {
-      print(value.name+"  "+value.id);
+      print(value.name + "  " + value.id);
       //print(value.parentReference.path);
       String id = value.parentReference.id;
       String path = value.parentReference.path;
@@ -107,13 +135,14 @@ class DocumentListUtil {
         continue;
       } else if (path == "/drive/root:/应用/VNote") {
         continue;
-      }else if(path.contains("_v_recycle_bin") || path.contains("_v_images")|| path.contains("_v_attachments")){
+      } else if (path.contains("_v_recycle_bin") ||
+          path.contains("_v_images") ||
+          path.contains("_v_attachments")) {
         continue;
       }
       path = path.replaceAll("/drive/root:/应用/VNote/", "");
 
-      pathsList.add(Item(id: id, path: path,name: name));
-
+      pathsList.add(Item(id: id, path: path, name: name));
     }
     // pathsList.forEach((i) => print(i));
 
@@ -161,7 +190,7 @@ class DocumentListUtil {
 //        }
 //      }
 //    });
-  return result;
+    return result;
   }
 
   void go(Item item, List<Document> result, Document parent) {
@@ -190,7 +219,7 @@ class DocumentListUtil {
     // 删除提取出来的字符串, 包括/
     if (item.path.split("/").length > 1) {
       newStr = item.path.substring(tempStr.length + 1);
-      item.fullPath = item.fullPath+tempStr+"/";
+      item.fullPath = item.fullPath + tempStr + "/";
       //print("剩下的数据: " + newStr);
     } else {
       newStr = "";
@@ -238,7 +267,8 @@ class DocumentListUtil {
   }
 
   /// 从网络获取笔记本, 即第一层文件夹
-  Future<OneDriveDataModel> _getNoteBookFromNetwork(BuildContext context, String token) async{
+  Future<OneDriveDataModel> _getNoteBookFromNetwork(
+      BuildContext context, String token) async {
     print("从网络获取文件夹");
     OneDriveDataModel oneDriveDataModel;
     await OneDriveDataDao.getNoteBookData(context, token).then((value) {
@@ -251,7 +281,8 @@ class DocumentListUtil {
   }
 
   /// 根据 id 从网络获取目录
-  Future<OneDriveDataModel> _getChildFromNetwork(BuildContext context, String token, String id) async{
+  Future<OneDriveDataModel> _getChildFromNetwork(
+      BuildContext context, String token, String id) async {
     print("根据 id 从网络获取文件夹");
     OneDriveDataModel oneDriveDataModel;
     await OneDriveDataDao.getChildData(context, token, id).then((value) {
@@ -280,7 +311,7 @@ class DocumentListUtil {
 }
 
 class Item {
-  Item({this.id = '', this.path = '', this.name='',this.fullPath=''});
+  Item({this.id = '', this.path = '', this.name = '', this.fullPath = ''});
   String id;
   String path;
   String name;
@@ -288,9 +319,9 @@ class Item {
 }
 
 // 根据完整路径获取对应的id
-String getId(String name, OneDriveDataModel oneDriveDataModel){
-  for (Value value in oneDriveDataModel.value){
-    if(value.parentReference.name == name){
+String getId(String name, OneDriveDataModel oneDriveDataModel) {
+  for (Value value in oneDriveDataModel.value) {
+    if (value.parentReference.name == name) {
       return value.parentReference.id;
     }
   }

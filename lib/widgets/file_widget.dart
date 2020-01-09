@@ -5,8 +5,9 @@ import 'package:vnote/utils/utils.dart';
 class FileWidget extends StatelessWidget {
   final String fileName;
   final DateTime lastModified;
+  final VoidCallback onPressedNext;
 
-  FileWidget({@required this.fileName, @required this.lastModified});
+  FileWidget({@required this.fileName, @required this.lastModified, this.onPressedNext,});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class FileWidget extends StatelessWidget {
         leading: fileIcon,
         title: fileNameWidget,
         subtitle: lastModifiedWidget,
+        onTap: onPressedNext,
       ),
     );
   }

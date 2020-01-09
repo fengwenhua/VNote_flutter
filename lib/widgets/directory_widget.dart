@@ -45,6 +45,7 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
         leading: folderIcon,
         title: titleWidget,
         subtitle: lastModifiedWidget,
+        onTap: widget.onPressedNext,
       )
     );
   }

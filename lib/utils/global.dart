@@ -17,3 +17,4 @@ double fontSize200 = ScreenUtil.getInstance().setSp(200);
 final String CLIENT_ID = "fd49989c-b57c-49a4-9832-8172ae6a4162";
 final String REDIRECT_URL = "https://login.microsoftonline.com/common/oauth2/nativeclient";
 final String CLIENT_SECRET = "pHT_.O-ocr0@e2p0QqtOQfB33BQGvr.L";
+final List<String> WHILE_NAME = [".md", ".json", ".jpg", ".png",".gif"];
