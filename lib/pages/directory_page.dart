@@ -23,7 +23,7 @@ class DirectoryPage extends StatefulWidget {
 }
 
 // 前面加下划线即为内部类, 不能为外部访问
-class _DirectoryPageState extends State<DirectoryPage> {
+class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveClientMixin{
   ScrollController controller = ScrollController();
   List<double> position = [];
   List<Document> rootDocuments = <Document>[];
@@ -234,6 +234,10 @@ class _DirectoryPageState extends State<DirectoryPage> {
         fileName: document.name,
         lastModified: document.dateModified,
       );
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 /// 加载的圈圈
