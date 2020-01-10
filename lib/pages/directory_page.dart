@@ -10,7 +10,6 @@ import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/directory_widget.dart';
 import 'package:vnote/widgets/file_widget.dart';
-import 'package:vnote/widgets/show_progress_widget.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
 
@@ -36,27 +35,6 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
   ScrollController controller = ScrollController();
   List<double> position = [];
   List<Document> rootDocuments = <Document>[];
-
-
-  Future<dynamic> _myClick(Document document) {
-    return showDialog<dynamic>(
-        context: context,
-        builder: (ctx) {
-          return Center(
-            child: new ShowProgress(_postData(document)),
-          );
-        });
-  }
-
-  Future<dynamic> _clickDocument(Document document) {
-    return showDialog<dynamic>(
-        context: context,
-        builder: (ctx) {
-          return Center(
-            child: new ShowProgress(_getMDFile(document)),
-          );
-        });
-  }
 
   /// 根据点击的 id 来查找目录
   Future<List<Document>> getChildData(String accessToken, String id) async {
