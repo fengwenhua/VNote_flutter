@@ -55,15 +55,28 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
   }
 
   _getMDFile(Document document) async{
-    TokenModel tokenModel = Provider.of<TokenModel>(context);
-    await getMDFileContent(tokenModel.token.accessToken, document.id).then((data){
-      print("可以跳转了!");
-        // 这里需要跳转到预览页面
-      pr.hide().whenComplete((){
-        String route = '/preview?content=${Uri.encodeComponent(data.toString())}';
-        Application.router.navigateTo(context, route,transition: TransitionType.fadeIn);
+    if(Application.sp.getString(document.id) != null){
+      print("本地有: " + document.name);
+      Future.delayed(Duration(seconds: 1)).then((value){
+        pr.hide().whenComplete((){
+          String route = '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}';
+          Application.router.navigateTo(context, route,transition: TransitionType.fadeIn);
+        });
       });
-    });
+
+    }else{
+      print("本地没有: " + document.name);
+      TokenModel tokenModel = Provider.of<TokenModel>(context);
+      await getMDFileContent(tokenModel.token.accessToken, document.id).then((data){
+        print("可以跳转了!");
+        // 这里需要跳转到预览页面
+        pr.hide().whenComplete((){
+          String route = '/preview?content=${Uri.encodeComponent(data.toString())}';
+          Application.router.navigateTo(context, route,transition: TransitionType.fadeIn);
+        });
+      });
+    }
+
   }
 
   _postData(Document document) async {
