@@ -40,8 +40,8 @@ class DocumentListUtil {
       Document parent =
           new Document(id: value.parentReference.id, name: "VNote");
       bool isFile = false;
-      for(String tmp in WHILE_NAME){
-        if(value.name.endsWith(tmp)){
+      for (String tmp in WHILE_NAME) {
+        if (value.name.endsWith(tmp)) {
           isFile = true;
         }
       }
@@ -69,23 +69,47 @@ class DocumentListUtil {
     oneDriveDataModel = await _getChildFromNetwork(context, token, id);
 
     print("目录如下:");
-    // 路径
+    // 1. 根据 file 和 folder 字段来判断是文件还是文件夹
+    // 2. 过滤, 文件只要白名单之内的
+    // 3. 分两个循环, 先插入目录, 再插入文件
 
+    /// 插入目录
     for (Value value in oneDriveDataModel.value) {
-      bool isFile = false;
-      for(String tmp in WHILE_NAME){
-        if(value.name.endsWith(tmp)){
-          isFile = true;
-        }
+      if (value.folder != null) {
+        Document temp = new Document(
+            id: value.id,
+            name: value.name,
+            isFile: false,
+            dateModified: DateTime.parse(value.lastModifiedDateTime));
+        result.add(temp);
       }
-      // print(value.id);
-      print(value.name);
-      Document temp = new Document(
-          id: value.id,
-          name: value.name,
-          isFile: isFile,
-          dateModified: DateTime.parse(value.lastModifiedDateTime));
-      result.add(temp);
+    }
+
+    /// 插入文件
+    for (Value value in oneDriveDataModel.value) {
+      if (value.file != null) {
+        /// 过滤
+        bool skip = true;
+        for (String tmp in WHILE_NAME) {
+          if (value.name.endsWith(tmp)) {
+            skip = false;
+          }
+        }
+        // 虽然是文件, 但是不在白名单之内, 跳过
+        if (skip) {
+          continue;
+        }
+
+        // print(value.id);
+        print(value.name);
+
+        Document temp = new Document(
+            id: value.id,
+            name: value.name,
+            isFile: true,
+            dateModified: DateTime.parse(value.lastModifiedDateTime));
+        result.add(temp);
+      }
     }
 
     if (callBack != null) {

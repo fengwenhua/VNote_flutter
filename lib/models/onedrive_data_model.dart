@@ -34,6 +34,7 @@ class Value {
   String lastModifiedDateTime;
   ParentReference parentReference;
   Folder folder;
+  File file;
 
   Value(
       {this.odataType,
@@ -41,7 +42,8 @@ class Value {
         this.name,
         this.lastModifiedDateTime,
         this.parentReference,
-        this.folder});
+        this.folder,
+        this.file});
 
   Value.fromJson(Map<String, dynamic> json) {
     odataType = json['@odata.type'];
@@ -53,6 +55,8 @@ class Value {
         : null;
     folder =
     json['folder'] != null ? new Folder.fromJson(json['folder']) : null;
+    file =
+    json['file'] != null ? new File.fromJson(json['file']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -66,6 +70,9 @@ class Value {
     }
     if (this.folder != null) {
       data['folder'] = this.folder.toJson();
+    }
+    if (this.file != null) {
+      data['file'] = this.file.toJson();
     }
     return data;
   }
@@ -139,6 +146,47 @@ class View {
     data['viewType'] = this.viewType;
     data['sortBy'] = this.sortBy;
     data['sortOrder'] = this.sortOrder;
+    return data;
+  }
+}
+
+class File {
+  String mimeType;
+  Hashes hashes;
+
+  File({this.mimeType, this.hashes});
+
+  File.fromJson(Map<String, dynamic> json) {
+    mimeType = json['mimeType'];
+    hashes =
+    json['hashes'] != null ? new Hashes.fromJson(json['hashes']) : null;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['mimeType'] = this.mimeType;
+    if (this.hashes != null) {
+      data['hashes'] = this.hashes.toJson();
+    }
+    return data;
+  }
+}
+
+class Hashes {
+  String quickXorHash;
+  String sha1Hash;
+
+  Hashes({this.quickXorHash, this.sha1Hash});
+
+  Hashes.fromJson(Map<String, dynamic> json) {
+    quickXorHash = json['quickXorHash'];
+    sha1Hash = json['sha1Hash'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['quickXorHash'] = this.quickXorHash;
+    data['sha1Hash'] = this.sha1Hash;
     return data;
   }
 }
