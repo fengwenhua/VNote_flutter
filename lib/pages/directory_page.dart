@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/models/document_model.dart';
@@ -10,6 +11,12 @@ import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/directory_widget.dart';
 import 'package:vnote/widgets/file_widget.dart';
 import 'package:vnote/widgets/show_progress_widget.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+
+
+import '../application.dart';
+
+
 
 class DirectoryPage extends StatefulWidget {
   List<Document> documents;
@@ -24,6 +31,8 @@ class DirectoryPage extends StatefulWidget {
 
 // 前面加下划线即为内部类, 不能为外部访问
 class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveClientMixin{
+  // 进度圈圈
+  ProgressDialog pr;
   ScrollController controller = ScrollController();
   List<double> position = [];
   List<Document> rootDocuments = <Document>[];
@@ -39,6 +48,16 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
         });
   }
 
+  Future<dynamic> _clickDocument(Document document) {
+    return showDialog<dynamic>(
+        context: context,
+        builder: (ctx) {
+          return Center(
+            child: new ShowProgress(_getMDFile(document)),
+          );
+        });
+  }
+
   /// 根据点击的 id 来查找目录
   Future<List<Document>> getChildData(String accessToken, String id) async {
     return await DocumentListUtil.instance
@@ -49,6 +68,23 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
 //      });
 //      DataListModel dataListModel = Provider.of<DataListModel>(context);
 //      dataListModel.updateValue(list);
+    });
+  }
+
+  /// 根据 id 下载 md 文件内容
+  Future<String> getMDFileContent(String accessToke, String id) async{
+    return await DocumentListUtil.instance.getMDFileContentFromNetwork(context, accessToke, id);
+  }
+
+  _getMDFile(Document document) async{
+    TokenModel tokenModel = Provider.of<TokenModel>(context);
+    await getMDFileContent(tokenModel.token.accessToken, document.id).then((data){
+      print("可以跳转了!");
+        // 这里需要跳转到预览页面
+      pr.hide().whenComplete((){
+        String route = '/preview?content=${Uri.encodeComponent(data.toString())}';
+        Application.router.navigateTo(context, route,transition: TransitionType.fadeIn);
+      });
     });
   }
 
@@ -81,8 +117,9 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
         DataListModel dataListModel = Provider.of<DataListModel>(context);
         dataListModel.updateValue(document.childData);
         //initPathFiles(document.childData);
-
-        jumpToPosition(true);
+        pr.hide().whenComplete((){
+          jumpToPosition(true);
+        });
       }
     });
   }
@@ -96,6 +133,8 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    pr = new ProgressDialog(context);
+    pr.style(message: 'Please wait...');
     DataListModel dataListModel = Provider.of<DataListModel>(context);
 
     return WillPopScope(
@@ -208,7 +247,10 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
         print("点开 ${document.name} 目录, 然后显示该目录下的所有文件");
 
         // 转圈圈和网络请求
-        _myClick(document);
+        //_myClick(document);
+        pr.show();
+        _postData(document);
+
       });
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
@@ -216,6 +258,10 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
         lastModified: document.dateModified,
         onPressedNext: (){
           print("点击了 ${document.name} 文件");
+          // 转圈圈和下载 md 文件
+          pr.show();
+          _getMDFile(document);
+          //_clickDocument(document);
         },
       );
 

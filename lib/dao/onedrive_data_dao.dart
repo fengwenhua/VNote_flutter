@@ -76,4 +76,28 @@ class OneDriveDataDao {
         });
   }
 
+  // 根据 id 获取md 文件内容
+  static Future<Response> getMDFileContent(BuildContext context, String p_token, String id){
+    Map<String, dynamic> headers = {"Authorization": p_token};
+    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
+    URL += id;
+    URL += "/content";
+
+    return NetUtils.instance.get(
+        context,
+        URL,
+            (data) {
+          print('返回 md 文件内容如下:');
+          print(data);
+          // 将文件写进本地
+          Application.sp.setString(id, data);
+          return data;
+        },
+        headers: headers,
+        errorCallBack: (errorMsg) {
+          print("error: " + errorMsg);
+          return null;
+        });
+  }
+
 }

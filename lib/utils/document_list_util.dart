@@ -318,6 +318,17 @@ class DocumentListUtil {
     return oneDriveDataModel;
   }
 
+  // 根据 id 从网路下载 md 文件
+  Future<String> getMDFileContentFromNetwork(
+      BuildContext context, String token, String id) async{
+    String content;
+    await OneDriveDataDao.getMDFileContent(context, token, id).then((value){
+      content = value.toString();
+    });
+    return content;
+  }
+
+
   bool _hasRawData() {
     if (Application.sp.getString("raw_data") != null) {
       print("本地有原始数据");
