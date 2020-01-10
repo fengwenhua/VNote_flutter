@@ -12,10 +12,7 @@ import 'package:vnote/widgets/directory_widget.dart';
 import 'package:vnote/widgets/file_widget.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 
-
 import '../application.dart';
-
-
 
 class DirectoryPage extends StatefulWidget {
   List<Document> documents;
@@ -29,7 +26,8 @@ class DirectoryPage extends StatefulWidget {
 }
 
 // 前面加下划线即为内部类, 不能为外部访问
-class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveClientMixin{
+class _DirectoryPageState extends State<DirectoryPage>
+    with AutomaticKeepAliveClientMixin {
   // 进度圈圈
   ProgressDialog pr;
   ScrollController controller = ScrollController();
@@ -50,33 +48,24 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
   }
 
   /// 根据 id 下载 md 文件内容
-  Future<String> getMDFileContent(String accessToke, String id) async{
-    return await DocumentListUtil.instance.getMDFileContentFromNetwork(context, accessToke, id);
+  Future<String> getMDFileContent(String accessToke, String id) async {
+    return await DocumentListUtil.instance
+        .getMDFileContentFromNetwork(context, accessToke, id);
   }
 
-  _getMDFile(Document document) async{
-    if(Application.sp.getString(document.id) != null){
-      print("本地有: " + document.name);
-      Future.delayed(Duration(seconds: 1)).then((value){
-        pr.hide().whenComplete((){
-          String route = '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}';
-          Application.router.navigateTo(context, route,transition: TransitionType.fadeIn);
-        });
+  _getMDFile(Document document) async {
+    TokenModel tokenModel = Provider.of<TokenModel>(context);
+    await getMDFileContent(tokenModel.token.accessToken, document.id)
+        .then((data) {
+      print("可以跳转了!");
+      // 这里需要跳转到预览页面
+      pr.hide().whenComplete(() {
+        String route =
+            '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
+        Application.router
+            .navigateTo(context, route, transition: TransitionType.fadeIn);
       });
-
-    }else{
-      print("本地没有: " + document.name);
-      TokenModel tokenModel = Provider.of<TokenModel>(context);
-      await getMDFileContent(tokenModel.token.accessToken, document.id).then((data){
-        print("可以跳转了!");
-        // 这里需要跳转到预览页面
-        pr.hide().whenComplete((){
-          String route = '/preview?content=${Uri.encodeComponent(data.toString())}';
-          Application.router.navigateTo(context, route,transition: TransitionType.fadeIn);
-        });
-      });
-    }
-
+    });
   }
 
   _postData(Document document) async {
@@ -108,7 +97,7 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
         DataListModel dataListModel = Provider.of<DataListModel>(context);
         dataListModel.updateValue(document.childData);
         //initPathFiles(document.childData);
-        pr.hide().whenComplete((){
+        pr.hide().whenComplete(() {
           jumpToPosition(true);
         });
       }
@@ -133,7 +122,8 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
         child: Consumer<DataListModel>(
           builder: (context, DataListModel model, _) => Scaffold(
             appBar: AppBar(
-                title: model.dataList.length > 0 && model.dataList[0]?.parent == null
+                title: model.dataList.length > 0 &&
+                        model.dataList[0]?.parent == null
                     ? Text('目录', style: TextStyle(fontSize: fontSize40))
                     : Text(model.dataList[0].parent.name,
                         style: TextStyle(fontSize: fontSize40)),
@@ -166,8 +156,7 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
                       controller: controller,
                       itemCount: model.dataList.length,
                       itemBuilder: (context, index) {
-                        return getListWidget(model.dataList)
-                            .elementAt(index);
+                        return getListWidget(model.dataList).elementAt(index);
                       },
                     ),
                   ),
@@ -179,7 +168,9 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
     DataListModel dataListModel = Provider.of<DataListModel>(context);
     if (dataListModel.dataList[0].parent != null) {
       //initPathFiles(dataListModel.dataList[0].parent.parent?.childData ?? rootDocuments);
-      dataListModel.updateValue(dataListModel.dataList[0]?.parent?.parent?.childData ?? rootDocuments);
+      dataListModel.updateValue(
+          dataListModel.dataList[0]?.parent?.parent?.childData ??
+              rootDocuments);
       jumpToPosition(false);
     } else {
       print("打开侧滑菜单");
@@ -199,7 +190,6 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
       position.removeLast();
     }
   }
-
 
   List<Widget> getListWidget(List<Document> childDocuments) {
     ///print("展开的内容如下:");
@@ -241,13 +231,12 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
         //_myClick(document);
         pr.show();
         _postData(document);
-
       });
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
         fileName: document.name,
         lastModified: document.dateModified,
-        onPressedNext: (){
+        onPressedNext: () {
           print("点击了 ${document.name} 文件");
           // 转圈圈和下载 md 文件
           pr.show();
@@ -260,6 +249,3 @@ class _DirectoryPageState extends State<DirectoryPage> with AutomaticKeepAliveCl
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
 }
-
-
-

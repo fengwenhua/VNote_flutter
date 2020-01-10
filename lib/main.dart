@@ -42,6 +42,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false, // 去除调试
       navigatorKey: Application.getIt<NavigateService>().key,
       theme: ThemeData(
+          platform: TargetPlatform.iOS,
           brightness: Brightness.light,
           primaryColor: Colors.blue,
           splashColor: Colors.transparent,
