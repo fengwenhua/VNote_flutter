@@ -31,6 +31,8 @@ var homeHandler = new Handler(
 var mdPreviewHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params){
       String content = params["content"].first;
-      return new NotePreviewPage(markdownSource: content);
+      String id =  params["id"].first;
+      String name =  params["name"].first;
+      return new NotePreviewPage(markdownSource: content, id:id,name: name,);
     }
 );
