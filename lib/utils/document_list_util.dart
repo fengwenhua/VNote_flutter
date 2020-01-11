@@ -323,6 +323,11 @@ class DocumentListUtil {
       BuildContext context, String token, String id) async{
     String content;
     await OneDriveDataDao.getMDFileContent(context, token, id).then((value){
+      // 这里需要处理本地图片的问题
+      // 1. 正则匹配出里面的本地图片, 注意后面的图片缩放" =数字px"
+      // 2. 发送请求访问_v_images下的文件, 怎么拿到_v_images 的 id?
+      // 3. 循环对应并且下载下来, 用插件转换地址
+      // 4. 用上面的地址替换原地址
       content = value.toString();
     });
     return content;
