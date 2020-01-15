@@ -1,7 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
@@ -58,6 +62,31 @@ class DocumentListUtil {
     }
 
     return result;
+  }
+
+  /// 根据 imageFolderId 与 imageUrls 对比获得所有图片
+  Future<List<Document>> getImagesList(BuildContext context, String token,
+      String id, List<String> imageUrls, Function callBack) async {
+    List<Document> result = new List<Document>();
+    return await _getImagesFromNetwork(context, token, id).then((oneDriveDataModel){
+      for (String imageUrl in imageUrls) {
+        for (Value value in oneDriveDataModel.value) {
+          if (value.name == imageUrl) {
+            Document temp = new Document(
+                id: value.id,
+                name: value.name,
+                isFile: true,
+                dateModified: DateTime.parse(value.lastModifiedDateTime));
+            result.add(temp);
+          }
+        }
+      }
+
+      if (callBack != null) {
+        callBack(result);
+      }
+      return result;
+    });
   }
 
   // 根据 id 获得儿子们
@@ -318,21 +347,105 @@ class DocumentListUtil {
     return oneDriveDataModel;
   }
 
-  // 根据 id 从网路下载 md 文件
-  Future<String> getMDFileContentFromNetwork(
-      BuildContext context, String token, String id) async{
-    String content;
-    await OneDriveDataDao.getMDFileContent(context, token, id).then((value){
-      // 这里需要处理本地图片的问题
-      // 1. 正则匹配出里面的本地图片, 注意后面的图片缩放" =数字px"
-      // 2. 发送请求访问_v_images下的文件, 怎么拿到_v_images 的 id?
-      // 3. 循环对应并且下载下来, 用插件转换地址
-      // 4. 用上面的地址替换原地址
-      content = value.toString();
+  /// 根据 image id 从网络获取图片列表
+  Future<OneDriveDataModel> _getImagesFromNetwork(
+      BuildContext context, String token, String id) async {
+    print("根据 imageId 从网络获取图片列表");
+    OneDriveDataModel oneDriveDataModel;
+    await OneDriveDataDao.getImagesID(context, token, id).then((value) {
+      oneDriveDataModel =
+          OneDriveDataModel.fromJson(json.decode(value.toString()));
+      //print("Model内容如下:");
+      //print(json.encode(oneDriveDataModel));
     });
-    return content;
+    return oneDriveDataModel;
   }
 
+  // 根据 id 从网路下载 md 文件, 返回其内容
+  Future<String> getMDFileContentFromNetwork(BuildContext context, String token,
+      String id, String imageFolderId) async {
+    String content;
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    return await OneDriveDataDao.getMDFileContent(context, token, id, imageFolderId)
+        .then((value) {
+          // 这里需要处理本地图片的问题
+          // 1. 正则匹配出里面的本地图片, 注意后面的图片缩放" =数字px"
+          // 2. 发送请求访问_v_images下的文件, 怎么拿到_v_images 的 id?
+          // 3. 循环对应并且下载下来, 用插件转换地址
+          // 4. 用上面的地址替换原地址
+          //字符串前加字母"r"，字符串不会解析转义""
+          RegExp reg = new RegExp(r"!\[.*?\]\((.*?)\)");
+
+          /// 1. 正则匹配所有图片
+          //调用allMatches函数，对字符串应用正则表达式
+          //返回包含所有匹配的迭代器
+          Iterable<Match> matches = reg.allMatches(value.toString());
+          // 存放所有图片的名字
+          List<String> imageUrls = [];
+          print("解析文章中的图片链接如下: ");
+          for (Match m in matches) {
+            //groupCount返回正则表达式的分组数
+            //由于group(0)保存了匹配信息，因此字符串的总长度为：分组数+1
+            print(m.group(1));
+            imageUrls.add(m.group(1).split("/")[1]);
+          }
+          content = value.toString();
+          /// 2. 发送请求访问_v_images下的文件
+          // 有图片才需要去找
+          return imageUrls;
+        })
+        .then((imageUrls) =>
+            getImagesList(context, token, imageFolderId, imageUrls, (data) {}))
+        .then((imagesList) =>downloadImages(context, token, appDocPath, imagesList,content)
+//      {
+//          print("##########################################");
+//          print("此时approot为: " + appDocPath);
+//          print("这里拿到要下载的图片如下: ");
+//          print("##########################################");
+//          for (Document t in imagesList) {
+//            print(t.name);
+//            OneDriveDataDao.downloadImage(context, token, t.id, appDocPath+"/"+t.name).then((value){
+//
+//              content =  content.replaceAll("_v_images/"+t.name, appDocPath+"/"+t.name);
+//              print("处理完: " + t.name);
+//            });
+//
+//          }
+//          print("##########################################");
+//          print("此时笔记内容是: ");
+//          print(content);
+//          print("##########################################");
+//          return content;
+//        }
+        ).then((data){
+          print("##########################################");
+          print("此时笔记内容是: ");
+          print(data);
+          print("##########################################");
+          return data;
+    });
+
+  }
+
+  Future<String> downloadImages(BuildContext context, String token, String path, List<Document> imagesList,String content) async{
+    for (Document t in imagesList) {
+      await OneDriveDataDao.downloadImage(context, token, t.id, path+"/"+t.name).then((value){
+        content =  content.replaceAll("_v_images/"+t.name, path+"/"+t.name);
+        print("处理完: " + t.name);
+        print("##########################################");
+        print("笔记内容是: ");
+        print(content);
+        print("##########################################");
+      });
+    }
+    print("返回数据");
+    print("##########################################");
+    print("笔记内容是: ");
+    print(content);
+    print("##########################################");
+    return content;
+  }
 
   bool _hasRawData() {
     if (Application.sp.getString("raw_data") != null) {
@@ -358,12 +471,17 @@ class Item {
   String fullPath;
 }
 
-// 根据完整路径获取对应的id
-String getId(String name, OneDriveDataModel oneDriveDataModel) {
-  for (Value value in oneDriveDataModel.value) {
-    if (value.parentReference.name == name) {
-      return value.parentReference.id;
-    }
+Future requestPermission() async {
+  // 申请权限
+  Map<PermissionGroup, PermissionStatus> permissions =
+  await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+  // 申请结果
+  PermissionStatus permission =
+  await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+  if (permission == PermissionStatus.granted) {
+    Fluttertoast.showToast(msg: "权限申请通过");
+  } else {
+    Fluttertoast.showToast(msg: "权限申请被拒绝");
   }
-  return null;
 }
+

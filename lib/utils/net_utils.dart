@@ -26,7 +26,53 @@ class NetUtils {
   static const String GET = "get";
   static const String POST = "post";
 
-  //get请求
+  /// download 请求
+  Future<Response> download(BuildContext context, String url, Function callBack,
+      {Map<String, String> params,
+        Map<String, dynamic> headers,
+        String path,
+        Function errorCallBack}) async{
+    print("要下载的url是: " + url);
+    String errorMsg = "";
+    int statusCode;
+    try {
+      Response response;
+      var dio;
+        dio = new Dio(new BaseOptions(
+          connectTimeout: 5000,
+          receiveTimeout: 10000,
+          headers: headers,
+          contentType: "application/x-www-form-urlencoded",
+        ));
+
+      if (params != null && params.isNotEmpty) {
+        StringBuffer sb = new StringBuffer("?");
+        params.forEach((key, value) {
+          sb.write("$key" + "=" + "$value" + "&");
+        });
+        String paramStr = sb.toString();
+        paramStr = paramStr.substring(0, paramStr.length - 1);
+        url += paramStr;
+      }
+      response = await dio.download(url, path);
+      statusCode = response.statusCode;
+      if (statusCode < 0) {
+        errorMsg = "网络请求错误,状态码:" + statusCode.toString();
+        _handError(errorCallBack, errorMsg);
+      }
+      if (callBack != null) {
+//        String res2Json = json.encode(response.data);
+//        Map<String, dynamic> map = json.decode(res2Json);
+//        callBack(map["data"]);
+        callBack(response.toString());
+      }
+      return response;
+    } catch (exception) {
+      _handError(errorCallBack, exception.toString());
+    }
+  }
+
+  /// get请求
   Future<Response> get(BuildContext context, String url, Function callBack,
       {Map<String, String> params,
       Map<String, dynamic> headers,

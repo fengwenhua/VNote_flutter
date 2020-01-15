@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:vnote/models/document_model.dart';
+import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
@@ -40,14 +42,20 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
   /// 点击更新按钮, 更新 md 文件
   _updateMDFile(String id) async {
     TokenModel tokenModel = Provider.of<TokenModel>(context);
-    await DocumentListUtil.instance
-        .getMDFileContentFromNetwork(context, tokenModel.token.accessToken, id).then((value){
-        pr.hide().whenComplete((){
-          setState(() {
-            content = value;
+    DataListModel dataListModel = Provider.of<DataListModel>(context);
+    for (Document d in dataListModel.dataList) {
+      if (d.name == "_v_images") {
+        await DocumentListUtil.instance
+            .getMDFileContentFromNetwork(context, tokenModel.token.accessToken, id, d.id).then((value){
+          pr.hide().whenComplete((){
+            setState(() {
+              content = value;
+            });
           });
         });
-    });
+      }
+    }
+
   }
 
   @override

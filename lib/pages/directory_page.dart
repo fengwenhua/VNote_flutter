@@ -48,24 +48,50 @@ class _DirectoryPageState extends State<DirectoryPage>
   }
 
   /// 根据 id 下载 md 文件内容
-  Future<String> getMDFileContent(String accessToke, String id) async {
+  Future<String> getMDFileContent(
+      String accessToken, String id, String imageId) async {
     return await DocumentListUtil.instance
-        .getMDFileContentFromNetwork(context, accessToke, id);
+        .getMDFileContentFromNetwork(context, accessToken, id, imageId);
   }
 
   _getMDFile(Document document) async {
     TokenModel tokenModel = Provider.of<TokenModel>(context);
-    await getMDFileContent(tokenModel.token.accessToken, document.id)
-        .then((data) {
-      print("可以跳转了!");
-      // 这里需要跳转到预览页面
-      pr.hide().whenComplete(() {
-        String route =
-            '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
-        Application.router
-            .navigateTo(context, route, transition: TransitionType.fadeIn);
+    // 这里
+    DataListModel dataListModel = Provider.of<DataListModel>(context);
+    bool hasImageFolder = false;
+    String id = "";
+    for (Document d in dataListModel.dataList) {
+      if (d.name == "_v_images") {
+        hasImageFolder = true;
+        id = d.id;
+        break;
+      }
+    }
+    if(hasImageFolder){
+      await getMDFileContent(tokenModel.token.accessToken, document.id, id)
+            .then((data) {
+        print("有图片, 可以跳转了!");
+        // 这里需要跳转到预览页面
+        pr.hide().whenComplete(() {
+          String route =
+              '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
+          Application.router
+              .navigateTo(context, route, transition: TransitionType.fadeIn);
+        });
       });
-    });
+    }else {
+      await getMDFileContent(tokenModel.token.accessToken, document.id, id)
+          .then((data) {
+        print("没图片, 以跳转了!");
+        // 这里需要跳转到预览页面
+        pr.hide().whenComplete(() {
+          String route =
+              '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
+          Application.router
+              .navigateTo(context, route, transition: TransitionType.fadeIn);
+        });
+      });
+    }
   }
 
   _postData(Document document) async {
