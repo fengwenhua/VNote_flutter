@@ -68,7 +68,8 @@ class DocumentListUtil {
   Future<List<Document>> getImagesList(BuildContext context, String token,
       String id, List<String> imageUrls, Function callBack) async {
     List<Document> result = new List<Document>();
-    return await _getImagesFromNetwork(context, token, id).then((oneDriveDataModel){
+    return await _getImagesFromNetwork(context, token, id)
+        .then((oneDriveDataModel) {
       for (String imageUrl in imageUrls) {
         for (Value value in oneDriveDataModel.value) {
           if (value.name == imageUrl) {
@@ -367,7 +368,8 @@ class DocumentListUtil {
     String content;
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
-    return await OneDriveDataDao.getMDFileContent(context, token, id, imageFolderId)
+    return await OneDriveDataDao.getMDFileContent(
+            context, token, id, imageFolderId)
         .then((value) {
           // 这里需要处理本地图片的问题
           // 1. 正则匹配出里面的本地图片, 注意后面的图片缩放" =数字px"
@@ -391,59 +393,35 @@ class DocumentListUtil {
             imageUrls.add(m.group(1).split("/")[1]);
           }
           content = value.toString();
+
           /// 2. 发送请求访问_v_images下的文件
           // 有图片才需要去找
           return imageUrls;
         })
         .then((imageUrls) =>
             getImagesList(context, token, imageFolderId, imageUrls, (data) {}))
-        .then((imagesList) =>downloadImages(context, token, appDocPath, imagesList,content)
-//      {
-//          print("##########################################");
-//          print("此时approot为: " + appDocPath);
-//          print("这里拿到要下载的图片如下: ");
-//          print("##########################################");
-//          for (Document t in imagesList) {
-//            print(t.name);
-//            OneDriveDataDao.downloadImage(context, token, t.id, appDocPath+"/"+t.name).then((value){
-//
-//              content =  content.replaceAll("_v_images/"+t.name, appDocPath+"/"+t.name);
-//              print("处理完: " + t.name);
-//            });
-//
-//          }
-//          print("##########################################");
-//          print("此时笔记内容是: ");
-//          print(content);
-//          print("##########################################");
-//          return content;
-//        }
-        ).then((data){
+        .then((imagesList) =>
+            downloadImages(context, token, appDocPath, imagesList, content))
+        .then((data) {
           print("##########################################");
           print("此时笔记内容是: ");
           print(data);
           print("##########################################");
           return data;
-    });
-
+        });
   }
 
-  Future<String> downloadImages(BuildContext context, String token, String path, List<Document> imagesList,String content) async{
+  Future<String> downloadImages(BuildContext context, String token, String path,
+      List<Document> imagesList, String content) async {
     for (Document t in imagesList) {
-      await OneDriveDataDao.downloadImage(context, token, t.id, path+"/"+t.name).then((value){
-        content =  content.replaceAll("_v_images/"+t.name, path+"/"+t.name);
+      await OneDriveDataDao.downloadImage(
+              context, token, t.id, path + "/" + t.name)
+          .then((value) {
+        content =
+            content.replaceAll("_v_images/" + t.name, path + "/" + t.name);
         print("处理完: " + t.name);
-        print("##########################################");
-        print("笔记内容是: ");
-        print(content);
-        print("##########################################");
       });
     }
-    print("返回数据");
-    print("##########################################");
-    print("笔记内容是: ");
-    print(content);
-    print("##########################################");
     return content;
   }
 
@@ -474,14 +452,13 @@ class Item {
 Future requestPermission() async {
   // 申请权限
   Map<PermissionGroup, PermissionStatus> permissions =
-  await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
   // 申请结果
   PermissionStatus permission =
-  await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
+      await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
   if (permission == PermissionStatus.granted) {
     Fluttertoast.showToast(msg: "权限申请通过");
   } else {
     Fluttertoast.showToast(msg: "权限申请被拒绝");
   }
 }
-
