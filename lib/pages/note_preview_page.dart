@@ -53,6 +53,7 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
             });
           });
         });
+        break;
       }
     }
 

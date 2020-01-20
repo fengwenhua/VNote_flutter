@@ -58,31 +58,29 @@ class _DirectoryPageState extends State<DirectoryPage>
     TokenModel tokenModel = Provider.of<TokenModel>(context);
     // 这里
     DataListModel dataListModel = Provider.of<DataListModel>(context);
-    bool hasImageFolder = false;
     String id = "";
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
-        hasImageFolder = true;
         id = d.id;
         break;
       }
     }
-    if(hasImageFolder){
-      await getMDFileContent(tokenModel.token.accessToken, document.id, id)
-            .then((data) {
-        print("有图片, 可以跳转了!");
-        // 这里需要跳转到预览页面
-        pr.hide().whenComplete(() {
+    if(Application.sp.containsKey(document.id)){
+      // 本地有文档缓存
+      print("使用本地文章缓存");
+      await Future.delayed(Duration(milliseconds: 100), () {
+        pr.hide().whenComplete((){
           String route =
-              '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
+              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
           Application.router
               .navigateTo(context, route, transition: TransitionType.fadeIn);
         });
       });
-    }else {
+    }else{
+      // 本地没有网络
+      print("从网络下载文章");
       await getMDFileContent(tokenModel.token.accessToken, document.id, id)
           .then((data) {
-        print("没图片, 以跳转了!");
         // 这里需要跳转到预览页面
         pr.hide().whenComplete(() {
           String route =

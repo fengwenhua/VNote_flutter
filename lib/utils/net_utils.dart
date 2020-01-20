@@ -39,7 +39,7 @@ class NetUtils {
       Response response;
       var dio;
         dio = new Dio(new BaseOptions(
-          connectTimeout: 5000,
+          connectTimeout: 10000,
           receiveTimeout: 10000,
           headers: headers,
           contentType: "application/x-www-form-urlencoded",

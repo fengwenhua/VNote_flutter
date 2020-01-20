@@ -7,6 +7,8 @@ import 'package:vnote/application.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 
 const ONEDRIVE_ALL_DATA_URL =
     "https://graph.microsoft.com/v1.0/drive/special/approot/delta?select=id,name,lastModifiedDateTime,parentReference,file,folder";
@@ -95,8 +97,6 @@ class OneDriveDataDao {
         (data) {
           print('返回 md 文件内容如下:');
           print(data);
-          // 将文件写进本地
-          Application.sp.setString(id, data);
           return data;
         },
         headers: headers,
@@ -151,6 +151,19 @@ class OneDriveDataDao {
         headers: headers,
         errorCallBack: (errorMsg) {
           print("error: " + errorMsg);
+          String msg="";
+          if(errorMsg.contains("timed out")){
+            msg = "网络连接超时";
+          }else{
+            msg = errorMsg;
+          }
+          Fluttertoast.showToast(
+              msg: msg,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIos: 2,
+              backgroundColor: Color(0x9E9E9E),
+              textColor: Color(0xffffff));
           return null;
         },
     path: path);

@@ -406,6 +406,9 @@ class DocumentListUtil {
           print("##########################################");
           print("此时笔记内容是: ");
           print(data);
+          // 存入本地
+          print("存入本地");
+          Application.sp.setString(id, data);
           print("##########################################");
           return data;
         });
