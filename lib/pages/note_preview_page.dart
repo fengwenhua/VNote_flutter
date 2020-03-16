@@ -63,7 +63,7 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(context);
-    pr.style(message: 'Please wait...');
+    pr.style(message: '预览页面: 请等待...');
 
     return Scaffold(
         appBar: AppBar(
@@ -72,7 +72,12 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
             icon: Icon(Icons.keyboard_arrow_left),
             color: Colors.white,
             onPressed: () {
-              Navigator.pop(context);
+              print("点击了预览页面的返回");
+              //FocusScope.of(context).requestFocus(new FocusNode());
+              pr.hide().whenComplete((){
+                Navigator.pop(context);
+              });
+
             },
           ),
           actions: <Widget>[
