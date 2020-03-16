@@ -12,7 +12,11 @@ class TokenModel with ChangeNotifier{
   void initToken(){
     if(Application.sp.containsKey("onedrive_token")){
       String s = Application.sp.getString("onedrive_token");
-      _token = OneDriveTokenModel.fromJson(json.decode(s));
+      if(s!=null){
+        _token = OneDriveTokenModel.fromJson(json.decode(s));
+      }else{
+        _token = null;
+      }
     }
   }
 

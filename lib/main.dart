@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/pages/splash_screen_page.dart';
 import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/preview_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/route/navigate_service.dart';
@@ -28,6 +29,9 @@ void main() {
       ChangeNotifierProvider<DataListModel>(
         create: (context) => DataListModel(),
       ),
+      ChangeNotifierProvider<PreviewModel>(
+        create: (context) => PreviewModel(),
+      )
     ],
     child: MyApp(),
   ));

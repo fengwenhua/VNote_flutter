@@ -34,6 +34,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
- Future<void> pop() async {
-await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+Future<void> pop() async {
+  await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
 }

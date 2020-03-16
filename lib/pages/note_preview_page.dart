@@ -41,13 +41,14 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
 
   /// 点击更新按钮, 更新 md 文件
   _updateMDFile(String id) async {
-    TokenModel tokenModel = Provider.of<TokenModel>(context);
-    DataListModel dataListModel = Provider.of<DataListModel>(context);
+    TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
+    DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
         await DocumentListUtil.instance
-            .getMDFileContentFromNetwork(context, tokenModel.token.accessToken, id, d.id).then((value){
+            .getMDFileContentFromNetwork(context, tokenModel.token.accessToken, id, d.id, pr).then((value){
           pr.hide().whenComplete((){
+            // 这里需要修改
             setState(() {
               content = value;
             });

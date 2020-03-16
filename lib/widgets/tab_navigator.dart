@@ -39,7 +39,7 @@ class _TabNavigatorState extends State<TabNavigator> {
   @override
   Widget build(BuildContext context) {
     //设置适配尺寸 (填入设计稿中设备的屏幕尺寸) 假如设计稿是按iPhone6的尺寸设计的(iPhone6 750*1334)
-    ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
+   ScreenUtil.init(context, width: 750, height: 1334);
 
     return Scaffold(
         drawer: Drawer(

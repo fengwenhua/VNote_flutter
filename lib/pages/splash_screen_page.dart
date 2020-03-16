@@ -60,7 +60,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       list.forEach((i) {
         print(i.name);
       });
-      DataListModel dataListModel = Provider.of<DataListModel>(context);
+      DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
       dataListModel.updateValue(list);
     });
   }
@@ -68,10 +68,12 @@ class _SplashScreenPageState extends State<SplashScreenPage>
   void goPage() async{
     // 初始化shared_preferences
     await Application.initSp();
-    TokenModel tokenModel = Provider.of<TokenModel>(context);
+    // 第一次安装完后, 这里提示错误
+    TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     // 从本地存储中读取token
     tokenModel.initToken();
     if(tokenModel.token != null){
+      print("本地有 token");
       // 本地有token, 应该刷新一下token, 然后跳到主页
       await OnedriveTokenDao.refreshToken(context, tokenModel.token.refreshToken).then((value) async {
         if(value.data != -1) {
@@ -100,7 +102,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)..init(context);
+    ScreenUtil.init(context, width: 750, height: 1334);
     final size = MediaQuery.of(context).size;
     Application.screenWidth = size.width;
     Application.screenHeight = size.height;

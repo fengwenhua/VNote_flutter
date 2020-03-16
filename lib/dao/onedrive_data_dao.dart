@@ -9,7 +9,6 @@ import 'package:vnote/utils/net_utils.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-
 const ONEDRIVE_ALL_DATA_URL =
     "https://graph.microsoft.com/v1.0/drive/special/approot/delta?select=id,name,lastModifiedDateTime,parentReference,file,folder";
 const ONEDRIVE_SPECIAL_FOLDER_URL =
@@ -23,7 +22,7 @@ class OneDriveDataDao {
         context,
         ONEDRIVE_ALL_DATA_URL,
         (data) {
-          print('返回的json数据如下:');
+          print('返回的json数据如下1:');
           print(data);
           // 将原始数据写进本地
           Application.sp.setString("raw_data", data);
@@ -44,7 +43,7 @@ class OneDriveDataDao {
         context,
         ONEDRIVE_SPECIAL_FOLDER_URL,
         (data) {
-          print('返回的json数据如下:');
+          print('返回的json数据如下2:');
           print(data);
           // 将原始数据写进本地
           Application.sp.setString("special_folder_raw_data", data);
@@ -70,7 +69,7 @@ class OneDriveDataDao {
         context,
         URL,
         (data) {
-          print('返回的json数据如下:');
+          print('返回的json数据如下3:');
           print(data);
           // 将原始数据写进本地
           Application.sp.setString("id_children_raw_data", data);
@@ -109,6 +108,7 @@ class OneDriveDataDao {
   /// 根据 _v_images 的 Id 返回所有图片id
   static Future<Response> getImagesID(
       BuildContext context, String token, String id) {
+    print("根据 _v_images 的 Id 返回所有图片id");
     Map<String, dynamic> headers = {"Authorization": token};
     String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
     URL += id;
@@ -119,7 +119,7 @@ class OneDriveDataDao {
         context,
         URL,
         (data) {
-          print('返回的json数据如下:');
+          print('返回的json数据如下4:');
           print(data);
           // 将原始数据写进本地
           Application.sp.setString("image_id_children_raw_data", data);
@@ -145,18 +145,26 @@ class OneDriveDataDao {
         URL,
         (data) {
           print("拿到图片的二进制数据");
-
           return data;
         },
         headers: headers,
         errorCallBack: (errorMsg) {
           print("error: " + errorMsg);
-          String msg="";
-          if(errorMsg.contains("timed out")){
-            msg = "网络连接超时";
+          print("是超时吗? " + errorMsg);
+          if(errorMsg.contains("timed out") || errorMsg.contains("timeout")){
+            print("确实是超时");
           }else{
+            print("竟然没有超时");
+          }
+
+
+          String msg = "";
+          if (errorMsg.contains("timed out")) {
+            msg = "下载图片时, 网络连接超时, 重试 ing";
+          } else {
             msg = errorMsg;
           }
+          // 这个地方, 竟然是显示了内容才弹....
           Fluttertoast.showToast(
               msg: msg,
               toastLength: Toast.LENGTH_SHORT,
@@ -164,8 +172,8 @@ class OneDriveDataDao {
               timeInSecForIos: 2,
               backgroundColor: Color(0x9E9E9E),
               textColor: Color(0xffffff));
-          return null;
+          return msg;
         },
-    path: path);
+        path: path);
   }
 }

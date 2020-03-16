@@ -26,24 +26,24 @@ class NetUtils {
   static const String GET = "get";
   static const String POST = "post";
 
-  /// download 请求
+  /// download 请求, 用于图片下载
   Future<Response> download(BuildContext context, String url, Function callBack,
       {Map<String, String> params,
-        Map<String, dynamic> headers,
-        String path,
-        Function errorCallBack}) async{
+      Map<String, dynamic> headers,
+      String path,
+      Function errorCallBack}) async {
     print("要下载的url是: " + url);
     String errorMsg = "";
     int statusCode;
     try {
       Response response;
       var dio;
-        dio = new Dio(new BaseOptions(
-          connectTimeout: 10000,
-          receiveTimeout: 10000,
-          headers: headers,
-          contentType: "application/x-www-form-urlencoded",
-        ));
+      dio = new Dio(new BaseOptions(
+        connectTimeout: 20000,
+        receiveTimeout: 20000,
+        headers: headers,
+        contentType: "application/x-www-form-urlencoded",
+      ));
 
       if (params != null && params.isNotEmpty) {
         StringBuffer sb = new StringBuffer("?");
@@ -78,7 +78,10 @@ class NetUtils {
       Map<String, dynamic> headers,
       Function errorCallBack}) async {
     return await _request(context, url, callBack,
-        method: GET, params: params, headers: headers,errorCallBack: errorCallBack);
+        method: GET,
+        params: params,
+        headers: headers,
+        errorCallBack: errorCallBack);
   }
 
   //post请求
@@ -103,15 +106,15 @@ class NetUtils {
       var dio;
       if (headers != null) {
         dio = new Dio(new BaseOptions(
-          connectTimeout: 5000,
-          receiveTimeout: 10000,
+          connectTimeout: 20000,
+          receiveTimeout: 20000,
           headers: headers,
           contentType: "application/x-www-form-urlencoded",
         ));
       } else {
         dio = new Dio(new BaseOptions(
-          connectTimeout: 5000,
-          receiveTimeout: 10000,
+          connectTimeout: 20000,
+          receiveTimeout: 20000,
           contentType: "application/x-www-form-urlencoded",
         ));
       }

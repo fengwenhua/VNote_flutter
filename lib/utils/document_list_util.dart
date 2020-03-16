@@ -6,10 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
+import 'package:vnote/provider/preview_model.dart';
 
 import 'global.dart';
 
@@ -33,7 +36,15 @@ class DocumentListUtil {
       {bool fromNetwork = false}) async {
     List<Document> result = new List<Document>();
     OneDriveDataModel oneDriveDataModel;
-    oneDriveDataModel = await _getNoteBookFromNetwork(context, token);
+    while (true) {
+      oneDriveDataModel = await _getNoteBookFromNetwork(context, token);
+      if (oneDriveDataModel != null) {
+        break;
+      } else {
+        print("gg, 特么的没有数据呀!!!");
+        print("再来一发");
+      }
+    }
 
     print("笔记本如下:");
     // 路径
@@ -67,6 +78,7 @@ class DocumentListUtil {
   /// 根据 imageFolderId 与 imageUrls 对比获得所有图片
   Future<List<Document>> getImagesList(BuildContext context, String token,
       String id, List<String> imageUrls, Function callBack) async {
+    print("根据 imageFolderId 与 imageUrls 对比获得所有图片");
     List<Document> result = new List<Document>();
     return await _getImagesFromNetwork(context, token, id)
         .then((oneDriveDataModel) {
@@ -79,6 +91,7 @@ class DocumentListUtil {
                 isFile: true,
                 dateModified: DateTime.parse(value.lastModifiedDateTime));
             result.add(temp);
+            // 这里可以算出来获取图片的总数
           }
         }
       }
@@ -96,7 +109,16 @@ class DocumentListUtil {
       {bool fromNetwork = false}) async {
     List<Document> result = new List<Document>();
     OneDriveDataModel oneDriveDataModel;
-    oneDriveDataModel = await _getChildFromNetwork(context, token, id);
+
+    while (true) {
+      oneDriveDataModel = await _getChildFromNetwork(context, token, id);
+      if (oneDriveDataModel != null) {
+        break;
+      } else {
+        print("gg, 特么的没有数据呀1!!!");
+        print("再来一发1");
+      }
+    }
 
     print("目录如下:");
     // 1. 根据 file 和 folder 字段来判断是文件还是文件夹
@@ -312,10 +334,14 @@ class DocumentListUtil {
     print("从网络获得数据");
     OneDriveDataModel oneDriveDataModel;
     await OneDriveDataDao.getAllData(context, token).then((value) {
-      oneDriveDataModel =
-          OneDriveDataModel.fromJson(json.decode(value.toString()));
-      //print("Model内容如下:");
-      //print(json.encode(oneDriveDataModel));
+      if (value == null) {
+        print("value 真特么没有数据");
+      } else {
+        oneDriveDataModel =
+            OneDriveDataModel.fromJson(json.decode(value.toString()));
+        //print("Model内容如下:");
+        //print(json.encode(oneDriveDataModel));
+      }
     });
     return oneDriveDataModel;
   }
@@ -326,10 +352,14 @@ class DocumentListUtil {
     print("从网络获取文件夹");
     OneDriveDataModel oneDriveDataModel;
     await OneDriveDataDao.getNoteBookData(context, token).then((value) {
-      oneDriveDataModel =
-          OneDriveDataModel.fromJson(json.decode(value.toString()));
-      //print("Model内容如下:");
-      //print(json.encode(oneDriveDataModel));
+      if (value == null) {
+        print("麻蛋, value 为空, 没有数据");
+      } else {
+        oneDriveDataModel =
+            OneDriveDataModel.fromJson(json.decode(value.toString()));
+        //print("Model内容如下:");
+        //print(json.encode(oneDriveDataModel));
+      }
     });
     return oneDriveDataModel;
   }
@@ -339,12 +369,19 @@ class DocumentListUtil {
       BuildContext context, String token, String id) async {
     print("根据 id 从网络获取文件夹");
     OneDriveDataModel oneDriveDataModel;
+
     await OneDriveDataDao.getChildData(context, token, id).then((value) {
-      oneDriveDataModel =
-          OneDriveDataModel.fromJson(json.decode(value.toString()));
-      //print("Model内容如下:");
-      //print(json.encode(oneDriveDataModel));
+      if (value == null) {
+        print("可能因为超时等原因, 没有数据");
+      } else {
+        oneDriveDataModel =
+            OneDriveDataModel.fromJson(json.decode(value.toString()));
+        print("get 到Model内容");
+        //print(json.encode(oneDriveDataModel));
+      }
     });
+    // 返回 model
+    print("返回 oneDriveDataModel");
     return oneDriveDataModel;
   }
 
@@ -356,6 +393,7 @@ class DocumentListUtil {
     await OneDriveDataDao.getImagesID(context, token, id).then((value) {
       oneDriveDataModel =
           OneDriveDataModel.fromJson(json.decode(value.toString()));
+      print("进来-----根据 imageId 从网络获取图片列表");
       //print("Model内容如下:");
       //print(json.encode(oneDriveDataModel));
     });
@@ -364,67 +402,164 @@ class DocumentListUtil {
 
   // 根据 id 从网路下载 md 文件, 返回其内容
   Future<String> getMDFileContentFromNetwork(BuildContext context, String token,
-      String id, String imageFolderId) async {
+      String id, String imageFolderId, ProgressDialog pr) async {
     String content;
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
+
+    final previewContent = Provider.of<PreviewModel>(context, listen:false);
+
     return await OneDriveDataDao.getMDFileContent(
             context, token, id, imageFolderId)
         .then((value) {
-          // 这里需要处理本地图片的问题
-          // 1. 正则匹配出里面的本地图片, 注意后面的图片缩放" =数字px"
-          // 2. 发送请求访问_v_images下的文件, 怎么拿到_v_images 的 id?
-          // 3. 循环对应并且下载下来, 用插件转换地址
-          // 4. 用上面的地址替换原地址
-          //字符串前加字母"r"，字符串不会解析转义""
-          RegExp reg = new RegExp(r"!\[.*?\]\((.*?)\)");
+      print("看看, 数据张啥样?");
+      print(value);
+      if (value == null) {
+        return null;
+      } else {
+        // 这里需要处理本地图片的问题
+        // 1. 正则匹配出里面的本地图片, 注意后面的图片缩放" =数字px"
+        // 2. 发送请求访问_v_images下的文件, 怎么拿到_v_images 的 id?
+        // 3. 循环对应并且下载下来, 用插件转换地址
+        // 4. 用上面的地址替换原地址
+        //字符串前加字母"r"，字符串不会解析转义""
+        RegExp reg = new RegExp(r"!\[.*?\]\((.*?)\)");
 
-          /// 1. 正则匹配所有图片
-          //调用allMatches函数，对字符串应用正则表达式
-          //返回包含所有匹配的迭代器
-          Iterable<Match> matches = reg.allMatches(value.toString());
-          // 存放所有图片的名字
-          List<String> imageUrls = [];
-          print("解析文章中的图片链接如下: ");
-          for (Match m in matches) {
-            //groupCount返回正则表达式的分组数
-            //由于group(0)保存了匹配信息，因此字符串的总长度为：分组数+1
-            print(m.group(1));
-            imageUrls.add(m.group(1).split("/")[1]);
+        /// 1. 正则匹配所有图片
+        //调用allMatches函数，对字符串应用正则表达式
+        //返回包含所有匹配的迭代器
+        Iterable<Match> matches = reg.allMatches(value.toString());
+        // 存放所有图片的名字
+        List<String> imageUrls = [];
+        print("解析文章中的图片链接如下: ");
+        String matchString="";
+        for (Match m in matches) {
+          //groupCount返回正则表达式的分组数
+          //由于group(0)保存了匹配信息，因此字符串的总长度为：分组数+1
+          matchString = m.group(1);
+          print(matchString);
+          if(matchString.contains("http://") || matchString.contains("https://")){
+            imageUrls.add(matchString.split("/")[1]);
+          }else{
+            continue;
           }
-          content = value.toString();
+        }
+        content = value.toString();
 
-          /// 2. 发送请求访问_v_images下的文件
-          // 有图片才需要去找
-          return imageUrls;
-        })
-        .then((imageUrls) =>
-            getImagesList(context, token, imageFolderId, imageUrls, (data) {}))
-        .then((imagesList) =>
-            downloadImages(context, token, appDocPath, imagesList, content))
-        .then((data) {
-          print("##########################################");
-          print("此时笔记内容是: ");
-          print(data);
-          // 存入本地
-          print("存入本地");
-          Application.sp.setString(id, data);
-          print("##########################################");
-          return data;
-        });
+        /// 2. 发送请求访问_v_images下的文件
+        // 有图片才需要去找
+        return imageUrls;
+      }
+    }).then((imageUrls) async {
+      if (imageUrls == null) {
+        return null;
+      } else {
+        return await getImagesList(
+            context, token, imageFolderId, imageUrls, (data) {});
+      }
+    }).then((imagesList) async {
+      if (imagesList == null) {
+        return null;
+      } else {
+        return await downloadImages(
+            context, token, appDocPath, imagesList, content, pr);
+      }
+    }).then((data) {
+      if (data == null) {
+        return null;
+      } else {
+        print("##########################################");
+        print("此时笔记内容是: ");
+        print(data);
+        // 存入本地
+        print("存入本地");
+        Application.sp.setString(id, data);
+        print("##########################################");
+
+        // 更新预览数据
+        // 前面都更新完了, 这里应该不用更新了
+        // previewContent.updateContent(data);
+
+        return data;
+      }
+    });
   }
 
   Future<String> downloadImages(BuildContext context, String token, String path,
-      List<Document> imagesList, String content) async {
-    for (Document t in imagesList) {
+      List<Document> imagesList, String content, ProgressDialog pr1) async {
+    // 先将旧窗口隐藏掉
+    pr1.hide();
+    // 批量下载图片
+    int repeatCount = 3; // 重复下次三次
+
+    final previewContent = Provider.of<PreviewModel>(context, listen: false);
+
+    // 这里才是真的获取所需下载图片数量的地方
+    // 可以在这里弹下载对话框
+    ProgressDialog pr;
+    pr = new ProgressDialog(context,type: ProgressDialogType.Download, isDismissible: true);
+    pr.style(
+        message: '开始下载...',
+        borderRadius: 10.0,
+        backgroundColor: Colors.white,
+        progressWidget: CircularProgressIndicator(),
+        elevation: 10.0,
+        insetAnimCurve: Curves.easeInOut,
+        progress: 0.0,
+        maxProgress: 100.0,
+        progressTextStyle: TextStyle(
+            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(
+            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
+    );
+
+    await pr.show();
+
+    for (int i = 0; i < imagesList.length; i++) {
       await OneDriveDataDao.downloadImage(
-              context, token, t.id, path + "/" + t.name)
+              context, token, imagesList[i].id, path + "/" + imagesList[i].name)
           .then((value) {
-        content =
-            content.replaceAll("_v_images/" + t.name, path + "/" + t.name);
-        print("处理完: " + t.name);
+
+        if (value == null) {
+          print("没有数据, 得知连接超时");
+          if (repeatCount > 0) {
+            print("重试还剩: " + repeatCount.toString() + " 次");
+            i--; // 减少 1, 让它重新操作
+            repeatCount--;
+          } else {
+            print("已经重试 3 次, down 不下来, 用指定图片替换!");
+            repeatCount = 3; // 重置
+            // https://gitee.com/tamlok/vnote/raw/master/screenshots/vnote.png
+            content = content.replaceAll("_v_images/" + imagesList[i].name,
+                "https://gitee.com/tamlok/vnote/raw/master/screenshots/vnote.png");
+            print("处理完: " + imagesList[i].name);
+            // 每处理一张, 更新一下
+            //previewContent.updateContent(content);
+          }
+        } else {
+          content = content.replaceAll("_v_images/" + imagesList[i].name,
+              path + "/" + imagesList[i].name);
+          print("处理完: " + imagesList[i].name);
+          repeatCount = 3; // 重置
+
+          // 每处理一张, 更新一下
+          //previewContent.updateContent(content);
+
+          pr.update(
+            progress: double.parse((100.0/imagesList.length * (i+1)).toStringAsFixed(1)),
+            message: "下载 ing...",
+            progressWidget: Container(
+                padding: EdgeInsets.all(8.0), child: CircularProgressIndicator()),
+            maxProgress: 100.0,
+            progressTextStyle: TextStyle(
+                color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+            messageTextStyle: TextStyle(
+                color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600),
+          );
+        }
       });
     }
+    pr.hide();
     return content;
   }
 

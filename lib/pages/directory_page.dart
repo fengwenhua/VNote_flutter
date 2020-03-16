@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
@@ -49,15 +50,16 @@ class _DirectoryPageState extends State<DirectoryPage>
 
   /// 根据 id 下载 md 文件内容
   Future<String> getMDFileContent(
-      String accessToken, String id, String imageId) async {
+      String accessToken, String id, String imageId, ProgressDialog pr) async {
     return await DocumentListUtil.instance
-        .getMDFileContentFromNetwork(context, accessToken, id, imageId);
+        .getMDFileContentFromNetwork(context, accessToken, id, imageId,  pr);
   }
 
-  _getMDFile(Document document) async {
-    TokenModel tokenModel = Provider.of<TokenModel>(context);
+  _getMDFile(Document document, ProgressDialog pr) async {
+    TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     // 这里
-    DataListModel dataListModel = Provider.of<DataListModel>(context);
+    DataListModel dataListModel =
+        Provider.of<DataListModel>(context, listen: false);
     String id = "";
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
@@ -65,35 +67,53 @@ class _DirectoryPageState extends State<DirectoryPage>
         break;
       }
     }
-    if(Application.sp.containsKey(document.id)){
+    // 测试 Application.sp.containsKey(document.id)
+    if (Application.sp.containsKey(document.id)) {
       // 本地有文档缓存
       print("使用本地文章缓存");
       await Future.delayed(Duration(milliseconds: 100), () {
-        pr.hide().whenComplete((){
+        pr.hide().whenComplete(() {
           String route =
               '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
           Application.router
               .navigateTo(context, route, transition: TransitionType.fadeIn);
         });
       });
-    }else{
+    } else {
       // 本地没有网络
       print("从网络下载文章");
-      await getMDFileContent(tokenModel.token.accessToken, document.id, id)
+      await getMDFileContent(tokenModel.token.accessToken, document.id, id, pr)
           .then((data) {
-        // 这里需要跳转到预览页面
-        pr.hide().whenComplete(() {
-          String route =
-              '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
-          Application.router
-              .navigateTo(context, route, transition: TransitionType.fadeIn);
-        });
+        print("看看这玩意张啥样:");
+        print(data);
+        if (data == null) {
+          print("超时, 没有获得数据");
+          pr.hide();
+          Fluttertoast.showToast(
+              msg: "超时!!!",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIos: 3,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+        } else {
+          // 这里需要跳转到预览页面
+          pr.hide().whenComplete(() {
+            String route =
+                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
+            Application.router
+                .navigateTo(context, route, transition: TransitionType.fadeIn);
+          });
+        }
       });
     }
   }
 
   _postData(Document document) async {
-    DataListModel dataListModel = Provider.of<DataListModel>(context);
+    DataListModel dataListModel =
+        Provider.of<DataListModel>(context, listen: false);
 //    print("#################################");
 //    print("要处理的是: " + document.name);
 //    for (Document p in dataListModel.dataList) {
@@ -106,7 +126,7 @@ class _DirectoryPageState extends State<DirectoryPage>
 //      }
 //    }
 //    print("#################################");
-    TokenModel tokenModel = Provider.of<TokenModel>(context);
+    TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     // 网络请求
     await getChildData(tokenModel.token.accessToken, document.id).then((data) {
       document.childData = data;
@@ -118,7 +138,8 @@ class _DirectoryPageState extends State<DirectoryPage>
       if (document.childData.length > 0) {
         position.add(controller.offset);
 
-        DataListModel dataListModel = Provider.of<DataListModel>(context);
+        DataListModel dataListModel =
+            Provider.of<DataListModel>(context, listen: false);
         dataListModel.updateValue(document.childData);
         //initPathFiles(document.childData);
         pr.hide().whenComplete(() {
@@ -137,9 +158,10 @@ class _DirectoryPageState extends State<DirectoryPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    pr = new ProgressDialog(context);
+    pr = new ProgressDialog(context, isDismissible: true);
     pr.style(message: 'Please wait...');
-    DataListModel dataListModel = Provider.of<DataListModel>(context);
+    DataListModel dataListModel =
+        Provider.of<DataListModel>(context, listen: false);
 
     return WillPopScope(
         onWillPop: onWillPop,
@@ -189,7 +211,8 @@ class _DirectoryPageState extends State<DirectoryPage>
   }
 
   Future<bool> onWillPop() async {
-    DataListModel dataListModel = Provider.of<DataListModel>(context);
+    DataListModel dataListModel =
+        Provider.of<DataListModel>(context, listen: false);
     if (dataListModel.dataList[0].parent != null) {
       //initPathFiles(dataListModel.dataList[0].parent.parent?.childData ?? rootDocuments);
       dataListModel.updateValue(
@@ -264,7 +287,7 @@ class _DirectoryPageState extends State<DirectoryPage>
           print("点击了 ${document.name} 文件");
           // 转圈圈和下载 md 文件
           pr.show();
-          _getMDFile(document);
+          _getMDFile(document, pr);
           //_clickDocument(document);
         },
       );

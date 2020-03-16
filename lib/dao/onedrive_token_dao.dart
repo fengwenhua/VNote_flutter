@@ -30,7 +30,7 @@ class OnedriveTokenDao {
               OneDriveTokenModel.fromJson(json.decode(data));
           print('获取token, 解析出来的结果如下:');
           print("access_token: " + model.accessToken);
-          TokenModel tokenModel = Provider.of<TokenModel>(context);
+          TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
           tokenModel.updateToken(model);
         },
         params: params,
@@ -59,7 +59,7 @@ class OnedriveTokenDao {
           print('刷新token, 解析出来的结果如下:');
           print("access_token: " + model.accessToken);
 
-          TokenModel tokenModel = Provider.of<TokenModel>(context);
+          TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
           tokenModel.updateToken(model);
         },
         params: params,

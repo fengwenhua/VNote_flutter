@@ -3,7 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:provider/provider.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
+import 'package:vnote/models/document_model.dart';
+import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/navigator_util.dart';
 
 class WebView extends StatefulWidget {
@@ -66,9 +71,27 @@ class _WebViewState extends State<WebView> {
     });
   }
 
+  /// 该方法在 splash_screen_page.dart 定义过一次
+  Future<List<Document>> getNotebook(String accessToken) async{
+    return await DocumentListUtil.instance.getNotebookList(context, accessToken, (list){
+      print("获取了笔记本List, 如下:");
+      list.forEach((i) {
+        print(i.name);
+      });
+      DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
+      dataListModel.updateValue(list);
+    });
+  }
+
   void getTokenAndGoHomePage(String code) async {
-    await OnedriveTokenDao.getToken(context, code).then((value) {
-      NavigatorUtil.goHomePage(context);
+    await OnedriveTokenDao.getToken(context, code).then((value) async {
+      // 拿到 token 之后, 应该获取根列表, 然后跳转到主页
+      TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
+      await getNotebook(tokenModel.token.accessToken).then((data){
+        print("跳转到主页");
+        NavigatorUtil.goHomePage(context);
+      });
+      //NavigatorUtil.goHomePage(context);
     });
   }
 
@@ -95,7 +118,7 @@ class _WebViewState extends State<WebView> {
       initialChild: Container(
         color: Colors.white,
         child: Center(
-          child: Text("Wating..."),
+          child: Text("等待 Onedrive 响应中...由于不可描述的原因, 请耐心等待!!"),
         ),
       ),
     ));
