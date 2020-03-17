@@ -1,7 +1,9 @@
+import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:vnote/application.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/token_model.dart';
@@ -42,12 +44,15 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
   /// 点击更新按钮, 更新 md 文件
   _updateMDFile(String id) async {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
-    DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
+    DataListModel dataListModel =
+        Provider.of<DataListModel>(context, listen: false);
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
         await DocumentListUtil.instance
-            .getMDFileContentFromNetwork(context, tokenModel.token.accessToken, id, d.id, pr).then((value){
-          pr.hide().whenComplete((){
+            .getMDFileContentFromNetwork(
+                context, tokenModel.token.accessToken, id, d.id, pr)
+            .then((value) {
+          pr.hide().whenComplete(() {
             // 这里需要修改
             setState(() {
               content = value;
@@ -57,7 +62,6 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
         break;
       }
     }
-
   }
 
   @override
@@ -74,10 +78,9 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
             onPressed: () {
               print("点击了预览页面的返回");
               //FocusScope.of(context).requestFocus(new FocusNode());
-              pr.hide().whenComplete((){
+              pr.hide().whenComplete(() {
                 Navigator.pop(context);
               });
-
             },
           ),
           actions: <Widget>[
@@ -89,7 +92,25 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
                 pr.show();
                 _updateMDFile(widget.id);
               },
-            )
+            ),
+            IconButton(
+              icon: Icon(Icons.edit),
+              color: Colors.white,
+              onPressed: () {
+                print("点击编辑");
+
+                String route =
+                    '/edit?content=${Uri.encodeComponent(widget.markdownSource)}&id=${Uri.encodeComponent(widget.id)}&name=${Uri.encodeComponent(widget.name)}';
+                Application.router
+                    .navigateTo(context, route,
+                        transition: TransitionType.fadeIn)
+                    .then((result) {
+                  setState(() {
+                    content = result;
+                  });
+                });
+              },
+            ),
           ],
         ),
         body: Material(

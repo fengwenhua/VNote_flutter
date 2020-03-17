@@ -402,7 +402,7 @@ class DocumentListUtil {
 
   // 根据 id 从网路下载 md 文件, 返回其内容
   Future<String> getMDFileContentFromNetwork(BuildContext context, String token,
-      String id, String imageFolderId, ProgressDialog pr) async {
+      String id, String imageFolderId, ProgressDialog prt) async {
     String content;
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
@@ -462,7 +462,7 @@ class DocumentListUtil {
         return null;
       } else {
         return await downloadImages(
-            context, token, appDocPath, imagesList, content, pr);
+            context, token, appDocPath, imagesList, content, prt);
       }
     }).then((data) {
       if (data == null) {
@@ -486,9 +486,9 @@ class DocumentListUtil {
   }
 
   Future<String> downloadImages(BuildContext context, String token, String path,
-      List<Document> imagesList, String content, ProgressDialog pr1) async {
+      List<Document> imagesList, String content, ProgressDialog prt) async {
     // 先将旧窗口隐藏掉
-    pr1.hide();
+    prt.hide();
     // 批量下载图片
     int repeatCount = 3; // 重复下次三次
 

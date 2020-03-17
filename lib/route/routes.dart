@@ -9,6 +9,7 @@ class Routes{
   static String home = "/home";
   static String login = "/login";
   static String preview = "/preview";
+  static String edit = "/edit";
 
   static void configureRoutes(Router router){
     router.notFoundHandler = new Handler(
@@ -21,6 +22,7 @@ class Routes{
     router.define(login, handler: loginHandler);
     router.define(home, handler: homeHandler);
     router.define(preview, handler: mdPreviewHandler);
+    router.define(edit, handler: mdEditHandler);
   }
 
 }

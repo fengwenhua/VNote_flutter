@@ -83,7 +83,6 @@ class _SplashScreenPageState extends State<SplashScreenPage>
             NavigatorUtil.goHomePage(context);
           });
           // 跳转到主页
-
         }
       });
     }else{

@@ -50,12 +50,12 @@ class _DirectoryPageState extends State<DirectoryPage>
 
   /// 根据 id 下载 md 文件内容
   Future<String> getMDFileContent(
-      String accessToken, String id, String imageId, ProgressDialog pr) async {
+      String accessToken, String id, String imageId, ProgressDialog prt) async {
     return await DocumentListUtil.instance
-        .getMDFileContentFromNetwork(context, accessToken, id, imageId,  pr);
+        .getMDFileContentFromNetwork(context, accessToken, id, imageId, prt);
   }
 
-  _getMDFile(Document document, ProgressDialog pr) async {
+  _getMDFile(Document document, ProgressDialog prt) async {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     // 这里
     DataListModel dataListModel =
@@ -82,7 +82,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     } else {
       // 本地没有网络
       print("从网络下载文章");
-      await getMDFileContent(tokenModel.token.accessToken, document.id, id, pr)
+      await getMDFileContent(tokenModel.token.accessToken, document.id, id, prt)
           .then((data) {
         print("看看这玩意张啥样:");
         print(data);
@@ -96,10 +96,10 @@ class _DirectoryPageState extends State<DirectoryPage>
               timeInSecForIos: 3,
               backgroundColor: Colors.red,
               textColor: Colors.white,
-              fontSize: 16.0
-          );
+              fontSize: 16.0);
         } else {
           // 这里需要跳转到预览页面
+          print("跳转到预览页面");
           pr.hide().whenComplete(() {
             String route =
                 '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
@@ -158,8 +158,9 @@ class _DirectoryPageState extends State<DirectoryPage>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    //print("进入 build 方法");
     pr = new ProgressDialog(context, isDismissible: true);
-    pr.style(message: 'Please wait...');
+    pr.style(message: '慢慢等吧...');
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
 
