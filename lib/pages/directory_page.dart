@@ -72,7 +72,7 @@ class _DirectoryPageState extends State<DirectoryPage>
       // 本地有文档缓存
       print("使用本地文章缓存");
       await Future.delayed(Duration(milliseconds: 100), () {
-        pr.hide().whenComplete(() {
+        prt.hide().whenComplete(() {
           String route =
               '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
           Application.router
@@ -88,11 +88,13 @@ class _DirectoryPageState extends State<DirectoryPage>
         print(data);
         if (data == null) {
           print("超时, 没有获得数据");
-          pr.hide();
+          if(prt.isShowing()){
+            prt.hide();
+          }
           Fluttertoast.showToast(
-              msg: "超时!!!",
+              msg: "网络连接超时!!!",
               toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.BOTTOM,
+              gravity: ToastGravity.CENTER,
               timeInSecForIos: 3,
               backgroundColor: Colors.red,
               textColor: Colors.white,
@@ -100,7 +102,7 @@ class _DirectoryPageState extends State<DirectoryPage>
         } else {
           // 这里需要跳转到预览页面
           print("跳转到预览页面");
-          pr.hide().whenComplete(() {
+          prt.hide().whenComplete(() {
             String route =
                 '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
             Application.router
@@ -272,23 +274,26 @@ class _DirectoryPageState extends State<DirectoryPage>
   Widget _getDirectoryWidget({@required Document document}) => DirectoryWidget(
       directoryName: document.name,
       lastModified: document.dateModified,
-      onPressedNext: () {
+      onPressedNext: () async {
         print("点开 ${document.name} 目录, 然后显示该目录下的所有文件");
 
         // 转圈圈和网络请求
         //_myClick(document);
-        pr.show();
-        _postData(document);
+        await pr.show().then((_){
+          _postData(document);
+        });
+
       });
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
         fileName: document.name,
         lastModified: document.dateModified,
-        onPressedNext: () {
+        onPressedNext: () async {
           print("点击了 ${document.name} 文件");
           // 转圈圈和下载 md 文件
-          pr.show();
-          _getMDFile(document, pr);
+          await pr.show().then((_){
+            _getMDFile(document, pr);
+          });
           //_clickDocument(document);
         },
       );

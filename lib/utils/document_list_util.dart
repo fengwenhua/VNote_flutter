@@ -43,6 +43,16 @@ class DocumentListUtil {
       } else {
         print("gg, 特么的没有数据呀!!!");
         print("再来一发");
+
+        Fluttertoast.showToast(
+            msg: "特么的没有数据, 请重启 app",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 3,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
       }
     }
 
@@ -80,20 +90,33 @@ class DocumentListUtil {
       String id, List<String> imageUrls, Function callBack) async {
     print("根据 imageFolderId 与 imageUrls 对比获得所有图片");
     List<Document> result = new List<Document>();
+    print("要找的图片大小: "+imageUrls.length.toString());
     return await _getImagesFromNetwork(context, token, id)
         .then((oneDriveDataModel) {
-      for (String imageUrl in imageUrls) {
-        for (Value value in oneDriveDataModel.value) {
-          if (value.name == imageUrl) {
-            Document temp = new Document(
-                id: value.id,
-                name: value.name,
-                isFile: true,
-                dateModified: DateTime.parse(value.lastModifiedDateTime));
-            result.add(temp);
-            // 这里可以算出来获取图片的总数
+      if (oneDriveDataModel == null) {
+        print("我擦, oneDriveDataModel没有东西!!! 那下个鸡儿的图片!!!");
+      } else {
+        for (String imageUrl in imageUrls) {
+          //print("找图片: " + imageUrl);
+          for (Value value in oneDriveDataModel.value) {
+            //print("对比: " + value.name);
+            if (value.name == imageUrl) {
+              //print("临时: 增加: " + value.name);
+              Document temp = new Document(
+                  id: value.id,
+                  name: value.name,
+                  isFile: true,
+                  dateModified: DateTime.parse(value.lastModifiedDateTime));
+              result.add(temp);
+              // 这里可以算出来获取图片的总数
+              break;
+            }
           }
         }
+      }
+
+      if(result.length == 0){
+        print("该文章没有图片, 或者因为网络原因, 没有搞到图片!");
       }
 
       if (callBack != null) {
@@ -391,11 +414,17 @@ class DocumentListUtil {
     print("根据 imageId 从网络获取图片列表");
     OneDriveDataModel oneDriveDataModel;
     await OneDriveDataDao.getImagesID(context, token, id).then((value) {
-      oneDriveDataModel =
-          OneDriveDataModel.fromJson(json.decode(value.toString()));
-      print("进来-----根据 imageId 从网络获取图片列表");
-      //print("Model内容如下:");
-      //print(json.encode(oneDriveDataModel));
+      if(value == null){
+        print("网络不行");
+
+      }else{
+        oneDriveDataModel =
+            OneDriveDataModel.fromJson(json.decode(value.toString()));
+        print("进来-----根据 imageId 从网络获取图片列表");
+        //print("Model内容如下:");
+        //print(json.encode(oneDriveDataModel));
+      }
+
     });
     return oneDriveDataModel;
   }
@@ -407,13 +436,13 @@ class DocumentListUtil {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
 
-    final previewContent = Provider.of<PreviewModel>(context, listen:false);
+    final previewContent = Provider.of<PreviewModel>(context, listen: false);
 
     return await OneDriveDataDao.getMDFileContent(
             context, token, id, imageFolderId)
         .then((value) {
       print("看看, 数据张啥样?");
-      print(value);
+      //print(value);
       if (value == null) {
         return null;
       } else {
@@ -432,15 +461,15 @@ class DocumentListUtil {
         // 存放所有图片的名字
         List<String> imageUrls = [];
         print("解析文章中的图片链接如下: ");
-        String matchString="";
+        String matchString = "";
         for (Match m in matches) {
           //groupCount返回正则表达式的分组数
           //由于group(0)保存了匹配信息，因此字符串的总长度为：分组数+1
           matchString = m.group(1);
           print(matchString);
-          if(matchString.contains("http://") || matchString.contains("https://")){
+          if (matchString.contains("_v_images")) {
             imageUrls.add(matchString.split("/")[1]);
-          }else{
+          } else {
             continue;
           }
         }
@@ -470,7 +499,7 @@ class DocumentListUtil {
       } else {
         print("##########################################");
         print("此时笔记内容是: ");
-        print(data);
+        //print(data);
         // 存入本地
         print("存入本地");
         Application.sp.setString(id, data);
@@ -487,8 +516,12 @@ class DocumentListUtil {
 
   Future<String> downloadImages(BuildContext context, String token, String path,
       List<Document> imagesList, String content, ProgressDialog prt) async {
+    print("准备下载图片");
     // 先将旧窗口隐藏掉
-    prt.hide();
+    if (prt.isShowing()) {
+      prt.hide();
+    }
+
     // 批量下载图片
     int repeatCount = 3; // 重复下次三次
 
@@ -497,7 +530,8 @@ class DocumentListUtil {
     // 这里才是真的获取所需下载图片数量的地方
     // 可以在这里弹下载对话框
     ProgressDialog pr;
-    pr = new ProgressDialog(context,type: ProgressDialogType.Download, isDismissible: true);
+    pr = new ProgressDialog(context,
+        type: ProgressDialogType.Download, isDismissible: true);
     pr.style(
         message: '开始下载...',
         borderRadius: 10.0,
@@ -510,16 +544,14 @@ class DocumentListUtil {
         progressTextStyle: TextStyle(
             color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
         messageTextStyle: TextStyle(
-            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600)
-    );
+            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600));
 
     await pr.show();
-
+    print("处理的图片: " + imagesList.length.toString());
     for (int i = 0; i < imagesList.length; i++) {
       await OneDriveDataDao.downloadImage(
               context, token, imagesList[i].id, path + "/" + imagesList[i].name)
           .then((value) {
-
         if (value == null) {
           print("没有数据, 得知连接超时");
           if (repeatCount > 0) {
@@ -546,15 +578,21 @@ class DocumentListUtil {
           //previewContent.updateContent(content);
 
           pr.update(
-            progress: double.parse((100.0/imagesList.length * (i+1)).toStringAsFixed(1)),
+            progress: double.parse(
+                (100.0 / imagesList.length * (i + 1)).toStringAsFixed(1)),
             message: "下载 ing...",
             progressWidget: Container(
-                padding: EdgeInsets.all(8.0), child: CircularProgressIndicator()),
+                padding: EdgeInsets.all(8.0),
+                child: CircularProgressIndicator()),
             maxProgress: 100.0,
             progressTextStyle: TextStyle(
-                color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
+                color: Colors.black,
+                fontSize: 13.0,
+                fontWeight: FontWeight.w400),
             messageTextStyle: TextStyle(
-                color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600),
+                color: Colors.black,
+                fontSize: 19.0,
+                fontWeight: FontWeight.w600),
           );
         }
       });

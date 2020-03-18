@@ -40,7 +40,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
         automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.panorama_fish_eye),
+            icon: Icon(Icons.update),
             color: Colors.white,
             onPressed: () {
               print("点击预览");
@@ -53,7 +53,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -61,7 +61,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
               MarkdownTextInput(
                 (String value) => setState(() => content = value),
                 content,
-                label: 'content',
+                label: '输入 markdown 内容',
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
@@ -33,7 +34,7 @@ class NotePreviewPage extends StatefulWidget {
 // 前面加下划线即为内部类, 不能为外部访问
 class _NotePreviewPageState extends State<NotePreviewPage> {
   String content;
-  ProgressDialog pr;
+  ProgressDialog pr1;
 
   @override
   void initState() {
@@ -50,14 +51,34 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
       if (d.name == "_v_images") {
         await DocumentListUtil.instance
             .getMDFileContentFromNetwork(
-                context, tokenModel.token.accessToken, id, d.id, pr)
+                context, tokenModel.token.accessToken, id, d.id, pr1)
             .then((value) {
-          pr.hide().whenComplete(() {
-            // 这里需要修改
-            setState(() {
-              content = value;
-            });
-          });
+              if(value==null){
+                print("gg, 拿不到更新的数据");
+                if(pr1.isShowing()){
+                  pr1.hide();
+                }
+
+                Fluttertoast.showToast(
+                    msg: "网络超时, 拿不到更新的数据",
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIos: 3,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0
+                );
+              }else{
+                print("拿到更新的数据");
+                pr1.hide().whenComplete(() {
+
+                  // 这里需要修改
+                  setState(() {
+                    content = value;
+                  });
+                });
+              }
+
         });
         break;
       }
@@ -66,8 +87,8 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    pr = new ProgressDialog(context);
-    pr.style(message: '预览页面: 请等待...');
+    pr1 = new ProgressDialog(context);
+    pr1.style(message: '预览页面: 请等待...');
 
     return Scaffold(
         appBar: AppBar(
@@ -78,19 +99,25 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
             onPressed: () {
               print("点击了预览页面的返回");
               //FocusScope.of(context).requestFocus(new FocusNode());
-              pr.hide().whenComplete(() {
+              if(pr1.isShowing()){
+                pr1.hide().whenComplete(() {
+                  Navigator.pop(context);
+                });
+              }else{
                 Navigator.pop(context);
-              });
+              }
             },
           ),
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.cached),
               color: Colors.white,
-              onPressed: () {
+              onPressed: () async {
                 print("点击刷新了");
-                pr.show();
-                _updateMDFile(widget.id);
+                await pr1.show().then((_){
+                  _updateMDFile(widget.id);
+                });
+
               },
             ),
             IconButton(
