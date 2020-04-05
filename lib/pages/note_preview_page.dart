@@ -84,6 +84,7 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("初始化");
     pr1 = new ProgressDialog(context);
     pr1.style(message: '预览页面: 请等待...');
 

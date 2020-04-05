@@ -48,7 +48,11 @@ class _NoteEditPageState extends State<NoteEditPage> {
               // 这里应该有几个步骤
               // 点击了预览, 说明要保存
               // 1. 保存到本地, 图片链接不变
+              print("更新后的内容存入本地");
+              Application.sp.setString(widget.id, content);
+
               // 2. 调用接口更新, 图片链接需要替换, 而且需要找到新增的图片
+
               // 3. 更新 _vnote.json 文件
 
               //print(content);
