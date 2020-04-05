@@ -30,11 +30,50 @@ class NoteEditPage extends StatefulWidget {
 class _NoteEditPageState extends State<NoteEditPage> {
   String content;
   ProgressDialog pr;
+  String _choice = 'Nothing';
 
   @override
   void initState() {
     super.initState();
     content = widget.markdownSource;
+  }
+
+  Future<void> showAlertDialog(BuildContext context) async {
+    await showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text('是否放弃编辑?'),
+            title: Center(
+                child: Text(
+                  '警告',
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold),
+                )),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    print("点击了放弃修改的确定");
+                    Navigator.of(context).pop();
+                    Navigator.pop(context, widget.markdownSource);
+                  },
+                  child: Text('确定')),
+              FlatButton(
+                  onPressed: () {
+                    print("点击了放弃修改的取消");
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('取消')),
+            ],
+          );
+        });
+
+
+
+
   }
 
   @override
@@ -47,6 +86,15 @@ class _NoteEditPageState extends State<NoteEditPage> {
       appBar: AppBar(
         title: const Text('编辑'),
         automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          color: Colors.white,
+          onPressed: () {
+            print("放弃修改, 直接返回?");
+            showAlertDialog(context);
+              //Navigator.pop(context, widget.markdownSource);
+          },
+        ),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.remove_red_eye),
