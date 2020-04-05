@@ -128,7 +128,6 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
                     .navigateTo(context, route,
                         transition: TransitionType.fadeIn)
                     .then((result) {
-                  print("############################################\n");
                   print("获取从编辑页面返回的数据");
                   //print(result);
                   setState(() {

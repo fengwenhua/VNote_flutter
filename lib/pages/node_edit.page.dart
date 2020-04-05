@@ -25,13 +25,11 @@ class NoteEditPage extends StatefulWidget {
 
 class _NoteEditPageState extends State<NoteEditPage> {
   String content;
-  TextEditingController contentController;
 
   @override
   void initState() {
     super.initState();
     content = widget.markdownSource;
-    contentController = TextEditingController(text: widget.markdownSource);
   }
 
   @override
@@ -42,14 +40,16 @@ class _NoteEditPageState extends State<NoteEditPage> {
         automaticallyImplyLeading: false,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.update),
+            icon: Icon(Icons.remove_red_eye),
             color: Colors.white,
             onPressed: () {
               print("点击预览, 将编辑的内容返回去!");
 
               // 这里应该有几个步骤
               // 点击了预览, 说明要保存
-              //
+              // 1. 保存到本地, 图片链接不变
+              // 2. 调用接口更新, 图片链接需要替换, 而且需要找到新增的图片
+              // 3. 更新 _vnote.json 文件
 
               //print(content);
               // 这里将编辑后的内容返回去
@@ -59,17 +59,11 @@ class _NoteEditPageState extends State<NoteEditPage> {
           ),
         ],
       ),
-      body:
-
-            MarkdownTextInput(
-                  (String value) => setState(() => content = value),
-              content,
-              label: '输入 markdown 内容',
-            ),
-
-
-
-
+      body: MarkdownTextInput(
+        (String value) => setState(() => content = value),
+        content,
+        label: '输入 markdown 内容',
+      ),
     );
   }
 }

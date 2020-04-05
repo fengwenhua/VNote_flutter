@@ -436,6 +436,7 @@ class DocumentListUtil {
     String content;
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
+    String appImagePath = appDocPath +'/image';
 
     final previewContent = Provider.of<PreviewModel>(context, listen: false);
 
@@ -492,7 +493,7 @@ class DocumentListUtil {
         return null;
       } else {
         return await downloadImages(
-            context, token, appDocPath, imagesList, content, prt);
+            context, token, appImagePath, imagesList, content, prt);
       }
     }).then((data) {
       if (data == null) {
