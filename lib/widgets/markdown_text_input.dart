@@ -111,18 +111,39 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                     ),
                   ),
                 ),
-                for (int i = 1; i <= 3; i++)
                   InkWell(
-                    key: Key('H${i}_button'),
-                    onTap: () => onTap(MarkdownType.title, titleSize: i),
+                    key: Key('H1_button'),
+                    onTap: () => onTap(MarkdownType.title, titleSize: 1),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Text(
-                        'H$i',
-                        style: TextStyle(fontSize: (18 - i).toDouble(), fontWeight: FontWeight.w700),
+                        'H1',
+                        style: TextStyle(fontSize: (18).toDouble(), fontWeight: FontWeight.w700),
                       ),
                     ),
                   ),
+                InkWell(
+                  key: Key('H2_button'),
+                  onTap: () => onTap(MarkdownType.title, titleSize: 2),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      'H1',
+                      style: TextStyle(fontSize: (17).toDouble(), fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  key: Key('H3_button'),
+                  onTap: () => onTap(MarkdownType.title, titleSize: 3),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(
+                      'H1',
+                      style: TextStyle(fontSize: (16).toDouble(), fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ),
                 InkWell(
                   key: const Key('link_button'),
                   onTap: () => onTap(MarkdownType.link),

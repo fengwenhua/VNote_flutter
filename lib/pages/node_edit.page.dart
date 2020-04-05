@@ -74,7 +74,8 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 await OneDriveDataDao.updateContent(context,
                         tokenModel.token.accessToken, widget.id, t_content)
                     .then((_) {
-                  // 3. 更新 _vnote.json 文件
+                  // 3. 应该在这里更新 _vnote.json 文件
+                }).then((_) {
                   print("到此更新完了, 可以跳转了!");
                   pr.hide().then((_) {
                     Navigator.pop(context, content);
