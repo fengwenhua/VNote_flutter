@@ -20,8 +20,15 @@ class FormatMarkdown {
         changedData =
             '[${data.substring(fromIndex, toIndex)}](${data.substring(fromIndex, toIndex)})';
         break;
+      case MarkdownType.quote:
+        changedData = '>  ${data.substring(fromIndex, toIndex)}';
+        break;
+      case MarkdownType.code:
+        changedData = '```\n${data.substring(fromIndex, toIndex)}```';
+        break;
       case MarkdownType.title:
-        changedData = "${"#" * titleSize} ${data.substring(fromIndex, toIndex)}";
+        changedData =
+            "${"#" * titleSize} ${data.substring(fromIndex, toIndex)}";
         break;
       case MarkdownType.list:
         var index = 0;
@@ -33,12 +40,15 @@ class FormatMarkdown {
         break;
     }
     if (fromIndex == toIndex) {
-      if (type == MarkdownType.bold) {
+      if (type == MarkdownType.bold ||
+          type == MarkdownType.quote ||
+          type == MarkdownType.list) {
         cursorIndex = 2;
-      }else if(type == MarkdownType.title){
-        cursorIndex = titleSize +1;
-      }
-      else {
+      } else if (type == MarkdownType.title) {
+        cursorIndex = titleSize + 1;
+      } else if (type == MarkdownType.code || type==MarkdownType.link) {
+        cursorIndex = 3;
+      } else {
         cursorIndex = 1;
       }
     } else {
@@ -84,5 +94,11 @@ enum MarkdownType {
   ///   * Item 1
   ///   * Item 2
   ///   * Item 3
-  list
+  list,
+
+  /// for:
+  /// > 引用
+  quote,
+
+  code,
 }

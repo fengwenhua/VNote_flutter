@@ -89,28 +89,30 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
           Material(
             color: Theme.of(context).cardColor,
             borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-            child: Row(
-              children: [
-                InkWell(
-                  key: const Key('bold_button'),
-                  onTap: () => onTap(MarkdownType.bold),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Icon(
-                      Icons.format_bold,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  InkWell(
+                    key: const Key('bold_button'),
+                    onTap: () => onTap(MarkdownType.bold),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.format_bold,
+                      ),
                     ),
                   ),
-                ),
-                InkWell(
-                  key: const Key('italic_button'),
-                  onTap: () => onTap(MarkdownType.italic),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Icon(
-                      Icons.format_italic,
+                  InkWell(
+                    key: const Key('italic_button'),
+                    onTap: () => onTap(MarkdownType.italic),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.format_italic,
+                      ),
                     ),
                   ),
-                ),
                   InkWell(
                     key: Key('H1_button'),
                     onTap: () => onTap(MarkdownType.title, titleSize: 1),
@@ -122,53 +124,76 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                       ),
                     ),
                   ),
-                InkWell(
-                  key: Key('H2_button'),
-                  onTap: () => onTap(MarkdownType.title, titleSize: 2),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      'H1',
-                      style: TextStyle(fontSize: (17).toDouble(), fontWeight: FontWeight.w700),
+                  InkWell(
+                    key: Key('H2_button'),
+                    onTap: () => onTap(MarkdownType.title, titleSize: 2),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        'H2',
+                        style: TextStyle(fontSize: (17).toDouble(), fontWeight: FontWeight.w700),
+                      ),
                     ),
                   ),
-                ),
-                InkWell(
-                  key: Key('H3_button'),
-                  onTap: () => onTap(MarkdownType.title, titleSize: 3),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      'H1',
-                      style: TextStyle(fontSize: (16).toDouble(), fontWeight: FontWeight.w700),
+                  InkWell(
+                    key: Key('H3_button'),
+                    onTap: () => onTap(MarkdownType.title, titleSize: 3),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Text(
+                        'H3',
+                        style: TextStyle(fontSize: (16).toDouble(), fontWeight: FontWeight.w700),
+                      ),
                     ),
                   ),
-                ),
-                InkWell(
-                  key: const Key('link_button'),
-                  onTap: () => onTap(MarkdownType.link),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Icon(
-                      Icons.link,
+                  InkWell(
+                    key: const Key('quote_button'),
+                    onTap: () => onTap(MarkdownType.quote),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.format_quote,
+                      ),
                     ),
                   ),
-                ),
-                InkWell(
-                  key: const Key('list_button'),
-                  onTap: () => onTap(MarkdownType.list),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Icon(
-                      Icons.list,
+                  InkWell(
+                    key: const Key('code_button'),
+                    onTap: () => onTap(MarkdownType.code),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.code,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  InkWell(
+                    key: const Key('link_button'),
+                    onTap: () => onTap(MarkdownType.link),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.link,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    key: const Key('list_button'),
+                    onTap: () => onTap(MarkdownType.list),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.list,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           )
         ],
       ),
     );
   }
+
+
 }
