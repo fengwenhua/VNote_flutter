@@ -26,6 +26,43 @@ class NetUtils {
   static const String GET = "get";
   static const String POST = "post";
 
+  /// put 请求, 用于文章内容更新
+  Future<Response> put(BuildContext context, String url, Function callBack,
+      {Map<String, dynamic> headers,
+        String content,
+        Function errorCallBack}) async{
+    String errorMsg = "";
+    int statusCode;
+    try{
+      Response response;
+      var dio;
+      dio = new Dio(new BaseOptions(
+        method: "put",
+        connectTimeout: 20000,
+        receiveTimeout: 20000,
+        headers: headers,
+        contentType: "text/plain",
+      ));
+
+      response = await dio.put(url, data: content);
+      statusCode = response.statusCode;
+
+      if (statusCode < 0) {
+        errorMsg = "网络请求错误,状态码:" + statusCode.toString();
+        _handError(errorCallBack, errorMsg);
+      }
+      if (callBack != null) {
+//        String res2Json = json.encode(response.data);
+//        Map<String, dynamic> map = json.decode(res2Json);
+//        callBack(map["data"]);
+        callBack(response.toString());
+      }
+      return response;
+    }catch (exception) {
+      _handError(errorCallBack, exception.toString());
+    }
+  }
+
   /// download 请求, 用于图片下载
   Future<Response> download(BuildContext context, String url, Function callBack,
       {Map<String, String> params,
@@ -154,6 +191,8 @@ class NetUtils {
       _handError(errorCallBack, exception.toString());
     }
   }
+
+
 
   void _handError(Function errorCallBack, String errorMsg) {
     if (errorCallBack != null) {

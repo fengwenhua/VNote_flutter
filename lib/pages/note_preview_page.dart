@@ -124,7 +124,7 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
                 print("点击编辑");
 
                 String route =
-                    '/edit?content=${Uri.encodeComponent(widget.markdownSource)}&id=${Uri.encodeComponent(widget.id)}&name=${Uri.encodeComponent(widget.name)}';
+                    '/edit?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(widget.id)}&name=${Uri.encodeComponent(widget.name)}';
                 Application.router
                     .navigateTo(context, route,
                         transition: TransitionType.fadeIn)

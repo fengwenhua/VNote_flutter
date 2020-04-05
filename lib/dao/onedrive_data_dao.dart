@@ -16,7 +16,6 @@ const ONEDRIVE_SPECIAL_FOLDER_URL =
 const TEST_URL = "https://httpbin.org/get";
 
 class OneDriveDataDao {
-
   /// 该递归的方法已经废除
   static Future<Response> getAllData(BuildContext context, String p_token) {
     Map<String, dynamic> headers = {"Authorization": p_token};
@@ -153,12 +152,11 @@ class OneDriveDataDao {
         errorCallBack: (errorMsg) {
           print("error: " + errorMsg);
           print("是超时吗? " + errorMsg);
-          if(errorMsg.contains("timed out") || errorMsg.contains("timeout")){
+          if (errorMsg.contains("timed out") || errorMsg.contains("timeout")) {
             print("确实是超时");
-          }else{
+          } else {
             print("竟然没有超时");
           }
-
 
           String msg = "";
           if (errorMsg.contains("timed out")) {
@@ -177,5 +175,27 @@ class OneDriveDataDao {
           return msg;
         },
         path: path);
+  }
+
+  /// 根据文章 id 更新文章内容
+  static Future<Response> updateContent(
+      BuildContext context, String token, String id, String content) {
+    Map<String, dynamic> headers = {"Authorization": token};
+    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
+    URL += id;
+    URL += "/content";
+    return NetUtils.instance.put(
+        context,
+        URL,
+        (data) {
+          print("请求返回来的内容如下:");
+          print(data);
+          print("###################################################\n\n");
+        },
+        content: content,
+        headers: headers,
+        errorCallBack: (errorMsg) {
+          print("出了错误, 是超时吗? " + errorMsg);
+        });
   }
 }
