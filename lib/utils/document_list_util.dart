@@ -194,6 +194,7 @@ class DocumentListUtil {
     return result;
   }
 
+  /// 废除这种递归的方法
   Future<List<Document>> getDirectoryList(
       BuildContext context, String token, Function callBack,
       {bool fromNetwork = false}) async {

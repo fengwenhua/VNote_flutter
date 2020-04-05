@@ -25,11 +25,13 @@ class NoteEditPage extends StatefulWidget {
 
 class _NoteEditPageState extends State<NoteEditPage> {
   String content;
+  TextEditingController contentController;
 
   @override
   void initState() {
     super.initState();
     content = widget.markdownSource;
+    contentController = TextEditingController(text: widget.markdownSource);
   }
 
   @override
@@ -43,7 +45,13 @@ class _NoteEditPageState extends State<NoteEditPage> {
             icon: Icon(Icons.update),
             color: Colors.white,
             onPressed: () {
-              print("点击预览");
+              print("点击预览, 将编辑的内容返回去!");
+
+              // 这里应该有几个步骤
+              // 点击了预览, 说明要保存
+              //
+
+              //print(content);
               // 这里将编辑后的内容返回去
               Navigator.pop(context, content);
               // 同时应该保存下来
@@ -51,22 +59,17 @@ class _NoteEditPageState extends State<NoteEditPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              MarkdownTextInput(
-                (String value) => setState(() => content = value),
-                content,
-                label: '输入 markdown 内容',
-              ),
-            ],
-          ),
-        ),
-      ),
+      body:
+
+            MarkdownTextInput(
+                  (String value) => setState(() => content = value),
+              content,
+              label: '输入 markdown 内容',
+            ),
+
+
+
+
     );
   }
 }

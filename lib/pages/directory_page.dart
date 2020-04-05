@@ -80,7 +80,7 @@ class _DirectoryPageState extends State<DirectoryPage>
         });
       });
     } else {
-      // 本地没有网络
+      // 本地没有, 从网络下载
       print("从网络下载文章");
       await getMDFileContent(tokenModel.token.accessToken, document.id, id, prt)
           .then((data) {

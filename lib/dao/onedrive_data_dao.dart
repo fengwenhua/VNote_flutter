@@ -16,6 +16,8 @@ const ONEDRIVE_SPECIAL_FOLDER_URL =
 const TEST_URL = "https://httpbin.org/get";
 
 class OneDriveDataDao {
+
+  /// 该递归的方法已经废除
   static Future<Response> getAllData(BuildContext context, String p_token) {
     Map<String, dynamic> headers = {"Authorization": p_token};
     return NetUtils.instance.get(
@@ -82,7 +84,7 @@ class OneDriveDataDao {
         });
   }
 
-  // 根据 id 获取md 文件内容
+  // 根据 id 获取 md 文件内容
   static Future<Response> getMDFileContent(
       BuildContext context, String token, String id, String imageId) {
     Map<String, dynamic> headers = {"Authorization": token};

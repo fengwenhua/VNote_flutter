@@ -53,32 +53,29 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
             .getMDFileContentFromNetwork(
                 context, tokenModel.token.accessToken, id, d.id, pr1)
             .then((value) {
-              if(value==null){
-                print("gg, 拿不到更新的数据");
-                if(pr1.isShowing()){
-                  pr1.hide();
-                }
+          if (value == null) {
+            print("gg, 拿不到更新的数据");
+            if (pr1.isShowing()) {
+              pr1.hide();
+            }
 
-                Fluttertoast.showToast(
-                    msg: "网络超时, 拿不到更新的数据",
-                    toastLength: Toast.LENGTH_LONG,
-                    gravity: ToastGravity.CENTER,
-                    timeInSecForIos: 3,
-                    backgroundColor: Colors.red,
-                    textColor: Colors.white,
-                    fontSize: 16.0
-                );
-              }else{
-                print("拿到更新的数据");
-                pr1.hide().whenComplete(() {
-
-                  // 这里需要修改
-                  setState(() {
-                    content = value;
-                  });
-                });
-              }
-
+            Fluttertoast.showToast(
+                msg: "网络超时, 拿不到更新的数据",
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIos: 3,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          } else {
+            print("拿到更新的数据");
+            pr1.hide().whenComplete(() {
+              // 这里需要修改
+              setState(() {
+                content = value;
+              });
+            });
+          }
         });
         break;
       }
@@ -99,11 +96,11 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
             onPressed: () {
               print("点击了预览页面的返回");
               //FocusScope.of(context).requestFocus(new FocusNode());
-              if(pr1.isShowing()){
+              if (pr1.isShowing()) {
                 pr1.hide().whenComplete(() {
                   Navigator.pop(context);
                 });
-              }else{
+              } else {
                 Navigator.pop(context);
               }
             },
@@ -114,10 +111,9 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
               color: Colors.white,
               onPressed: () async {
                 print("点击刷新了");
-                await pr1.show().then((_){
+                await pr1.show().then((_) {
                   _updateMDFile(widget.id);
                 });
-
               },
             ),
             IconButton(
@@ -132,6 +128,9 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
                     .navigateTo(context, route,
                         transition: TransitionType.fadeIn)
                     .then((result) {
+                  print("############################################\n");
+                  print("获取从编辑页面返回的数据");
+                  //print(result);
                   setState(() {
                     content = result;
                   });
