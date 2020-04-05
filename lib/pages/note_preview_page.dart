@@ -92,7 +92,7 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
         appBar: AppBar(
           title: Text(widget.name, style: TextStyle(fontSize: fontSize40)),
           leading: IconButton(
-            icon: Icon(Icons.keyboard_arrow_left),
+            icon: Icon(Icons.arrow_back),
             color: Colors.white,
             onPressed: () {
               print("点击了预览页面的返回");

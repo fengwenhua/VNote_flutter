@@ -190,7 +190,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                       )
                     : IconButton(
                         icon: Icon(
-                          Icons.keyboard_arrow_left,
+                          Icons.arrow_back,
                           color: Colors.white,
                         ),
                         onPressed: onWillPop,
