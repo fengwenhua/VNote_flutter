@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/pages/splash_screen_page.dart';
 import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/preview_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/application.dart';
@@ -31,6 +32,9 @@ void main() {
       ),
       ChangeNotifierProvider<PreviewModel>(
         create: (context) => PreviewModel(),
+      ),
+      ChangeNotifierProvider<NewImageListModel>(
+        create: (context) => NewImageListModel(),
       )
     ],
     child: MyApp(),

@@ -5,7 +5,10 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
+import 'package:vnote/models/document_model.dart';
+import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/utils/utils.dart';
 import 'package:vnote/widgets/markdown_text_input.dart';
 
 class NoteEditPage extends StatefulWidget {
@@ -47,12 +50,12 @@ class _NoteEditPageState extends State<NoteEditPage> {
             content: Text('是否放弃编辑?'),
             title: Center(
                 child: Text(
-                  '警告',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold),
-                )),
+              '警告',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold),
+            )),
             actions: <Widget>[
               FlatButton(
                   onPressed: () {
@@ -88,7 +91,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
           onPressed: () {
             print("放弃修改, 直接返回?");
             showAlertDialog(context);
-              //Navigator.pop(context, widget.markdownSource);
+            //Navigator.pop(context, widget.markdownSource);
           },
         ),
         actions: <Widget>[
@@ -113,7 +116,20 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 // 这里因为还没有写添加本地图片, 所以逻辑会简单一些
                 String image_path = Application.sp.getString("appImagePath");
                 print("本地图片放置目录: " + image_path);
+
                 String t_content = content;
+
+                // 获取到 newImageList
+                final _newImageList = Provider.of<NewImageListModel>(context, listen: false);
+                // 本地增加的所有图片
+                List<String> newImagesList = _newImageList.newImageList;
+                // 调用接口上传, 上传成功后再替换
+                print("本文章中新增加的图片如下: ");
+                for(String i in newImagesList){
+                  print(i);
+
+                }
+
                 t_content = t_content.replaceAll(image_path, "_v_images");
                 await OneDriveDataDao.updateContent(context,
                         tokenModel.token.accessToken, widget.id, t_content)

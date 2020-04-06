@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
+import 'package:vnote/provider/new_images_model.dart';
 
 /// Use this class for converting String to [ResultMarkdown]
 class FormatMarkdown {
@@ -209,6 +211,9 @@ Future<String> _showInputDialog(BuildContext context) async {
       // 重命名
       String newPath = imgPath + Platform.pathSeparator + newName;
       return await file.copy(newPath).then((_) {
+        final _newImageList = Provider.of<NewImageListModel>(context, listen: false);
+        _newImageList.addImage(newPath);
+
         var temp = _imgName + "#####" + newPath;
         print("图片名和图片路径: " + temp);
         return temp;

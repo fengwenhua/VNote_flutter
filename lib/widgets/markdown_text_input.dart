@@ -32,7 +32,7 @@ class MarkdownTextInput extends StatefulWidget {
 class _MarkdownTextInputState extends State<MarkdownTextInput> {
   final _controller = TextEditingController();
 
-  void onTap(MarkdownType type, {int titleSize = 1}) {
+  void onTap(BuildContext context, MarkdownType type, {int titleSize = 1}) {
     final basePosition = _controller.selection.baseOffset;
 
     FormatMarkdown.convertToMarkdown(
@@ -99,7 +99,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                 children: [
                   InkWell(
                     key: const Key('bold_button'),
-                    onTap: () => onTap(MarkdownType.bold),
+                    onTap: () => onTap(context, MarkdownType.bold),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Icon(
@@ -109,7 +109,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                   ),
                   InkWell(
                     key: const Key('italic_button'),
-                    onTap: () => onTap(MarkdownType.italic),
+                    onTap: () => onTap(context, MarkdownType.italic),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Icon(
@@ -119,7 +119,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                   ),
                   InkWell(
                     key: Key('H1_button'),
-                    onTap: () => onTap(MarkdownType.title, titleSize: 1),
+                    onTap: () => onTap(context, MarkdownType.title, titleSize: 1),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Text(
@@ -130,7 +130,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                   ),
                   InkWell(
                     key: Key('H2_button'),
-                    onTap: () => onTap(MarkdownType.title, titleSize: 2),
+                    onTap: () => onTap(context, MarkdownType.title, titleSize: 2),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Text(
@@ -141,7 +141,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                   ),
                   InkWell(
                     key: Key('H3_button'),
-                    onTap: () => onTap(MarkdownType.title, titleSize: 3),
+                    onTap: () => onTap(context, MarkdownType.title, titleSize: 3),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Text(
@@ -152,7 +152,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                   ),
                   InkWell(
                     key: const Key('quote_button'),
-                    onTap: () => onTap(MarkdownType.quote),
+                    onTap: () => onTap(context, MarkdownType.quote),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Icon(
@@ -162,7 +162,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                   ),
                   InkWell(
                     key: const Key('code_button'),
-                    onTap: () => onTap(MarkdownType.code),
+                    onTap: () => onTap(context, MarkdownType.code),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Icon(
@@ -172,7 +172,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                   ),
                   InkWell(
                     key: const Key('photo_button'),
-                    onTap: () => onTap(MarkdownType.photo),
+                    onTap: () => onTap(context, MarkdownType.photo),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Icon(
@@ -182,7 +182,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                   ),
                   InkWell(
                     key: const Key('link_button'),
-                    onTap: () => onTap(MarkdownType.link),
+                    onTap: () => onTap(context, MarkdownType.link),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Icon(
@@ -192,7 +192,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                   ),
                   InkWell(
                     key: const Key('list_button'),
-                    onTap: () => onTap(MarkdownType.list),
+                    onTap: () => onTap(context, MarkdownType.list),
                     child: Padding(
                       padding: const EdgeInsets.all(10),
                       child: Icon(
