@@ -28,12 +28,18 @@ class FormatMarkdown {
             '[${data.substring(fromIndex, toIndex)}](${data.substring(fromIndex, toIndex)})';
         break;
       case MarkdownType.photo:
-        await _showInputDialog(context).then((String res) {
+        return await _showInputDialog(context).then((String res) {
           print("返回来的整体是: " + res);
           print("返回来的名字是: " + res.split("#####")[0]);
           print("返回来的路径是: " + res.split("#####")[1]);
           changedData = '![${res.split("#####")[0]}](${res.split("#####")[1]})';
           print("changeData 是: " + changedData);
+          cursorIndex = changedData.length;
+          return ResultMarkdown(
+              data.substring(0, fromIndex) +
+                  changedData +
+                  data.substring(toIndex, data.length),
+              cursorIndex);
         });
         break;
       case MarkdownType.quote:
