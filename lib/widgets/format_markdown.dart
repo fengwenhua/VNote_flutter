@@ -32,7 +32,11 @@ class FormatMarkdown {
           print("返回来的整体是: " + res);
           print("返回来的名字是: " + res.split("#####")[0]);
           print("返回来的路径是: " + res.split("#####")[1]);
-          changedData = '![${res.split("#####")[0]}](${res.split("#####")[1]})';
+          if(res.split("#####")[1] == ""){
+            changedData = "";
+          }else{
+            changedData = '![${res.split("#####")[0]}](${res.split("#####")[1]})';
+          }
           print("changeData 是: " + changedData);
           cursorIndex = changedData.length;
           return ResultMarkdown(
