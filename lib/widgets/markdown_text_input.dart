@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'format_markdown.dart';
+import 'package:image_picker/image_picker.dart';
+
 
 /// Widget with markdown buttons
 class MarkdownTextInput extends StatefulWidget {
@@ -33,12 +35,14 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
   void onTap(MarkdownType type, {int titleSize = 1}) {
     final basePosition = _controller.selection.baseOffset;
 
-    final result = FormatMarkdown.convertToMarkdown(
-        type, _controller.text, _controller.selection.baseOffset, _controller.selection.extentOffset,
-        titleSize: titleSize);
+    FormatMarkdown.convertToMarkdown(
+        type, _controller.text, _controller.selection.baseOffset, _controller.selection.extentOffset,context,
+        titleSize: titleSize).then((result){
+      _controller.value = _controller.value
+          .copyWith(text: result.data, selection: TextSelection.collapsed(offset: basePosition + result.cursorIndex));
+    });
 
-    _controller.value = _controller.value
-        .copyWith(text: result.data, selection: TextSelection.collapsed(offset: basePosition + result.cursorIndex));
+
   }
 
   @override
@@ -163,6 +167,16 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
                       padding: const EdgeInsets.all(10),
                       child: Icon(
                         Icons.code,
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    key: const Key('photo_button'),
+                    onTap: () => onTap(MarkdownType.photo),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.insert_photo,
                       ),
                     ),
                   ),

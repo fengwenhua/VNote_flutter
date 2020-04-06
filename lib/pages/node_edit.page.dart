@@ -70,10 +70,6 @@ class _NoteEditPageState extends State<NoteEditPage> {
             ],
           );
         });
-
-
-
-
   }
 
   @override

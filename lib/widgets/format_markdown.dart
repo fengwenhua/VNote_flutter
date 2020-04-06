@@ -1,11 +1,18 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:vnote/application.dart';
+
 /// Use this class for converting String to [ResultMarkdown]
 class FormatMarkdown {
   /// Convert [data] part into [ResultMarkdown] from [type].
   /// Use [fromIndex] and [toIndex] for converting part of [data]
   /// [titleSize] is used for markdown titles
-  static ResultMarkdown convertToMarkdown(
-      MarkdownType type, String data, int fromIndex, int toIndex,
-      {int titleSize = 1}) {
+  static Future<ResultMarkdown> convertToMarkdown(MarkdownType type,
+      String data, int fromIndex, int toIndex, BuildContext context,
+      {int titleSize = 1}) async {
     String changedData;
     int cursorIndex;
 
@@ -19,6 +26,15 @@ class FormatMarkdown {
       case MarkdownType.link:
         changedData =
             '[${data.substring(fromIndex, toIndex)}](${data.substring(fromIndex, toIndex)})';
+        break;
+      case MarkdownType.photo:
+        await _showInputDialog(context).then((String res) {
+          print("返回来的整体是: " + res);
+          print("返回来的名字是: " + res.split("#####")[0]);
+          print("返回来的路径是: " + res.split("#####")[1]);
+          changedData = '![${res.split("#####")[0]}](${res.split("#####")[1]})';
+          print("changeData 是: " + changedData);
+        });
         break;
       case MarkdownType.quote:
         changedData = '>  ${data.substring(fromIndex, toIndex)}';
@@ -42,11 +58,12 @@ class FormatMarkdown {
     if (fromIndex == toIndex) {
       if (type == MarkdownType.bold ||
           type == MarkdownType.quote ||
-          type == MarkdownType.list) {
+          type == MarkdownType.list ||
+          type == MarkdownType.photo) {
         cursorIndex = 2;
       } else if (type == MarkdownType.title) {
         cursorIndex = titleSize + 1;
-      } else if (type == MarkdownType.code || type==MarkdownType.link) {
+      } else if (type == MarkdownType.code || type == MarkdownType.link) {
         cursorIndex = 3;
       } else {
         cursorIndex = 1;
@@ -60,6 +77,139 @@ class FormatMarkdown {
             changedData +
             data.substring(toIndex, data.length),
         cursorIndex);
+  }
+}
+
+/// 图片控件
+Widget _imageView(image) {
+  if (image == null) {
+    return Center(
+      child: Text("NO PHOTO"),
+    );
+  } else {
+    return Image.file(
+      image,
+    );
+  }
+}
+
+enum Action { Ok, Cancel }
+
+Future<String> _showInputDialog(BuildContext context) async {
+  File _image;
+  var _imgName = "";
+  final action = await showDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text('温馨提示'),
+          content:
+              new StatefulBuilder(builder: (context, StateSetter setState) {
+            return Card(
+              elevation: 0.0,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        RaisedButton(
+                          onPressed: () async {
+                            File image = await ImagePicker.pickImage(
+                                source: ImageSource.camera);
+                            setState(() {
+                              _image = image;
+                            });
+                          },
+                          child: Text("拍照"),
+                        ),
+                        RaisedButton(
+                          onPressed: () async {
+                            File image = await ImagePicker.pickImage(
+                                source: ImageSource.gallery);
+                            setState(() {
+                              _image = image;
+                            });
+                          },
+                          child: Text("选择照片"),
+                        ),
+                      ],
+                    ),
+                    TextField(
+                      decoration: InputDecoration(
+                          hintText: '请输入图片名字',
+                          filled: true,
+                          fillColor: Colors.grey.shade50),
+                      onChanged: (String value) {
+                        print("输入内容是: " + value);
+                        _imgName = value;
+                      },
+                    ),
+                    _imageView(_image),
+                  ],
+                ),
+              ),
+            );
+          }),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              onPressed: () {
+                print("取消图片");
+                Navigator.pop(context, Action.Cancel);
+              },
+              child: Text('取消'),
+            ),
+            CupertinoDialogAction(
+              onPressed: () {
+                print("确定图片");
+                Navigator.pop(context, Action.Ok);
+              },
+              child: Text('确定'),
+            ),
+          ],
+        );
+      });
+  switch (action) {
+    case Action.Ok:
+      String imgPath = Application.sp.getString("appImagePath");
+      Directory directory = new Directory(imgPath);
+      try {
+        bool exists = await directory.exists();
+        if (!exists) {
+          print("图片目录不存在 创建它");
+          await directory.create();
+        }
+      } catch (e) {
+        print(e);
+      }
+
+      print("旧路径: " + _image.path);
+      File file = new File(_image.path);
+      String newName = new DateTime.now().millisecondsSinceEpoch.toString();
+
+      if (_image.path.contains(".jpg")) {
+        newName = newName + ".jpg";
+      } else if (_image.path.contains(".png")) {
+        newName = newName + ".png";
+      } else if (_image.path.contains(".gif")) {
+        newName = newName + ".gif";
+      } else {
+        print("不存在的后缀名??");
+      }
+      print("新名字: " + newName);
+      // 重命名
+      String newPath = imgPath + Platform.pathSeparator + newName;
+      return await file.copy(newPath).then((_) {
+        var temp = _imgName + "#####" + newPath;
+        print("图片名和图片路径: " + temp);
+        return temp;
+      });
+
+      break;
+    case Action.Cancel:
+      return "#####";
+      break;
+    default:
+      break;
   }
 }
 
@@ -101,4 +251,6 @@ enum MarkdownType {
   quote,
 
   code,
+
+  photo,
 }
