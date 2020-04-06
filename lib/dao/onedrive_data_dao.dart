@@ -177,7 +177,7 @@ class OneDriveDataDao {
         path: path);
   }
 
-  /// 根据文章 id 更新文章内容
+  /// 根据文章 id 和 content 更新文章内容
   static Future<Response> updateContent(
       BuildContext context, String token, String id, String content) {
     Map<String, dynamic> headers = {"Authorization": token};
@@ -188,6 +188,32 @@ class OneDriveDataDao {
         context,
         URL,
         (data) {
+          print("请求返回来的内容如下:");
+          print(data);
+          print("###################################################\n\n");
+        },
+        content: content,
+        headers: headers,
+        errorCallBack: (errorMsg) {
+          print("出了错误, 是超时吗? " + errorMsg);
+        });
+  }
+
+  /// [uploadFile] 根据 [parentId] 和 [content] 和 [filename] 上传文件
+  /// 可以是 md, 也可以是图片
+  /// PUT /me/drive/items/{parent-id}:/{filename}:/content
+  static Future<Response> uploadFile(
+      BuildContext context, String token, String parentId, dynamic content, String filename) {
+    Map<String, dynamic> headers = {"Authorization": token};
+    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
+    URL += parentId;
+    URL += ":/";
+    URL += filename;
+    URL += ":/content";
+    return NetUtils.instance.put(
+        context,
+        URL,
+            (data) {
           print("请求返回来的内容如下:");
           print(data);
           print("###################################################\n\n");

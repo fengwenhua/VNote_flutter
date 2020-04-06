@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
@@ -49,6 +50,10 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
         Provider.of<DataListModel>(context, listen: false);
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
+        // 在这里更新 imageFolderid , 也就是 _v_images 文件夹的 id
+        final _imageFolderId =Provider.of<ImageFolderIdModel>(context, listen: false);
+        _imageFolderId.updateImageFolderId(d.id);
+
         await DocumentListUtil.instance
             .getMDFileContentFromNetwork(
                 context, tokenModel.token.accessToken, id, d.id, pr1)

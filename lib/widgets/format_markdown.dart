@@ -188,7 +188,7 @@ Future<String> _showInputDialog(BuildContext context) async {
         bool exists = await directory.exists();
         if (!exists) {
           print("图片目录不存在 创建它");
-          await directory.create();
+          await directory.create(recursive: true);
         }
       } catch (e) {
         print(e);
@@ -214,7 +214,7 @@ Future<String> _showInputDialog(BuildContext context) async {
         final _newImageList = Provider.of<NewImageListModel>(context, listen: false);
         _newImageList.addImage(newPath);
 
-        var temp = _imgName + "#####" + newPath;
+        var temp = _imgName.trim() + "#####" + newPath.trim();
         print("图片名和图片路径: " + temp);
         return temp;
       });

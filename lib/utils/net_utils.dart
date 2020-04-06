@@ -29,7 +29,7 @@ class NetUtils {
   /// put 请求, 用于文章内容更新
   Future<Response> put(BuildContext context, String url, Function callBack,
       {Map<String, dynamic> headers,
-        String content,
+        dynamic content,
         Function errorCallBack}) async{
     String errorMsg = "";
     int statusCode;
@@ -39,7 +39,6 @@ class NetUtils {
       dio = new Dio(new BaseOptions(
         method: "put",
         connectTimeout: 20000,
-        receiveTimeout: 20000,
         headers: headers,
         contentType: "text/plain",
       ));

@@ -10,7 +10,7 @@ class NewImageListModel with ChangeNotifier{
     notifyListeners();
   }
 
-  void clear(){
+  void clearList(){
     _newImageList.clear();
     notifyListeners();
   }

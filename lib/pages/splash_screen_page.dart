@@ -11,6 +11,7 @@ import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/navigator_util.dart';
+import 'package:vnote/utils/utils.dart';
 
 class SplashScreenPage extends StatefulWidget {
   SplashScreenPage({Key key}) : super(key: key);
@@ -68,6 +69,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
   void goPage() async{
     // 初始化shared_preferences
     await Application.initSp();
+    Utils.setImageFolder();
     // 第一次安装完后, 这里提示错误
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     // 从本地存储中读取token

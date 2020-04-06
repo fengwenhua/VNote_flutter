@@ -1,14 +1,15 @@
-import 'package:fluro/fluro.dart';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
-import 'package:vnote/models/document_model.dart';
+import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/token_model.dart';
-import 'package:vnote/utils/utils.dart';
 import 'package:vnote/widgets/markdown_text_input.dart';
 
 class NoteEditPage extends StatefulWidget {
@@ -103,7 +104,6 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 print("没有修改内容, 直接跳");
                 Navigator.pop(context, content);
               } else {
-                await pr.show();
                 print("点击预览, 将编辑的内容返回去!");
 
                 // 这里应该有几个步骤
@@ -120,25 +120,140 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 String t_content = content;
 
                 // 获取到 newImageList
-                final _newImageList = Provider.of<NewImageListModel>(context, listen: false);
+                final _newImageList =
+                    Provider.of<NewImageListModel>(context, listen: false);
+                final _imageFolderId =
+                    Provider.of<ImageFolderIdModel>(context, listen: false);
                 // 本地增加的所有图片
                 List<String> newImagesList = _newImageList.newImageList;
-                // 调用接口上传, 上传成功后再替换
-                print("本文章中新增加的图片如下: ");
-                for(String i in newImagesList){
-                  print(i);
 
+                // 本地新增了图片才上传, 不然上传个鸡儿
+                if (newImagesList.length > 0) {
+                  String imageFolderId = _imageFolderId.imageFolderId;
+
+                  int repeatCount = 3; // 重复上传 3 次
+                  ProgressDialog uploadPR;
+                  uploadPR = new ProgressDialog(context,
+                      type: ProgressDialogType.Download, isDismissible: true);
+                  uploadPR.style(
+                      message: '开始上传...',
+                      borderRadius: 10.0,
+                      backgroundColor: Colors.white,
+                      progressWidget: CircularProgressIndicator(),
+                      elevation: 10.0,
+                      insetAnimCurve: Curves.easeInOut,
+                      progress: 0.0,
+                      maxProgress: 100.0,
+                      progressTextStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.w400),
+                      messageTextStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 19.0,
+                          fontWeight: FontWeight.w600));
+
+                  await uploadPR.show();
+                  print("需要处理的图片: " + newImagesList.length.toString());
+
+                  // 调用接口上传, 上传成功后再替换
+                  print("本文章中新增加的图片如下: ");
+                  for (int i = 0; i < newImagesList.length; i++) {
+                    print(newImagesList[i]);
+                    var fileData =
+                        await MultipartFile.fromFile(newImagesList[i]);
+
+                    print("文件名: " + fileData.filename);
+                    print("文件长度: " + fileData.length.toString());
+                    print("_v_images的 id: " + imageFolderId);
+
+                    FormData formData = FormData.fromMap({"file": fileData});
+
+                    await OneDriveDataDao.uploadFile(
+                            context,
+                            tokenModel.token.accessToken,
+                            imageFolderId,
+                            formData,
+                            fileData.filename)
+                        .then((value) {
+                      if (value == null) {
+                        print("没有数据, 应该上传失败了");
+
+                        if (repeatCount > 0) {
+                          Fluttertoast.showToast(
+                              msg: "上传失败了! 重试! 还剩 " +
+                                  repeatCount.toString() +
+                                  " 次",
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIos: 3,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                          print("重试还剩: " + repeatCount.toString() + " 次");
+                          i--; // 减少 1, 让它重新操作
+                          repeatCount--;
+                        } else {
+                          print("已经重试 3 次, 他妈的不管了");
+                          Fluttertoast.showToast(
+                              msg: "已经重试 3 次, 他妈的不管了!",
+                              toastLength: Toast.LENGTH_LONG,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIos: 3,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0);
+                          repeatCount = 3; // 重置
+
+                          print("处理完: " + fileData.filename);
+                        }
+                      } else {
+                        t_content = t_content.replaceAll(
+                            newImagesList[i], "_v_images/" + fileData.filename);
+
+                        print("处理完: " + fileData.filename);
+                        repeatCount = 3; // 重置
+                        // 更新进度条
+                        uploadPR.update(
+                          progress: double.parse(
+                              (100.0 / newImagesList.length * (i + 1))
+                                  .toStringAsFixed(1)),
+                          message: "uploading...",
+                          progressWidget: Container(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator()),
+                          maxProgress: 100.0,
+                          progressTextStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13.0,
+                              fontWeight: FontWeight.w400),
+                          messageTextStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 19.0,
+                              fontWeight: FontWeight.w600),
+                        );
+                      }
+                    });
+                  }
+
+                  // 上传完关闭进度框
+                  uploadPR.hide();
+                  // 记得要清空
+                  _newImageList.clearList();
                 }
-
-                t_content = t_content.replaceAll(image_path, "_v_images");
-                await OneDriveDataDao.updateContent(context,
-                        tokenModel.token.accessToken, widget.id, t_content)
-                    .then((_) {
-                  // 3. 应该在这里更新 _vnote.json 文件
-                }).then((_) {
-                  print("到此更新完了, 可以跳转了!");
-                  pr.hide().then((_) {
-                    Navigator.pop(context, content);
+                // 显示更新进度条
+                await pr.show().then((_) async {
+                  // 替换那些已经有的
+                  t_content = t_content.replaceAll(image_path, "_v_images");
+                  await OneDriveDataDao.updateContent(context,
+                          tokenModel.token.accessToken, widget.id, t_content)
+                      .then((_) {
+                    // 3. 应该在这里更新 _vnote.json 文件
+                  }).then((_) {
+                    print("到此更新完了, 可以跳转了!");
+                    pr.hide().then((_) {
+                      Navigator.pop(context, content);
+                    });
                   });
                 });
               }

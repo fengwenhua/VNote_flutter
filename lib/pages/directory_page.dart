@@ -6,6 +6,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
@@ -63,6 +64,10 @@ class _DirectoryPageState extends State<DirectoryPage>
     String id = "";
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
+        // 在这里拿到了 imageFolder 的 id, 即是 _v_images的 id
+        final _imageFolderId =Provider.of<ImageFolderIdModel>(context, listen: false);
+        _imageFolderId.updateImageFolderId(d.id);
+
         id = d.id;
         break;
       }

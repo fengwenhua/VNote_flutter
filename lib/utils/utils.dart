@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:meta/meta.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:vnote/application.dart';
 
 class Utils {
   static String getFormattedDateTime({@required DateTime dateTime}) {
@@ -37,4 +41,13 @@ class Utils {
     }
     return imageUrls;
   }
+
+  static Future<void> setImageFolder() async {
+    Directory appDocDir = await getApplicationDocumentsDirectory();
+    String appDocPath = appDocDir.path;
+    String appImagePath = appDocPath +'/image';
+    print("设置图片文件夹: " + appImagePath);
+    Application.sp.setString("appImagePath", appImagePath);
+  }
 }
+
