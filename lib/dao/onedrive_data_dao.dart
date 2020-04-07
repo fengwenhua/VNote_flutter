@@ -237,14 +237,8 @@ class OneDriveDataDao {
         context,
         URL,
             (data, status) {
-          print("请求返回来的内容如下:");
-          print(data);
-          print("###################################################\n\n");
-          if(status.toString().contains("204")){
-            print("状态码 204, 说明删除成功!");
-          }else{
-            print(status.toString());
-          }
+          print("这里拿到的 status 是 " + status.toString());
+          return status.toString();
         },
         headers: headers,
         errorCallBack: (errorMsg) {

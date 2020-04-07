@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'format_markdown.dart';
-import 'package:undo/undo.dart';
 
 
 /// Widget with markdown buttons

@@ -4,6 +4,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
@@ -148,6 +149,8 @@ class _DirectoryPageState extends State<DirectoryPage>
           pr.hide().whenComplete(() {
             jumpToPosition(true);
           });
+          final _parentId = Provider.of<ParentIdModel>(context, listen: false);
+          _parentId.goBackParentId();
         }
       });
     } else {
@@ -183,6 +186,8 @@ class _DirectoryPageState extends State<DirectoryPage>
           pr.hide().whenComplete(() {
             jumpToPosition(true);
           });
+          final _parentId = Provider.of<ParentIdModel>(context, listen: false);
+          _parentId.goBackParentId();
         }
       });
     }
@@ -351,21 +356,30 @@ class _DirectoryPageState extends State<DirectoryPage>
                 });
 
             // 这里写删除逻辑
-
+            if (isDismiss) {
+              TokenModel tokenModel =
+                  Provider.of<TokenModel>(context, listen: false);
+              DataListModel dataListModel =
+                  Provider.of<DataListModel>(context, listen: false);
+              // 网络请求删除在线的文件夹
+              await OneDriveDataDao.deleteFile(
+                  context, tokenModel.token.accessToken, document.id);
+              // 删除本地缓存的文件夹
+              dataListModel.dataList.remove(document);
+            }
 
             return isDismiss;
           },
           background: Container(
-            color: Colors.red,
-            child: Center(
-              child: ListTile(
-                trailing: Icon(
-                  Icons.delete,
-                  color: Colors.white,
+              color: Colors.red,
+              child: Center(
+                child: ListTile(
+                  trailing: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-            )
-          ),
+              )),
         );
       } else {
         // 文件
@@ -407,20 +421,29 @@ class _DirectoryPageState extends State<DirectoryPage>
                 });
 
             // 这里写删除逻辑
-
+            if (isDismiss) {
+              TokenModel tokenModel =
+                  Provider.of<TokenModel>(context, listen: false);
+              DataListModel dataListModel =
+                  Provider.of<DataListModel>(context, listen: false);
+              // 网络请求删除在线的文件夹
+              await OneDriveDataDao.deleteFile(
+                  context, tokenModel.token.accessToken, document.id);
+              // 删除本地缓存的文件夹
+              dataListModel.dataList.remove(document);
+            }
             return isDismiss;
           },
           background: Container(
-            color: Colors.red,
-            child: Center(
-              child: ListTile(
-                trailing: Icon(
-                  Icons.delete,
-                  color: Colors.white,
+              color: Colors.red,
+              child: Center(
+                child: ListTile(
+                  trailing: Icon(
+                    Icons.delete,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
-            )
-          ),
+              )),
         );
       }
     }).toList();
