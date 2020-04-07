@@ -232,7 +232,7 @@ class OneDriveDataDao {
     Map<String, dynamic> headers = {"Authorization": token};
     String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
     URL += id;
-    return NetUtils.instance.put(
+    return NetUtils.instance.delete(
         context,
         URL,
             (data, status) {
