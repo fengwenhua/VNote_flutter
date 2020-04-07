@@ -357,12 +357,14 @@ class _DirectoryPageState extends State<DirectoryPage>
           },
           background: Container(
             color: Colors.red,
-            child: ListTile(
-              trailing: Icon(
-                Icons.delete,
-                color: Colors.white,
+            child: Center(
+              child: ListTile(
+                trailing: Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ),
               ),
-            ),
+            )
           ),
         );
       } else {
@@ -410,12 +412,14 @@ class _DirectoryPageState extends State<DirectoryPage>
           },
           background: Container(
             color: Colors.red,
-            child: ListTile(
-              trailing: Icon(
-                Icons.delete,
-                color: Colors.white,
+            child: Center(
+              child: ListTile(
+                trailing: Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ),
               ),
-            ),
+            )
           ),
         );
       }
@@ -457,11 +461,11 @@ class _DirectoryPageState extends State<DirectoryPage>
   Widget _createDialog(
       String _confirmContent, Function sureFunction, Function cancelFunction) {
     return AlertDialog(
-      title: Text('Confirm'),
+      title: Text('警告!'),
       content: Text(_confirmContent),
       actions: <Widget>[
-        FlatButton(onPressed: sureFunction, child: Text('sure')),
-        FlatButton(onPressed: cancelFunction, child: Text('cancel')),
+        FlatButton(onPressed: sureFunction, child: Text('确认')),
+        FlatButton(onPressed: cancelFunction, child: Text('取消')),
       ],
     );
   }
