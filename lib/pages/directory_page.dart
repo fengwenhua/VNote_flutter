@@ -322,6 +322,9 @@ class _DirectoryPageState extends State<DirectoryPage>
     return childDocuments.map((document) {
       //print("要处理的是: " + document.name);
       final SlidableController slidableController = SlidableController();
+      TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
+      DataListModel dataListModel =
+          Provider.of<DataListModel>(context, listen: false);
       if (!document.isFile) {
         // 目录
         return Slidable(
@@ -353,7 +356,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                     builder: (context) {
                       return AlertDialog(
                         title: Text('提示？'),
-                        content: Text('确定删除该条记录？'),
+                        content: Text('确定删除该文件夹？'),
                         actions: <Widget>[
                           FlatButton(
                             child: Text('取消'),
@@ -362,13 +365,6 @@ class _DirectoryPageState extends State<DirectoryPage>
                           FlatButton(
                             child: Text('确定'),
                             onPressed: () async {
-                              TokenModel tokenModel = Provider.of<TokenModel>(
-                                  context,
-                                  listen: false);
-                              DataListModel dataListModel =
-                                  Provider.of<DataListModel>(context,
-                                      listen: false);
-
                               Navigator.of(context).pop(true);
                               await pr.show().then((_) async {
                                 print("点击了删除");
@@ -396,7 +392,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                   builder: (context) {
                     return AlertDialog(
                       title: Text('提示？'),
-                      content: Text('确定删除该条记录？'),
+                      content: Text('确定删除该文件夹？'),
                       actions: <Widget>[
                         FlatButton(
                           child: Text('取消'),
@@ -405,12 +401,6 @@ class _DirectoryPageState extends State<DirectoryPage>
                         FlatButton(
                           child: Text('确定'),
                           onPressed: () async {
-                            TokenModel tokenModel =
-                                Provider.of<TokenModel>(context, listen: false);
-                            DataListModel dataListModel =
-                                Provider.of<DataListModel>(context,
-                                    listen: false);
-
                             Navigator.of(context).pop(true);
                             await pr.show().then((_) async {
                               print("点击了删除");
@@ -464,7 +454,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                     builder: (context) {
                       return AlertDialog(
                         title: Text('提示？'),
-                        content: Text('确定删除该条记录？'),
+                        content: Text('确定删除该文件？'),
                         actions: <Widget>[
                           FlatButton(
                             child: Text('取消'),
@@ -473,13 +463,6 @@ class _DirectoryPageState extends State<DirectoryPage>
                           FlatButton(
                             child: Text('确定'),
                             onPressed: () async {
-                              TokenModel tokenModel = Provider.of<TokenModel>(
-                                  context,
-                                  listen: false);
-                              DataListModel dataListModel =
-                              Provider.of<DataListModel>(context,
-                                  listen: false);
-
                               Navigator.of(context).pop(true);
                               await pr.show().then((_) async {
                                 print("点击了删除");
@@ -516,12 +499,6 @@ class _DirectoryPageState extends State<DirectoryPage>
                         FlatButton(
                           child: Text('确定'),
                           onPressed: () async {
-                            TokenModel tokenModel =
-                                Provider.of<TokenModel>(context, listen: false);
-                            DataListModel dataListModel =
-                                Provider.of<DataListModel>(context,
-                                    listen: false);
-
                             Navigator.of(context).pop(true);
                             await pr.show().then((_) async {
                               print("点击了删除");
