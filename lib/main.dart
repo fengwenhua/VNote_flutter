@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +8,7 @@ import 'package:vnote/pages/splash_screen_page.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/new_images_model.dart';
+import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/preview_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/application.dart';
@@ -39,6 +42,9 @@ void main() {
       ),
       ChangeNotifierProvider<ImageFolderIdModel>(
         create: (context)=> ImageFolderIdModel(),
+      ),
+      ChangeNotifierProvider<ParentIdModel>(
+        create: (context)=>ParentIdModel(),
       )
     ],
     child: MyApp(),
