@@ -79,7 +79,7 @@ class _WebViewState extends State<WebView> {
         print(i.name);
       });
       DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
-      dataListModel.updateValue(list);
+      dataListModel.goAheadDataList(list);
     });
   }
 

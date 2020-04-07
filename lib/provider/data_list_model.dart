@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:vnote/models/document_model.dart';
+import 'package:vnote/utils/my_stack.dart';
 
 class DataListModel with ChangeNotifier{
-  List<Document> _list = new List<Document>();
-  List<Document> get dataList => _list;
+  MyStack<List<Document>> _dataList = MyStack<List<Document>>();
+  List<Document> get dataList => _dataList.top();
 
-  void updateValue(List<Document> p){
-
-    _list = p;
-    // 这里可能会不生效
+  void goAheadDataList(List<Document> newDataList){
+    _dataList.push(newDataList);
     notifyListeners();
   }
+
+  void goBackDataList(){
+    _dataList.pop();
+    notifyListeners();
+  }
+
 }

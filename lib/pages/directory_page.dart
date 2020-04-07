@@ -66,7 +66,8 @@ class _DirectoryPageState extends State<DirectoryPage>
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
         // 在这里拿到了 imageFolder 的 id, 即是 _v_images的 id
-        final _imageFolderId =Provider.of<ImageFolderIdModel>(context, listen: false);
+        final _imageFolderId =
+            Provider.of<ImageFolderIdModel>(context, listen: false);
         _imageFolderId.updateImageFolderId(d.id);
 
         break;
@@ -93,7 +94,7 @@ class _DirectoryPageState extends State<DirectoryPage>
         print(data);
         if (data == null) {
           print("超时, 没有获得数据");
-          if(prt.isShowing()){
+          if (prt.isShowing()) {
             prt.hide();
           }
           Fluttertoast.showToast(
@@ -126,18 +127,13 @@ class _DirectoryPageState extends State<DirectoryPage>
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     // 网络请求
     await getChildData(tokenModel.token.accessToken, document.id).then((data) {
-      document.childData = data;
-      // 这里应该遍历里面的元素, 让他们的爸爸变成 document
-      data.forEach((i) {
-        i.parent = document;
-      });
       // 显示
-      if (document.childData.length > 0) {
+      if (data.length > 0) {
         position.add(controller.offset);
 
         DataListModel dataListModel =
             Provider.of<DataListModel>(context, listen: false);
-        dataListModel.updateValue(document.childData);
+        dataListModel.goAheadDataList(data);
         //initPathFiles(document.childData);
         pr.hide().whenComplete(() {
           jumpToPosition(true);
@@ -161,68 +157,63 @@ class _DirectoryPageState extends State<DirectoryPage>
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
 
+    ParentIdModel parentIdModel =
+        Provider.of<ParentIdModel>(context, listen: false);
+
     return WillPopScope(
-        onWillPop: onWillPop,
-        child: Consumer<DataListModel>(
-          builder: (context, DataListModel model, _) => Scaffold(
-            appBar: AppBar(
-                title: model.dataList.length > 0 &&
-                        model.dataList[0]?.parent == null
-                    ? Text('目录', style: TextStyle(fontSize: fontSize40))
-                    : Text(model.dataList[0].parent.name,
-                        style: TextStyle(fontSize: fontSize40)),
-                leading: model.dataList[0]?.parent == null
-                    ? IconButton(
-                        icon: Icon(
-                          Icons.dehaze,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          // 打开Drawer抽屉菜单
-                          print("点击了侧滑按钮");
-                          Scaffold.of(context).openDrawer();
-                        },
-                      )
-                    : IconButton(
-                        icon: Icon(
-                          Icons.arrow_back,
-                          color: Colors.white,
-                        ),
-                        onPressed: onWillPop,
-                      )),
-            body: model.dataList.length == 0
-                ? Center(
-                    child: Text("The folder is empty"),
-                  )
-                : Scrollbar(
-                    child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      controller: controller,
-                      itemCount: model.dataList.length,
-                      itemBuilder: (context, index) {
-                        return getListWidget(model.dataList).elementAt(index);
-                      },
+      onWillPop: onWillPop,
+      child: Scaffold(
+        appBar: AppBar(
+            title: Text(parentIdModel.parentName,
+                style: TextStyle(fontSize: fontSize40)),
+            leading: parentIdModel.parentId == "approot"
+                ? IconButton(
+                    icon: Icon(
+                      Icons.dehaze,
+                      color: Colors.white,
                     ),
-                  ),
-          ),
-        ));
+                    onPressed: () {
+                      // 打开Drawer抽屉菜单
+                      print("点击了侧滑按钮");
+                      Scaffold.of(context).openDrawer();
+                    },
+                  )
+                : IconButton(
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                    onPressed: onWillPop,
+                  )),
+        body: dataListModel.dataList.length == 0
+            ? Center(
+                child: Text("该目录为空"),
+              )
+            : Scrollbar(
+                child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  controller: controller,
+                  itemCount: dataListModel.dataList.length,
+                  itemBuilder: (context, index) {
+                    return getListWidget(dataListModel.dataList)
+                        .elementAt(index);
+                  },
+                ),
+              ),
+      ),
+    );
   }
 
   Future<bool> onWillPop() async {
     // 退回, 所以要弹栈, 更新 ParentID
-    final _parentId =Provider.of<ParentIdModel>(context, listen: false);
-
+    final _parentId = Provider.of<ParentIdModel>(context, listen: false);
 
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
-    if (dataListModel.dataList[0].parent != null) {
-      //initPathFiles(dataListModel.dataList[0].parent.parent?.childData ?? rootDocuments);
-
+    if (_parentId.parentId != "approot") {
+      print("不在根目录");
       _parentId.goBackParentId();
-
-      dataListModel.updateValue(
-          dataListModel.dataList[0]?.parent?.parent?.childData ??
-              rootDocuments);
+      dataListModel.goBackDataList();
       jumpToPosition(false);
     } else {
       print("在根目录了, 所有没有返回的操作了, 也不需要给 parentid 弹栈了");
@@ -283,15 +274,14 @@ class _DirectoryPageState extends State<DirectoryPage>
         // 这里可以先查看本地缓存
 
         // 记得将这个 id 记录下来, 以后刷新用
-        final _parentId =Provider.of<ParentIdModel>(context, listen: false);
-        _parentId.goAheadParentId(document.id);
+        final _parentId = Provider.of<ParentIdModel>(context, listen: false);
+        _parentId.goAheadParentId(document.id, document.name);
 
         // 转圈圈和网络请求
         //_myClick(document);
-        await pr.show().then((_){
+        await pr.show().then((_) {
           _postData(document);
         });
-
       });
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
@@ -300,7 +290,7 @@ class _DirectoryPageState extends State<DirectoryPage>
         onPressedNext: () async {
           print("点击了 ${document.name} 文件");
           // 转圈圈和下载 md 文件
-          await pr.show().then((_){
+          await pr.show().then((_) {
             _getMDFile(document, pr);
           });
           //_clickDocument(document);

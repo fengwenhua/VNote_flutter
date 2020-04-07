@@ -63,7 +63,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
         print(i.name);
       });
       DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
-      dataListModel.updateValue(list);
+      dataListModel.goAheadDataList(list);
     });
   }
 
@@ -86,7 +86,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
             // 初始化, 爸爸是谁, 这里用 approot标记
             // 以后每点进去或者返回来, 都要刷新这个值
             final _parentId =Provider.of<ParentIdModel>(context, listen: false);
-            _parentId.goAheadParentId("approot");
+            _parentId.goAheadParentId("approot", "目录");
 
             print("跳转到主页");
             NavigatorUtil.goHomePage(context);
