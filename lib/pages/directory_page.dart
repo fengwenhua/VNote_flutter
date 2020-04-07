@@ -130,7 +130,6 @@ class _DirectoryPageState extends State<DirectoryPage>
       await DocumentListUtil.instance
           .getNotebookList(context, tokenModel.token.accessToken, (data) async {
         if (data.length > 0) {
-
           DataListModel dataListModel =
               Provider.of<DataListModel>(context, listen: false);
           dataListModel.updateCurrentDir(data);
@@ -313,15 +312,111 @@ class _DirectoryPageState extends State<DirectoryPage>
 
     return newDocument.map((document) {
       if (!document.isFile) {
-        return Container(
-          margin: const EdgeInsets.only(left: 4.0),
-          child: _getDirectoryWidget(document: document),
+        // 目录
+        return Dismissible(
+          key: Key(document.id),
+          child: Container(
+            margin: const EdgeInsets.only(left: 4.0),
+            child: _getDirectoryWidget(document: document),
+          ),
+          direction: DismissDirection.endToStart, // 滑动方向从右到左
+          onDismissed: (direction) {
+            // 展示 SnackBar
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text('删除了${document.name}'),
+              duration: Duration(milliseconds: 400),
+            ));
+          },
+          confirmDismiss: (direction) async {
+            var _confirmContent = "确认删除${document.name}?";
+            var _alertDialog = _createDialog(_confirmContent, () {
+              // 展示 SnackBar
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text('确认删除${document.name}'),
+                duration: Duration(milliseconds: 400),
+              ));
+              Navigator.of(context).pop(true);
+            }, () {
+              // 展示 SnackBar
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text('不删除${document.name}'),
+                duration: Duration(milliseconds: 400),
+              ));
+              Navigator.of(context).pop(false);
+            });
+            var isDismiss = await showDialog(
+                context: context,
+                builder: (context) {
+                  return _alertDialog;
+                });
+
+            // 这里写删除逻辑
+
+
+            return isDismiss;
+          },
+          background: Container(
+            color: Colors.red,
+            child: ListTile(
+              trailing: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+            ),
+          ),
         );
       } else {
         // 文件
-        return Container(
-          margin: const EdgeInsets.only(left: 4.0),
-          child: _getFileWidget(document: document),
+        return Dismissible(
+          key: Key(document.id),
+          child: Container(
+            margin: const EdgeInsets.only(left: 4.0),
+            child: _getFileWidget(document: document),
+          ),
+          direction: DismissDirection.endToStart,
+          onDismissed: (direction) {
+            // 展示 SnackBar
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text('删除了${document.name}'),
+              duration: Duration(milliseconds: 400),
+            ));
+          },
+          confirmDismiss: (direction) async {
+            var _confirmContent = "确认删除${document.name}?";
+            var _alertDialog = _createDialog(_confirmContent, () {
+              // 展示 SnackBar
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text('确认删除${document.name}'),
+                duration: Duration(milliseconds: 400),
+              ));
+              Navigator.of(context).pop(true);
+            }, () {
+              // 展示 SnackBar
+              Scaffold.of(context).showSnackBar(SnackBar(
+                content: Text('不删除${document.name}'),
+                duration: Duration(milliseconds: 400),
+              ));
+              Navigator.of(context).pop(false);
+            });
+            var isDismiss = await showDialog(
+                context: context,
+                builder: (context) {
+                  return _alertDialog;
+                });
+
+            // 这里写删除逻辑
+
+            return isDismiss;
+          },
+          background: Container(
+            color: Colors.red,
+            child: ListTile(
+              trailing: Icon(
+                Icons.delete,
+                color: Colors.white,
+              ),
+            ),
+          ),
         );
       }
     }).toList();
@@ -358,6 +453,18 @@ class _DirectoryPageState extends State<DirectoryPage>
           //_clickDocument(document);
         },
       );
+
+  Widget _createDialog(
+      String _confirmContent, Function sureFunction, Function cancelFunction) {
+    return AlertDialog(
+      title: Text('Confirm'),
+      content: Text(_confirmContent),
+      actions: <Widget>[
+        FlatButton(onPressed: sureFunction, child: Text('sure')),
+        FlatButton(onPressed: cancelFunction, child: Text('cancel')),
+      ],
+    );
+  }
 
   @override
   // TODO: implement wantKeepAlive
