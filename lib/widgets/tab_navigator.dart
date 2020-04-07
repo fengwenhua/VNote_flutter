@@ -42,6 +42,28 @@ class _TabNavigatorState extends State<TabNavigator> {
    ScreenUtil.init(context, width: 750, height: 1334);
 
     return Scaffold(
+        floatingActionButton: Container(
+          height: 60,
+          width: 60,
+          padding: EdgeInsets.all(4),
+          margin: EdgeInsets.only(top: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40),
+            color: Colors.white,
+          ),
+          child: FloatingActionButton(
+              child: Icon(Icons.add,color: Colors.black,size: 40,),
+              onPressed: (){
+                print('FloatingActionButton');
+                _controller.jumpToPage(2); // 调用controller切换页面
+                setState(() {
+                  _currentIndex = 2; // 更新页面
+                });
+              },
+              backgroundColor: this._currentIndex==2?Colors.red:Colors.yellow,
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         drawer: Drawer(
           child: MediaQuery.removePadding(
               context: context,
