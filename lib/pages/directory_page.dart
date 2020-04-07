@@ -342,7 +342,8 @@ class _DirectoryPageState extends State<DirectoryPage>
               showDialog<bool>(
                   context: context,
                   builder: (context) {
-                    return _deleteDialog(context, document, tokenModel, dataListModel);
+                    return _deleteDialog(
+                        context, document, tokenModel, dataListModel);
                   });
             },
           ),
@@ -353,7 +354,8 @@ class _DirectoryPageState extends State<DirectoryPage>
             return showDialog<bool>(
                 context: context,
                 builder: (context) {
-                  return _deleteDialog(context, document, tokenModel, dataListModel);
+                  return _deleteDialog(
+                      context, document, tokenModel, dataListModel);
                 });
           },
           onDismissed: (actionType) {
@@ -408,7 +410,8 @@ class _DirectoryPageState extends State<DirectoryPage>
     );
   }
 
-  Widget _deleteDialog(BuildContext context, Document document, TokenModel tokenModel, DataListModel dataListModel){
+  Widget _deleteDialog(BuildContext context, Document document,
+      TokenModel tokenModel, DataListModel dataListModel) {
     return AlertDialog(
       title: Text('提示？'),
       content: Text('确定删除该项？'),
@@ -425,8 +428,8 @@ class _DirectoryPageState extends State<DirectoryPage>
               print("点击了删除");
 
               // 网络请求删除在线的文件夹
-              await OneDriveDataDao.deleteFile(context,
-                  tokenModel.token.accessToken, document.id);
+              await OneDriveDataDao.deleteFile(
+                  context, tokenModel.token.accessToken, document.id);
               // 删除本地缓存的文件夹
               dataListModel.removeEle(document);
             });
