@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
@@ -320,134 +321,228 @@ class _DirectoryPageState extends State<DirectoryPage>
 
     return childDocuments.map((document) {
       //print("要处理的是: " + document.name);
+      final SlidableController slidableController = SlidableController();
       if (!document.isFile) {
         // 目录
-        return Dismissible(
+        return Slidable(
           key: Key(document.id),
+          actionPane: SlidableDrawerActionPane(),
+          controller: slidableController,
+          actionExtentRatio: 0.25,
           child: Container(
             margin: const EdgeInsets.only(left: 4.0),
             child: _getDirectoryWidget(document: document),
           ),
-          direction: DismissDirection.endToStart, // 滑动方向从右到左
-          onDismissed: (direction) {
-            // 展示 SnackBar
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text('删除了${document.name}'),
-              duration: Duration(milliseconds: 400),
-            ));
-          },
-          confirmDismiss: (direction) async {
-            var _confirmContent = "确认删除${document.name}?";
-            var _alertDialog = _createDialog(_confirmContent, () {
-              // 展示 SnackBar
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text('确认删除${document.name}'),
-                duration: Duration(milliseconds: 400),
-              ));
-              Navigator.of(context).pop(true);
-            }, () {
-              // 展示 SnackBar
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text('不删除${document.name}'),
-                duration: Duration(milliseconds: 400),
-              ));
-              Navigator.of(context).pop(false);
-            });
-            var isDismiss = await showDialog(
-                context: context,
-                builder: (context) {
-                  return _alertDialog;
-                });
-
-            // 这里写删除逻辑
-            if (isDismiss) {
-              TokenModel tokenModel =
-                  Provider.of<TokenModel>(context, listen: false);
-              DataListModel dataListModel =
-                  Provider.of<DataListModel>(context, listen: false);
-              // 网络请求删除在线的文件夹
-              await OneDriveDataDao.deleteFile(
-                  context, tokenModel.token.accessToken, document.id);
-              // 删除本地缓存的文件夹
-              dataListModel.removeEle(document);
-            }
-
-            return isDismiss;
-          },
-          background: Container(
+          secondaryActions: <Widget>[
+            IconSlideAction(
+              caption: '重命名',
+              color: Colors.black45,
+              icon: Icons.create,
+              onTap: () {
+                print("点击了重命名");
+              },
+            ),
+            IconSlideAction(
+              caption: '删除',
               color: Colors.red,
-              child: Center(
-                child: ListTile(
-                  trailing: Icon(
-                    Icons.delete,
-                    color: Colors.white,
-                  ),
-                ),
-              )),
+              icon: Icons.delete,
+              closeOnTap: true,
+              onTap: () async {
+                showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('提示？'),
+                        content: Text('确定删除该条记录？'),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('取消'),
+                            onPressed: () => Navigator.of(context).pop(false),
+                          ),
+                          FlatButton(
+                            child: Text('确定'),
+                            onPressed: () async {
+                              TokenModel tokenModel = Provider.of<TokenModel>(
+                                  context,
+                                  listen: false);
+                              DataListModel dataListModel =
+                                  Provider.of<DataListModel>(context,
+                                      listen: false);
+
+                              Navigator.of(context).pop(true);
+                              await pr.show().then((_) async {
+                                print("点击了删除");
+
+                                // 网络请求删除在线的文件夹
+                                await OneDriveDataDao.deleteFile(context,
+                                    tokenModel.token.accessToken, document.id);
+                                // 删除本地缓存的文件夹
+                                dataListModel.removeEle(document);
+                              });
+                              await pr.hide();
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              },
+            ),
+          ],
+          dismissal: SlidableDismissal(
+            child: SlidableDrawerDismissal(),
+            onWillDismiss: (actionType) {
+              return showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('提示？'),
+                      content: Text('确定删除该条记录？'),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text('取消'),
+                          onPressed: () => Navigator.of(context).pop(false),
+                        ),
+                        FlatButton(
+                          child: Text('确定'),
+                          onPressed: () async {
+                            TokenModel tokenModel =
+                                Provider.of<TokenModel>(context, listen: false);
+                            DataListModel dataListModel =
+                                Provider.of<DataListModel>(context,
+                                    listen: false);
+
+                            Navigator.of(context).pop(true);
+                            await pr.show().then((_) async {
+                              print("点击了删除");
+
+                              // 网络请求删除在线的文件夹
+                              await OneDriveDataDao.deleteFile(context,
+                                  tokenModel.token.accessToken, document.id);
+                              // 删除本地缓存的文件夹
+                              dataListModel.removeEle(document);
+                            });
+                            await pr.hide();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            },
+            onDismissed: (actionType) {
+              print("actionType: " + actionType.toString());
+            },
+          ),
         );
       } else {
         // 文件
-        return Dismissible(
+        return Slidable(
           key: Key(document.id),
+          actionPane: SlidableDrawerActionPane(),
+          controller: slidableController,
+          actionExtentRatio: 0.25,
           child: Container(
             margin: const EdgeInsets.only(left: 4.0),
             child: _getFileWidget(document: document),
           ),
-          direction: DismissDirection.endToStart,
-          onDismissed: (direction) {
-            // 展示 SnackBar
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text('删除了${document.name}'),
-              duration: Duration(milliseconds: 400),
-            ));
-          },
-          confirmDismiss: (direction) async {
-            var _confirmContent = "确认删除${document.name}?";
-            var _alertDialog = _createDialog(_confirmContent, () {
-              // 展示 SnackBar
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text('确认删除${document.name}'),
-                duration: Duration(milliseconds: 400),
-              ));
-              Navigator.of(context).pop(true);
-            }, () {
-              // 展示 SnackBar
-              Scaffold.of(context).showSnackBar(SnackBar(
-                content: Text('不删除${document.name}'),
-                duration: Duration(milliseconds: 400),
-              ));
-              Navigator.of(context).pop(false);
-            });
-            var isDismiss = await showDialog(
-                context: context,
-                builder: (context) {
-                  return _alertDialog;
-                });
-
-            // 这里写删除逻辑
-            if (isDismiss) {
-              TokenModel tokenModel =
-                  Provider.of<TokenModel>(context, listen: false);
-              DataListModel dataListModel =
-                  Provider.of<DataListModel>(context, listen: false);
-              // 网络请求删除在线的文件夹
-              await OneDriveDataDao.deleteFile(
-                  context, tokenModel.token.accessToken, document.id);
-              // 删除本地缓存的文件夹
-              dataListModel.removeEle(document);
-            }
-            return isDismiss;
-          },
-          background: Container(
+          secondaryActions: <Widget>[
+            IconSlideAction(
+              caption: '重命名',
+              color: Colors.black45,
+              icon: Icons.create,
+              onTap: () {
+                print("点击了重命名");
+              },
+            ),
+            IconSlideAction(
+              caption: '删除',
               color: Colors.red,
-              child: Center(
-                child: ListTile(
-                  trailing: Icon(
-                    Icons.delete,
-                    color: Colors.white,
-                  ),
-                ),
-              )),
+              icon: Icons.delete,
+              closeOnTap: true,
+              onTap: () async {
+                showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text('提示？'),
+                        content: Text('确定删除该条记录？'),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text('取消'),
+                            onPressed: () => Navigator.of(context).pop(false),
+                          ),
+                          FlatButton(
+                            child: Text('确定'),
+                            onPressed: () async {
+                              TokenModel tokenModel = Provider.of<TokenModel>(
+                                  context,
+                                  listen: false);
+                              DataListModel dataListModel =
+                              Provider.of<DataListModel>(context,
+                                  listen: false);
+
+                              Navigator.of(context).pop(true);
+                              await pr.show().then((_) async {
+                                print("点击了删除");
+
+                                // 网络请求删除在线的文件夹
+                                await OneDriveDataDao.deleteFile(context,
+                                    tokenModel.token.accessToken, document.id);
+                                // 删除本地缓存的文件夹
+                                dataListModel.removeEle(document);
+                              });
+                              await pr.hide();
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              },
+            ),
+          ],
+          dismissal: SlidableDismissal(
+            child: SlidableDrawerDismissal(),
+            onWillDismiss: (actionType) {
+              return showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('提示？'),
+                      content: Text('确定删除该文件？'),
+                      actions: <Widget>[
+                        FlatButton(
+                          child: Text('取消'),
+                          onPressed: () => Navigator.of(context).pop(false),
+                        ),
+                        FlatButton(
+                          child: Text('确定'),
+                          onPressed: () async {
+                            TokenModel tokenModel =
+                                Provider.of<TokenModel>(context, listen: false);
+                            DataListModel dataListModel =
+                                Provider.of<DataListModel>(context,
+                                    listen: false);
+
+                            Navigator.of(context).pop(true);
+                            await pr.show().then((_) async {
+                              print("点击了删除");
+
+                              // 网络请求删除在线的文件夹
+                              await OneDriveDataDao.deleteFile(context,
+                                  tokenModel.token.accessToken, document.id);
+                              // 删除本地缓存的文件夹
+                              dataListModel.removeEle(document);
+                            });
+                            await pr.hide();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            },
+            onDismissed: (actionType) {
+              print("actionType: " + actionType.toString());
+            },
+          ),
         );
       }
     }).toList();

@@ -40,6 +40,7 @@ dependencies:
   flutter_markdown: ^0.3.4
   progress_dialog: ^1.2.1
   image_picker: ^0.6.4
+  flutter_slidable: ^0.5.4
 
 dev_dependencies:
   flutter_test:
