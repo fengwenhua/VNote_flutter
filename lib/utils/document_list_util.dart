@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,6 +13,7 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
+import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/preview_model.dart';
 import 'package:vnote/utils/utils.dart';
@@ -55,6 +57,14 @@ class DocumentListUtil {
             textColor: Colors.white,
             fontSize: 16.0
         );
+
+        Future.delayed(Duration(seconds: 3), () async {
+          Navigator.of(context).pop();
+          print('延时3s执行, 退出 app');
+          await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        });
+
+
       }
     }
 
@@ -89,11 +99,15 @@ class DocumentListUtil {
 
   /// 根据 imageFolderId 与 imageUrls 对比获得所有图片
   Future<List<Document>> getImagesList(BuildContext context, String token,
-      String id, List<String> imageUrls, Function callBack) async {
+       List<String> imageUrls, Function callBack) async {
     print("根据 imageFolderId 与 imageUrls 对比获得所有图片");
     List<Document> result = new List<Document>();
     print("要找的图片大小: "+imageUrls.length.toString());
-    return await _getImagesFromNetwork(context, token, id)
+
+    final _imageFolderId =Provider.of<ImageFolderIdModel>(context, listen: false);
+    String imageFolderId = _imageFolderId.imageFolderId;
+
+    return await _getImagesFromNetwork(context, token, imageFolderId)
         .then((oneDriveDataModel) {
       if (oneDriveDataModel == null) {
         print("我擦, oneDriveDataModel没有东西!!! 那下个鸡儿的图片!!!");
@@ -295,6 +309,7 @@ class DocumentListUtil {
     return result;
   }
 
+  /// 废除这种递归的方法
   void go(Item item, List<Document> result, Document parent) {
     if (item.path.isEmpty) {
       return;
@@ -434,7 +449,7 @@ class DocumentListUtil {
 
   // 根据 id 从网路下载 md 文件, 返回其内容
   Future<String> getMDFileContentFromNetwork(BuildContext context, String token,
-      String id, String imageFolderId, ProgressDialog prt) async {
+      String id, ProgressDialog prt) async {
     String content;
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
@@ -443,7 +458,7 @@ class DocumentListUtil {
     final previewContent = Provider.of<PreviewModel>(context, listen: false);
 
     return await OneDriveDataDao.getMDFileContent(
-            context, token, id, imageFolderId)
+            context, token, id)
         .then((value) {
       print("看看, 数据张啥样?");
       //print(value);
@@ -472,7 +487,7 @@ class DocumentListUtil {
         return null;
       } else {
         return await getImagesList(
-            context, token, imageFolderId, imageUrls, (data) {});
+            context, token, imageUrls, (data) {});
       }
     }).then((imagesList) async {
       if (imagesList == null) {

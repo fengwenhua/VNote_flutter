@@ -36,7 +36,8 @@ class OneDriveDataDao {
         });
   }
 
-  // 获取第一层的文件夹作为笔记本
+  /// 获取第一层的文件夹作为笔记本
+  /// 列出应用文件夹子项：GET /drive/special/approot/children
   static Future<Response> getNoteBookData(
       BuildContext context, String p_token) {
     Map<String, dynamic> headers = {"Authorization": p_token};
@@ -85,7 +86,7 @@ class OneDriveDataDao {
 
   // 根据 id 获取 md 文件内容
   static Future<Response> getMDFileContent(
-      BuildContext context, String token, String id, String imageId) {
+      BuildContext context, String token, String id) {
     Map<String, dynamic> headers = {"Authorization": token};
     String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
     URL += id;

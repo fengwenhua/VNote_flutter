@@ -56,7 +56,7 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
 
         await DocumentListUtil.instance
             .getMDFileContentFromNetwork(
-                context, tokenModel.token.accessToken, id, d.id, pr1)
+                context, tokenModel.token.accessToken, id, pr1)
             .then((value) {
           if (value == null) {
             print("gg, 拿不到更新的数据");

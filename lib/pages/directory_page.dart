@@ -51,9 +51,9 @@ class _DirectoryPageState extends State<DirectoryPage>
 
   /// 根据 id 下载 md 文件内容
   Future<String> getMDFileContent(
-      String accessToken, String id, String imageId, ProgressDialog prt) async {
+      String accessToken, String id, ProgressDialog prt) async {
     return await DocumentListUtil.instance
-        .getMDFileContentFromNetwork(context, accessToken, id, imageId, prt);
+        .getMDFileContentFromNetwork(context, accessToken, id, prt);
   }
 
   _getMDFile(Document document, ProgressDialog prt) async {
@@ -61,14 +61,13 @@ class _DirectoryPageState extends State<DirectoryPage>
     // 这里
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
-    String id = "";
+
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
         // 在这里拿到了 imageFolder 的 id, 即是 _v_images的 id
         final _imageFolderId =Provider.of<ImageFolderIdModel>(context, listen: false);
         _imageFolderId.updateImageFolderId(d.id);
 
-        id = d.id;
         break;
       }
     }
@@ -87,7 +86,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     } else {
       // 本地没有, 从网络下载
       print("从网络下载文章");
-      await getMDFileContent(tokenModel.token.accessToken, document.id, id, prt)
+      await getMDFileContent(tokenModel.token.accessToken, document.id, prt)
           .then((data) {
         print("看看这玩意张啥样:");
         print(data);
@@ -121,18 +120,8 @@ class _DirectoryPageState extends State<DirectoryPage>
   _postData(Document document) async {
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
-//    print("#################################");
-//    print("要处理的是: " + document.name);
-//    for (Document p in dataListModel.dataList) {
-//      if (p.id == document.id) {
-//        print("找到了! 看看有没有儿子");
-//        if (p.childData != null) {
-//          print(p.childData[0].name);
-//        }
-//        break;
-//      }
-//    }
-//    print("#################################");
+
+    // 获取当前 token
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     // 网络请求
     await getChildData(tokenModel.token.accessToken, document.id).then((data) {
@@ -281,6 +270,10 @@ class _DirectoryPageState extends State<DirectoryPage>
       lastModified: document.dateModified,
       onPressedNext: () async {
         print("点开 ${document.name} 目录, 然后显示该目录下的所有文件");
+
+        // 这里可以先查看本地缓存
+
+        // 记得将这个 id 记录下来, 以后刷新用
 
         // 转圈圈和网络请求
         //_myClick(document);
