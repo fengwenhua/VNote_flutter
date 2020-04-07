@@ -7,6 +7,7 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
@@ -81,6 +82,12 @@ class _SplashScreenPageState extends State<SplashScreenPage>
         if(value.data != -1) {
 
           await getNotebook(tokenModel.token.accessToken).then((data){
+
+            // 初始化, 爸爸是谁, 这里用 approot标记
+            // 以后每点进去或者返回来, 都要刷新这个值
+            final _parentId =Provider.of<ParentIdModel>(context, listen: false);
+            _parentId.goAheadParentId("approot");
+
             print("跳转到主页");
             NavigatorUtil.goHomePage(context);
           });

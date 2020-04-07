@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:vnote/utils/my_stack.dart';
 
 /// 存储当前目录的爸爸的 id, 用于刷新用
 class ParentIdModel with ChangeNotifier{
-  String _parentId;
-  String get getParentId => _parentId;
+  MyStack<String> _parentId = MyStack<String>();
 
-  void updateParentId(String newId){
-    _parentId = newId;
+  String get getParentId => _parentId.top();
+
+  void goAheadParentId(String newId){
+    _parentId.push(newId);
+    notifyListeners();
+  }
+
+  void goBackParentId(){
+    _parentId.pop();
     notifyListeners();
   }
 }

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
+import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
@@ -208,15 +209,23 @@ class _DirectoryPageState extends State<DirectoryPage>
   }
 
   Future<bool> onWillPop() async {
+    // 退回, 所以要弹栈, 更新 ParentID
+    final _parentId =Provider.of<ParentIdModel>(context, listen: false);
+
+
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
     if (dataListModel.dataList[0].parent != null) {
       //initPathFiles(dataListModel.dataList[0].parent.parent?.childData ?? rootDocuments);
+
+      _parentId.goBackParentId();
+
       dataListModel.updateValue(
           dataListModel.dataList[0]?.parent?.parent?.childData ??
               rootDocuments);
       jumpToPosition(false);
     } else {
+      print("在根目录了, 所有没有返回的操作了, 也不需要给 parentid 弹栈了");
       print("打开侧滑菜单");
       Navigator.pop(context);
     }
@@ -274,6 +283,8 @@ class _DirectoryPageState extends State<DirectoryPage>
         // 这里可以先查看本地缓存
 
         // 记得将这个 id 记录下来, 以后刷新用
+        final _parentId =Provider.of<ParentIdModel>(context, listen: false);
+        _parentId.goAheadParentId(document.id);
 
         // 转圈圈和网络请求
         //_myClick(document);
