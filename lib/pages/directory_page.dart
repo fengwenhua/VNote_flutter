@@ -38,6 +38,7 @@ class _DirectoryPageState extends State<DirectoryPage>
   ScrollController controller = ScrollController();
   List<double> position = [];
   List<Document> rootDocuments = <Document>[];
+  final SlidableController slidableController = SlidableController();
 
   /// 根据点击的 id 来查找目录
   Future<List<Document>> getChildData(String accessToken, String id) async {
@@ -304,24 +305,9 @@ class _DirectoryPageState extends State<DirectoryPage>
   }
 
   List<Widget> getListWidget(List<Document> childDocuments) {
-    ///print("展开的内容如下:");
-//    List<Document> newDocument = new List<Document>();
-//    childDocuments.forEach((i) {
-//      print("处理 " + i.name);
-//
-//      Document d = new Document(
-//          id: i.id,
-//          name: i.name,
-//          isFile: i.isFile,
-//          dateModified: i.dateModified,
-//          parent: i.parent,
-//          childData: i.childData);
-//      newDocument.add(d);
-//    });
-
     return childDocuments.map((document) {
       //print("要处理的是: " + document.name);
-      final SlidableController slidableController = SlidableController();
+
       TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
       DataListModel dataListModel =
           Provider.of<DataListModel>(context, listen: false);
