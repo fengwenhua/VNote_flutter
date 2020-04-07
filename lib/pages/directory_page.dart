@@ -196,13 +196,14 @@ class _DirectoryPageState extends State<DirectoryPage>
   @override
   void initState() {
     super.initState();
+    print("进入 directory_page 的 initState 方法");
     rootDocuments = widget.documents;
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    //print("进入 build 方法");
+    print("进入 directory_page 的 build 方法");
     pr = new ProgressDialog(context, isDismissible: true);
     pr.style(message: '慢慢等吧...');
     DataListModel dataListModel =
@@ -303,19 +304,22 @@ class _DirectoryPageState extends State<DirectoryPage>
 
   List<Widget> getListWidget(List<Document> childDocuments) {
     ///print("展开的内容如下:");
-    List<Document> newDocument = new List<Document>();
-    childDocuments.forEach((i) {
-      Document d = new Document(
-          id: i.id,
-          name: i.name,
-          isFile: i.isFile,
-          dateModified: i.dateModified,
-          parent: i.parent,
-          childData: i.childData);
-      newDocument.add(d);
-    });
+//    List<Document> newDocument = new List<Document>();
+//    childDocuments.forEach((i) {
+//      print("处理 " + i.name);
+//
+//      Document d = new Document(
+//          id: i.id,
+//          name: i.name,
+//          isFile: i.isFile,
+//          dateModified: i.dateModified,
+//          parent: i.parent,
+//          childData: i.childData);
+//      newDocument.add(d);
+//    });
 
-    return newDocument.map((document) {
+    return childDocuments.map((document) {
+      //print("要处理的是: " + document.name);
       if (!document.isFile) {
         // 目录
         return Dismissible(
@@ -365,7 +369,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               await OneDriveDataDao.deleteFile(
                   context, tokenModel.token.accessToken, document.id);
               // 删除本地缓存的文件夹
-              dataListModel.dataList.remove(document);
+              dataListModel.removeEle(document);
             }
 
             return isDismiss;
@@ -430,7 +434,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               await OneDriveDataDao.deleteFile(
                   context, tokenModel.token.accessToken, document.id);
               // 删除本地缓存的文件夹
-              dataListModel.dataList.remove(document);
+              dataListModel.removeEle(document);
             }
             return isDismiss;
           },

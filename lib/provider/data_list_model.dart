@@ -6,6 +6,20 @@ class DataListModel with ChangeNotifier{
   MyStack<List<Document>> _dataList = MyStack<List<Document>>();
   List<Document> get dataList => _dataList.top();
 
+  void removeEle(Document document){
+    List<Document> list = _dataList.pop();
+    print("要干掉的是" + document.name);
+    list.remove(document);
+//    print("是否还在: ${list.contains(document)}" );
+//    print("这个鬼 list 还有: ");
+//    list.forEach((i){
+//      print(i.name);
+//    });
+//    print("!~~~~~~~~分割服~~~~~~~");
+    _dataList.push(list);
+    notifyListeners();
+  }
+
   void goAheadDataList(List<Document> newDataList){
     _dataList.push(newDataList);
     notifyListeners();
