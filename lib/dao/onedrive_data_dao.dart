@@ -224,4 +224,30 @@ class OneDriveDataDao {
           print("出了错误, 是超时吗? " + errorMsg);
         });
   }
+
+  /// [deleteFile] 是根据 [id] 删除文件
+  /// DELETE /me/drive/items/{item-id}
+  /// 如果成功，此调用将返回 204 No Content 响应
+  static Future<Response> deleteFile(BuildContext context, String token, String id){
+    Map<String, dynamic> headers = {"Authorization": token};
+    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
+    URL += id;
+    return NetUtils.instance.put(
+        context,
+        URL,
+            (data, status) {
+          print("请求返回来的内容如下:");
+          print(data);
+          print("###################################################\n\n");
+          if(status.toString().contains("204")){
+            print("状态码 204, 说明删除成功!");
+          }else{
+            print(status.toString());
+          }
+        },
+        headers: headers,
+        errorCallBack: (errorMsg) {
+          print("出了错误, 是超时吗? " + errorMsg);
+        });
+  }
 }
