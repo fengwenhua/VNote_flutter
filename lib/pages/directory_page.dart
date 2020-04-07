@@ -119,27 +119,74 @@ class _DirectoryPageState extends State<DirectoryPage>
     }
   }
 
-  _postData(Document document) async {
-    DataListModel dataListModel =
-        Provider.of<DataListModel>(context, listen: false);
-
+  /// [_postData] 是根据 [id] 或者下一级目录的内容
+  /// 如果[update]为 true 代表只是更新当前目录
+  /// 如果 id=="approot"则用另一个请求
+  _postData(String id, {bool update = false}) async {
     // 获取当前 token
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
-    // 网络请求
-    await getChildData(tokenModel.token.accessToken, document.id).then((data) {
-      // 显示
-      if (data.length > 0) {
-        position.add(controller.offset);
 
-        DataListModel dataListModel =
-            Provider.of<DataListModel>(context, listen: false);
-        dataListModel.goAheadDataList(data);
-        //initPathFiles(document.childData);
-        pr.hide().whenComplete(() {
-          jumpToPosition(true);
-        });
-      }
-    });
+    if (id == "approot") {
+      await DocumentListUtil.instance
+          .getNotebookList(context, tokenModel.token.accessToken, (data) async {
+        if (data.length > 0) {
+
+          DataListModel dataListModel =
+              Provider.of<DataListModel>(context, listen: false);
+          dataListModel.updateCurrentDir(data);
+          pr.hide().whenComplete(() {
+            jumpToPosition(true);
+          });
+        } else {
+          Fluttertoast.showToast(
+              msg: "GG, 笔记本都没了??",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIos: 3,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          pr.hide().whenComplete(() {
+            jumpToPosition(true);
+          });
+        }
+      });
+    } else {
+      // 网络请求
+      await getChildData(tokenModel.token.accessToken, id).then((data) {
+        // 显示
+        if (data.length > 0) {
+          if (update) {
+            position.removeLast();
+          }
+          position.add(controller.offset);
+
+          DataListModel dataListModel =
+              Provider.of<DataListModel>(context, listen: false);
+          if (update) {
+            dataListModel.updateCurrentDir(data);
+          } else {
+            dataListModel.goAheadDataList(data);
+          }
+          //initPathFiles(document.childData);
+          pr.hide().whenComplete(() {
+            jumpToPosition(true);
+          });
+        } else {
+          Fluttertoast.showToast(
+              msg: "该文件夹内容为空",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIos: 3,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          pr.hide().whenComplete(() {
+            jumpToPosition(true);
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -166,6 +213,21 @@ class _DirectoryPageState extends State<DirectoryPage>
         appBar: AppBar(
             title: Text(parentIdModel.parentName,
                 style: TextStyle(fontSize: fontSize40)),
+            actions: <Widget>[
+              // 非隐藏起来的菜单
+              new IconButton(
+                  icon: new Icon(Icons.refresh),
+                  tooltip: "Update",
+                  onPressed: () async {
+                    // 手动点击更新按钮
+                    await pr.show().then((_) {
+                      String parentId = parentIdModel.parentId;
+                      // 接下来是根据这个 id 刷新获取数据
+
+                      _postData(parentId, update: true);
+                    });
+                  })
+            ],
             leading: parentIdModel.parentId == "approot"
                 ? IconButton(
                     icon: Icon(
@@ -280,7 +342,7 @@ class _DirectoryPageState extends State<DirectoryPage>
         // 转圈圈和网络请求
         //_myClick(document);
         await pr.show().then((_) {
-          _postData(document);
+          _postData(document.id);
         });
       });
 
