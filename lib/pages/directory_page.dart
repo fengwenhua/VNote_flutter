@@ -283,9 +283,10 @@ class _DirectoryPageState extends State<DirectoryPage>
                                       //OneDriveDataModel oneDriveDataModel =  OneDriveDataModel.fromJson(json.decode(value.toString()));
                                       // 更新本地 dataList
                                       Map<String, dynamic> json = jsonDecode(value.toString());
-                                      String name = json["name"];
-                                      String id = json["id"];
-
+                                      String dateString = json['lastModifiedDateTime'];
+                                      DateTime date = DateTime.parse(dateString);
+                                      Document doc = new Document(id:json["id"], name: json["name"],isFile:false,dateModified:date );
+                                      dataListModel.addEle(doc);
 
                                     }).then((_) async {
                                       await pr.hide();

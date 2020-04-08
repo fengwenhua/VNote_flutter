@@ -20,6 +20,16 @@ class DataListModel with ChangeNotifier{
     notifyListeners();
   }
 
+  /// 添加新元素
+  void addEle(Document document){
+    // 先弹出来
+    List<Document> list = _dataList.pop();
+    list.add(document);
+    // 然后压回去
+    _dataList.push(list);
+    notifyListeners();
+  }
+
   void goAheadDataList(List<Document> newDataList){
     _dataList.push(newDataList);
     notifyListeners();
