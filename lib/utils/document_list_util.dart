@@ -15,6 +15,7 @@ import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/new_images_model.dart';
+import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/preview_model.dart';
 import 'package:vnote/utils/utils.dart';
 
@@ -398,8 +399,13 @@ class DocumentListUtil {
       } else {
         oneDriveDataModel =
             OneDriveDataModel.fromJson(json.decode(value.toString()));
+        ParentIdModel parentIdModel =
+        Provider.of<ParentIdModel>(context, listen: false);
         //print("Model内容如下:");
         //print(json.encode(oneDriveDataModel));
+        print("在这里拿到 vnote 文件夹的 id, 并且设置好 parentId");
+        //oneDriveDataModel.value[0]?.parentReference?.id??"approot"
+        parentIdModel.goAheadParentId(oneDriveDataModel.value[0]?.parentReference?.id??"approot", "VNote 根目录");
       }
     });
     return oneDriveDataModel;

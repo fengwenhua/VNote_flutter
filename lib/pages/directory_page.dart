@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:fluro/fluro.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
+import 'package:vnote/models/onedrive_data_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
@@ -126,11 +128,12 @@ class _DirectoryPageState extends State<DirectoryPage>
   /// [_postData] 是根据 [id] 或者下一级目录的内容
   /// 如果[update]为 true 代表只是更新当前目录
   /// 如果 id=="approot"则用另一个请求
-  _postData(String id, {bool update = false}) async {
+  _postData(String id, String name, {bool update = false}) async {
     // 获取当前 token
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
-
-    if (id == "approot") {
+    ParentIdModel parentIdModel =
+        Provider.of<ParentIdModel>(context, listen: false);
+    if (id == "approot" || name == "VNote 根目录") {
       await DocumentListUtil.instance
           .getNotebookList(context, tokenModel.token.accessToken, (data) async {
         if (data.length > 0) {
@@ -214,7 +217,7 @@ class _DirectoryPageState extends State<DirectoryPage>
 
     ParentIdModel parentIdModel =
         Provider.of<ParentIdModel>(context, listen: false);
-
+    TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
@@ -267,10 +270,22 @@ class _DirectoryPageState extends State<DirectoryPage>
                                 child: Text('取消'),
                               ),
                               CupertinoDialogAction(
-                                onPressed: () {
+                                onPressed: () async {
+                                  await pr.show().then((_) async {
+                                    await OneDriveDataDao.createFolder(
+                                            context,
+                                            tokenModel.token.accessToken,
+                                            folderName,
+                                            parentIdModel.parentId)
+                                        .then((value) {
+                                      //print("创建目录返回来的数据: " + value.toString());
+                                      Map<String, dynamic> json =
+                                          jsonDecode(value.toString());
+                                    }).then((_) async {
+                                      await pr.hide();
+                                    });
+                                  });
                                   Navigator.pop(context);
-
-
                                 },
                                 child: Text('确定'),
                               ),
@@ -285,9 +300,10 @@ class _DirectoryPageState extends State<DirectoryPage>
                     // 手动点击更新按钮
                     await pr.show().then((_) {
                       String parentId = parentIdModel.parentId;
+                      String parentName = parentIdModel.parentName;
                       // 接下来是根据这个 id 刷新获取数据
 
-                      _postData(parentId, update: true);
+                      _postData(parentId, parentName, update: true);
                     });
                   })
             ],
@@ -437,7 +453,7 @@ class _DirectoryPageState extends State<DirectoryPage>
         // 转圈圈和网络请求
         //_myClick(document);
         await pr.show().then((_) {
-          _postData(document.id);
+          _postData(document.id, document.name);
         });
       });
 

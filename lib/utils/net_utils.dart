@@ -158,6 +158,7 @@ class NetUtils {
       String contentType = "application/x-www-form-urlencoded",
       String data}) async {
     return await _request(context, url, callBack,
+        headers: headers,
         method: POST,
         params: params,
         errorCallBack: errorCallBack,
@@ -179,6 +180,8 @@ class NetUtils {
       Response response;
       var dio;
       if (headers != null) {
+        //print("有 headers");
+        //print(headers.toString());
         dio = new Dio(new BaseOptions(
           connectTimeout: 20000,
           receiveTimeout: 20000,
@@ -208,6 +211,7 @@ class NetUtils {
         if (params != null && params.isNotEmpty) {
           response = await dio.post(url, data: params);
         } else if (data != null && data.isNotEmpty) {
+          //print("创建文件夹的 post");
           response = await dio.post(url, data: data);
         } else {
           response = await dio.post(url);
