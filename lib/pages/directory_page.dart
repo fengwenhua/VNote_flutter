@@ -277,10 +277,16 @@ class _DirectoryPageState extends State<DirectoryPage>
                                             tokenModel.token.accessToken,
                                             folderName,
                                             parentIdModel.parentId)
-                                        .then((value) {
+                                        .then((value)  {
                                       //print("创建目录返回来的数据: " + value.toString());
-                                      Map<String, dynamic> json =
-                                          jsonDecode(value.toString());
+
+                                      //OneDriveDataModel oneDriveDataModel =  OneDriveDataModel.fromJson(json.decode(value.toString()));
+                                      // 更新本地 dataList
+                                      Map<String, dynamic> json = jsonDecode(value.toString());
+                                      String name = json["name"];
+                                      String id = json["id"];
+
+
                                     }).then((_) async {
                                       await pr.hide();
                                     });
