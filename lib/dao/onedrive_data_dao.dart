@@ -62,10 +62,8 @@ class OneDriveDataDao {
   static Future<Response> getChildData(
       BuildContext context, String token, String id) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
-    URL += id;
-    URL +=
-        "/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
+    String URL =
+        "https://graph.microsoft.com/v1.0/me/drive/items/$id/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
 
     return NetUtils.instance.get(
         context,
@@ -85,12 +83,10 @@ class OneDriveDataDao {
   }
 
   // 根据 id 获取 md 文件内容
-  static Future<Response> getMDFileContent(
+  static Future<Response> getFileContent(
       BuildContext context, String token, String id) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
-    URL += id;
-    URL += "/content";
+    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/$id/content";
 
     return NetUtils.instance.get(
         context,
@@ -112,10 +108,8 @@ class OneDriveDataDao {
       BuildContext context, String token, String id) {
     print("根据 _v_images 的 Id 返回所有图片id");
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
-    URL += id;
-    URL +=
-        "/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
+    String URL =
+        "https://graph.microsoft.com/v1.0/me/drive/items/$id/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
 
     return NetUtils.instance.get(
         context,
@@ -139,9 +133,7 @@ class OneDriveDataDao {
   static Future<Response> downloadImage(
       BuildContext context, String token, String id, String path) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
-    URL += id;
-    URL += "/content";
+    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/$id/content";
     return NetUtils.instance.download(
         context,
         URL,
@@ -182,9 +174,7 @@ class OneDriveDataDao {
   static Future<Response> updateContent(
       BuildContext context, String token, String id, String content) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
-    URL += id;
-    URL += "/content";
+    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/$id/content";
     return NetUtils.instance.put(
         context,
         URL,
@@ -203,18 +193,15 @@ class OneDriveDataDao {
   /// [uploadFile] 根据 [parentId] 和 [content] 和 [filename] 上传文件
   /// 可以是 md, 也可以是图片
   /// PUT /me/drive/items/{parent-id}:/{filename}:/content
-  static Future<Response> uploadFile(
-      BuildContext context, String token, String parentId, dynamic content, String filename) {
+  static Future<Response> uploadFile(BuildContext context, String token,
+      String parentId, dynamic content, String filename) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
-    URL += parentId;
-    URL += ":/";
-    URL += filename;
-    URL += ":/content";
+    String URL =
+        "https://graph.microsoft.com/v1.0/me/drive/items/$parentId:/$filename:/content";
     return NetUtils.instance.put(
         context,
         URL,
-            (data) {
+        (data) {
           print("请求返回来的内容如下:");
           print(data);
           print("###################################################\n\n");
@@ -229,18 +216,48 @@ class OneDriveDataDao {
   /// [deleteFile] 是根据 [id] 删除文件
   /// DELETE /me/drive/items/{item-id}
   /// 如果成功，此调用将返回 204 No Content 响应
-  static Future<Response> deleteFile(BuildContext context, String token, String id){
+  static Future<Response> deleteFile(
+      BuildContext context, String token, String id) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/";
-    URL += id;
+    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/$id";
     return NetUtils.instance.delete(
         context,
         URL,
-            (data, status) {
+        (data, status) {
           print("这里拿到的 status 是 " + status.toString());
           return status.toString();
         },
         headers: headers,
+        errorCallBack: (errorMsg) {
+          print("出了错误, 是超时吗? " + errorMsg);
+        });
+  }
+
+  /// [createFolder] 用于在[parentId]之下创建新文件夹[folderName]
+  /// POST /me/drive/items/{parent-item-id}/children
+  /// 上传之后如果重名则服务器会自动重命名
+  static Future<Response> createFolder(
+      BuildContext context, String token, String folderName, String parentId) {
+    Map<String, dynamic> headers = {"Authorization": token};
+    String URL =
+        "https://graph.microsoft.com/v1.0/me/drive/items/$parentId/children";
+
+    String data = '''{
+  "name": "$folderName",
+  "folder": { },
+  "@microsoft.graph.conflictBehavior": "rename"
+}''';
+
+    return NetUtils.instance.post(
+        context,
+        URL,
+        (data) {
+          print("创建文件夹返回来的数据: " + data.toString());
+          return data;
+        },
+        data: data,
+        headers: headers,
+        contentType: "application/json",
         errorCallBack: (errorMsg) {
           print("出了错误, 是超时吗? " + errorMsg);
         });

@@ -154,16 +154,24 @@ class NetUtils {
   Future<Response> post(BuildContext context, String url, Function callBack,
       {Map<String, String> params,
       Map<String, dynamic> headers,
-      Function errorCallBack}) async {
+      Function errorCallBack,
+      String contentType = "application/x-www-form-urlencoded",
+      String data}) async {
     return await _request(context, url, callBack,
-        method: POST, params: params, errorCallBack: errorCallBack);
+        method: POST,
+        params: params,
+        errorCallBack: errorCallBack,
+        contentType: contentType,
+        data: data);
   }
 
   Future<Response> _request(BuildContext context, String url, Function callBack,
       {String method,
       Map<String, String> params,
       Map<String, dynamic> headers,
-      Function errorCallBack}) async {
+      Function errorCallBack,
+      String contentType,
+      String data}) async {
     print("传进来的url: " + url);
     String errorMsg = "";
     int statusCode;
@@ -175,13 +183,13 @@ class NetUtils {
           connectTimeout: 20000,
           receiveTimeout: 20000,
           headers: headers,
-          contentType: "application/x-www-form-urlencoded",
+          contentType: contentType,
         ));
       } else {
         dio = new Dio(new BaseOptions(
           connectTimeout: 20000,
           receiveTimeout: 20000,
-          contentType: "application/x-www-form-urlencoded",
+          contentType: contentType,
         ));
       }
 
@@ -199,6 +207,8 @@ class NetUtils {
       } else if (method == POST) {
         if (params != null && params.isNotEmpty) {
           response = await dio.post(url, data: params);
+        } else if (data != null && data.isNotEmpty) {
+          response = await dio.post(url, data: data);
         } else {
           response = await dio.post(url);
         }

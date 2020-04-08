@@ -52,7 +52,7 @@ class _TabNavigatorState extends State<TabNavigator> {
             color: Colors.white,
           ),
           child: FloatingActionButton(
-              child: Icon(Icons.add,color: Colors.black,size: 40,),
+              child: Icon(Icons.add,color: Colors.white,size: 40,),
               onPressed: (){
                 print('FloatingActionButton');
                 _controller.jumpToPage(2); // 调用controller切换页面
@@ -60,7 +60,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                   _currentIndex = 2; // 更新页面
                 });
               },
-              backgroundColor: this._currentIndex==2?Colors.red:Colors.yellow,
+              backgroundColor: this._currentIndex==2?Colors.blue:Colors.yellow,
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

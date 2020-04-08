@@ -198,14 +198,14 @@ class _DirectoryPageState extends State<DirectoryPage>
   @override
   void initState() {
     super.initState();
-    print("进入 directory_page 的 initState 方法");
+    //print("进入 directory_page 的 initState 方法");
     rootDocuments = widget.documents;
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    print("进入 directory_page 的 build 方法");
+    //print("进入 directory_page 的 build 方法");
     pr = new ProgressDialog(context, isDismissible: true);
     pr.style(message: '慢慢等吧...');
     DataListModel dataListModel =
