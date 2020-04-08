@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/pages/splash_screen_page.dart';
+import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/new_images_model.dart';
@@ -44,6 +45,9 @@ void main() {
       ),
       ChangeNotifierProvider<ParentIdModel>(
         create: (context)=>ParentIdModel(),
+      ),
+      ChangeNotifierProvider<ConfigIdModel>(
+        create: (context) => ConfigIdModel(),
       )
     ],
     child: MyApp(),

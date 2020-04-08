@@ -8,14 +8,17 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
+import 'package:vnote/models/desktop_config_model.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
+import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
+import 'package:vnote/utils/utils.dart';
 import 'package:vnote/widgets/directory_widget.dart';
 import 'package:vnote/widgets/file_widget.dart';
 import 'package:progress_dialog/progress_dialog.dart';
@@ -69,16 +72,22 @@ class _DirectoryPageState extends State<DirectoryPage>
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
 
+    bool hasImageFolder = false;
+    final _imageFolderIdAndConfigIdModel =
+        Provider.of<ImageFolderIdModel>(context, listen: false);
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
         // 在这里拿到了 imageFolder 的 id, 即是 _v_images的 id
-        final _imageFolderId =
-            Provider.of<ImageFolderIdModel>(context, listen: false);
-        _imageFolderId.updateImageFolderId(d.id);
-
+        _imageFolderIdAndConfigIdModel.updateImageFolderId(d.id);
+        hasImageFolder = true;
         break;
       }
     }
+
+    if (!hasImageFolder) {
+      _imageFolderIdAndConfigIdModel.updateImageFolderId("noimagefolder");
+    }
+
     // 测试 Application.sp.containsKey(document.id)
     if (Application.sp.containsKey(document.id)) {
       // 本地有文档缓存
@@ -125,7 +134,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     }
   }
 
-  /// [_postData] 是根据 [id] 或者下一级目录的内容
+  /// [_postData] 是根据 [id] 获取下一级目录的内容
   /// 如果[update]为 true 代表只是更新当前目录
   /// 如果 id=="approot"则用另一个请求
   _postData(String id, String name, {bool update = false}) async {
@@ -175,6 +184,14 @@ class _DirectoryPageState extends State<DirectoryPage>
             dataListModel.updateCurrentDir(data);
           } else {
             dataListModel.goAheadDataList(data);
+            for (Document d in dataListModel.dataList) {
+              if (d.name == "_vnote.json") {
+                ConfigIdModel configIdModel =
+                    Provider.of<ConfigIdModel>(context, listen: false);
+                configIdModel.updateConfigId(d.id);
+                break;
+              }
+            }
           }
           //initPathFiles(document.childData);
           pr.hide().whenComplete(() {
@@ -218,6 +235,8 @@ class _DirectoryPageState extends State<DirectoryPage>
     ParentIdModel parentIdModel =
         Provider.of<ParentIdModel>(context, listen: false);
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
+    ConfigIdModel configIdModel =
+        Provider.of<ConfigIdModel>(context, listen: false);
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
@@ -277,16 +296,59 @@ class _DirectoryPageState extends State<DirectoryPage>
                                             tokenModel.token.accessToken,
                                             folderName,
                                             parentIdModel.parentId)
-                                        .then((value)  {
+                                        .then((value) async {
                                       //print("创建目录返回来的数据: " + value.toString());
 
                                       //OneDriveDataModel oneDriveDataModel =  OneDriveDataModel.fromJson(json.decode(value.toString()));
-                                      // 更新本地 dataList
-                                      Map<String, dynamic> json = jsonDecode(value.toString());
-                                      String dateString = json['lastModifiedDateTime'];
-                                      DateTime date = DateTime.parse(dateString);
-                                      Document doc = new Document(id:json["id"], name: json["name"],isFile:false,dateModified:date );
+                                      print("更新本地 dataList");
+                                      Map<String, dynamic> jsonData =
+                                          jsonDecode(value.toString());
+                                      String id = jsonData["id"];
+                                      String newFolderName = jsonData["name"];
+                                      String dateString =
+                                          jsonData['lastModifiedDateTime'];
+                                      DateTime date =
+                                          DateTime.parse(dateString);
+                                      Document doc = new Document(
+                                          id: id,
+                                          name: jsonData["name"],
+                                          isFile: false,
+                                          dateModified: date);
                                       dataListModel.addEle(doc);
+
+                                      // 下面是更新当前目录的 _vnote.json 文件
+                                      String configId = configIdModel.configId;
+                                      if(configId == "approot"){
+                                        print("根目录, 不需要更新 _vnote.json 文件");
+                                      }else{
+                                        print(
+                                            "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 sub_directories 字段");
+
+                                        // 如果找到当前目录下的 _vnote.json 的 id???
+
+                                        await OneDriveDataDao.getFileContent(
+                                            context,
+                                            tokenModel.token.accessToken,
+                                            configId)
+                                            .then((value) {
+                                              print("要添加的文件夹名称: " + newFolderName);
+                                          Map<String, dynamic> newFolder = jsonDecode('{"name":"$newFolderName"}');
+                                          DesktopConfigModel desktopConfigModel =
+                                          DesktopConfigModel.fromJson(
+                                              json.decode(value.toString()));
+                                          print("添加之前: ");
+                                          print(json.encode(desktopConfigModel));
+                                          desktopConfigModel
+                                              .addNewFolder(newFolder);
+                                          print("添加之后: ");
+                                          print(json.encode(desktopConfigModel));
+
+                                          // 添加成功_vnote.json 之后, 就是更新这个文件
+
+                                        });
+                                      }
+
+                                      // 下面是给新创建的目录新增一个 _vnote.json 文件
 
                                     }).then((_) async {
                                       await pr.hide();

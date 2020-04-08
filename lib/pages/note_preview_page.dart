@@ -48,12 +48,14 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
+    final _imageFolderIdModel =Provider.of<ImageFolderIdModel>(context, listen: false);
+
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
         // 在这里更新 imageFolderid , 也就是 _v_images 文件夹的 id
         // 这里再次更新是为了预防某个叼毛, 将_v_images 干掉...
-        final _imageFolderId =Provider.of<ImageFolderIdModel>(context, listen: false);
-        _imageFolderId.updateImageFolderId(d.id);
+
+        _imageFolderIdModel.updateImageFolderId(d.id);
 
         await DocumentListUtil.instance
             .getMDFileContentFromNetwork(

@@ -7,6 +7,16 @@ class DesktopConfigModel {
 	DesktopConfigModel(
 			{this.createdTime, this.files, this.subDirectories, this.version});
 
+
+	void addNewFile(Map<String, dynamic> json){
+		this.files.add(new Files.fromJson(json));
+	}
+
+	void addNewFolder(Map<String, dynamic> json){
+		print("添加进入的是: " + json['name']);
+		this.subDirectories.add(new SubDirectories.fromJson(json));
+	}
+
 	DesktopConfigModel.fromJson(Map<String, dynamic> json) {
 		createdTime = json['created_time'];
 		if (json['files'] != null) {
@@ -106,6 +116,7 @@ class SubDirectories {
 
 	SubDirectories.fromJson(Map<String, dynamic> json) {
 		name = json['name'];
+		print("解析出来的名字为: " + name);
 	}
 
 	Map<String, dynamic> toJson() {

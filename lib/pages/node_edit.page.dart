@@ -127,8 +127,15 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 List<String> newImagesList = _newImageList.newImageList;
 
                 // 本地新增了图片才上传, 不然上传个鸡儿
+                // 如果没有_v_image , 记得新建这个目录
                 if (newImagesList.length > 0) {
                   String imageFolderId = _imageFolderId.imageFolderId;
+
+                  if(imageFolderId == "noimagefolder"){
+                    print("没有 imagefolder 文件夹, 需要先创建 imageFolder 文件夹");
+
+                    // 接下来是新建 _v_images 文件夹的过程???
+                  }
 
                   int repeatCount = 3; // 重复上传 3 次
                   ProgressDialog uploadPR;

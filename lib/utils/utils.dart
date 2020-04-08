@@ -27,7 +27,7 @@ class Utils {
     return '$year-$month-${day}T$hour:$minute:${second}Z';
   }
 
-  /// [newFolderJson] 用于新建目录时, 返回需要在该目录里面生成的 _vnote.json 文件内容.
+  /// [newFolderJson] 用于新建空目录时, 返回需要在该目录里面生成的 _vnote.json 文件内容.
   static String newFolderJson() {
     String time = Utils.getFormattedDateTimeForJson(dateTime: DateTime.now());
     String jsonData = '''{
@@ -39,6 +39,22 @@ class Utils {
     "version": "1"
 }
     ''';
+    return jsonData;
+  }
+
+  /// [newFileJson] 用于新建文件时, 返回_vnote.json 所需要的内容
+  static String newFileJson(String fileName){
+    String time = Utils.getFormattedDateTimeForJson(dateTime: DateTime.now());
+    String jsonData = '''        {
+            "attachment_folder": "",
+            "attachments": [
+            ],
+            "created_time": "$time",
+            "modified_time": "$time",
+            "name": "$fileName",
+            "tags": [
+            ]
+        }''';
     return jsonData;
   }
 

@@ -13,6 +13,7 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
+import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
@@ -56,16 +57,13 @@ class DocumentListUtil {
             timeInSecForIos: 3,
             backgroundColor: Colors.red,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
 
         Future.delayed(Duration(seconds: 3), () async {
           Navigator.of(context).pop();
           print('延时3s执行, 退出 app');
           await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
         });
-
-
       }
     }
 
@@ -100,14 +98,19 @@ class DocumentListUtil {
 
   /// 根据 imageFolderId 与 imageUrls 对比获得所有图片
   Future<List<Document>> getImagesList(BuildContext context, String token,
-       List<String> imageUrls, Function callBack) async {
+      List<String> imageUrls, Function callBack) async {
     print("根据 imageFolderId 与 imageUrls 对比获得所有图片");
     List<Document> result = new List<Document>();
-    print("要找的图片大小: "+imageUrls.length.toString());
+    print("要找的图片大小: " + imageUrls.length.toString());
 
-    final _imageFolderId =Provider.of<ImageFolderIdModel>(context, listen: false);
+    final _imageFolderId =
+        Provider.of<ImageFolderIdModel>(context, listen: false);
     String imageFolderId = _imageFolderId.imageFolderId;
 
+    if (imageFolderId == "noimagefolder") {
+      print("md, 你特么的本地没有 imageFolder 文件夹, 你下个鸡儿的图片!");
+      return result;
+    }
     return await _getImagesFromNetwork(context, token, imageFolderId)
         .then((oneDriveDataModel) {
       if (oneDriveDataModel == null) {
@@ -132,7 +135,7 @@ class DocumentListUtil {
         }
       }
 
-      if(result.length == 0){
+      if (result.length == 0) {
         print("该文章没有图片, 或者因为网络原因, 没有搞到图片!");
       }
 
@@ -400,12 +403,17 @@ class DocumentListUtil {
         oneDriveDataModel =
             OneDriveDataModel.fromJson(json.decode(value.toString()));
         ParentIdModel parentIdModel =
-        Provider.of<ParentIdModel>(context, listen: false);
+            Provider.of<ParentIdModel>(context, listen: false);
         //print("Model内容如下:");
         //print(json.encode(oneDriveDataModel));
         print("在这里拿到 vnote 文件夹的 id, 并且设置好 parentId");
         //oneDriveDataModel.value[0]?.parentReference?.id??"approot"
-        parentIdModel.goAheadParentId(oneDriveDataModel.value[0]?.parentReference?.id??"approot", "VNote 根目录");
+        parentIdModel.goAheadParentId(
+            oneDriveDataModel.value[0]?.parentReference?.id ?? "approot",
+            "VNote 根目录");
+        print("同时设置_vnote.json 的 id, 当然, 因为这里是第一层, 没有这文件, 所以设置默认是 approot");
+        ConfigIdModel configIdModel = Provider.of<ConfigIdModel>(context, listen: false);
+        configIdModel.updateConfigId("approot");
       }
     });
     return oneDriveDataModel;
@@ -438,33 +446,30 @@ class DocumentListUtil {
     print("根据 imageId 从网络获取图片列表");
     OneDriveDataModel oneDriveDataModel;
     await OneDriveDataDao.getImagesID(context, token, id).then((value) {
-      if(value == null){
+      if (value == null) {
         print("网络不行");
-
-      }else{
+      } else {
         oneDriveDataModel =
             OneDriveDataModel.fromJson(json.decode(value.toString()));
         print("进来-----根据 imageId 从网络获取图片列表");
         //print("Model内容如下:");
         //print(json.encode(oneDriveDataModel));
       }
-
     });
     return oneDriveDataModel;
   }
 
   // 根据 id 从网路下载 md 文件, 返回其内容
-  Future<String> getMDFileContentFromNetwork(BuildContext context, String token,
-      String id, ProgressDialog prt) async {
+  Future<String> getMDFileContentFromNetwork(
+      BuildContext context, String token, String id, ProgressDialog prt) async {
     String content;
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
-    String appImagePath = appDocPath +'/image';
+    String appImagePath = appDocPath + '/image';
 
     final previewContent = Provider.of<PreviewModel>(context, listen: false);
 
-    return await OneDriveDataDao.getFileContent(
-            context, token, id)
+    return await OneDriveDataDao.getFileContent(context, token, id)
         .then((value) {
       print("看看, 数据张啥样?");
       //print(value);
@@ -480,8 +485,6 @@ class DocumentListUtil {
 
         List<String> imageUrls = Utils.getMDImages(value.toString());
 
-
-
         content = value.toString();
 
         /// 2. 发送请求访问_v_images下的文件
@@ -492,8 +495,7 @@ class DocumentListUtil {
       if (imageUrls == null) {
         return null;
       } else {
-        return await getImagesList(
-            context, token, imageUrls, (data) {});
+        return await getImagesList(context, token, imageUrls, (data) {});
       }
     }).then((imagesList) async {
       if (imagesList == null) {
