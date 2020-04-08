@@ -12,10 +12,18 @@ class DesktopConfigModel {
 		this.files.add(new Files.fromJson(json));
 	}
 
+	void delFile(String name){
+		this.files.removeWhere((f)=> f.name==name);
+  }
+
 	void addNewFolder(Map<String, dynamic> json){
 		//print("添加进入的是: " + json['name']);
 		this.subDirectories.add(new SubDirectories.fromJson(json));
 	}
+
+	void deleteFolder(String name){
+		this.subDirectories.removeWhere((s)=>s.name==name);
+  }
 
 	DesktopConfigModel.fromJson(Map<String, dynamic> json) {
 		createdTime = json['created_time'];

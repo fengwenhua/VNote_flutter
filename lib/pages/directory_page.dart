@@ -608,9 +608,11 @@ class _DirectoryPageState extends State<DirectoryPage>
 
   Widget _deleteDialog(BuildContext context, Document document,
       TokenModel tokenModel, DataListModel dataListModel) {
+    ConfigIdModel configIdModel =
+        Provider.of<ConfigIdModel>(context, listen: false);
     return AlertDialog(
       title: Text('提示？'),
-      content: Text('确定删除该项？'),
+      content: document.isFile ? Text('确定删除该文件？') : Text('确定删除该文件夹? '),
       actions: <Widget>[
         FlatButton(
           child: Text('取消'),
@@ -628,6 +630,39 @@ class _DirectoryPageState extends State<DirectoryPage>
                   context, tokenModel.token.accessToken, document.id);
               // 删除本地缓存的文件夹
               dataListModel.removeEle(document);
+              // 同时要修改配置文件
+              // 如果是顶层 approot 则不用管
+              // 否则
+              String configId = configIdModel.configId;
+              if (configId == "approot") {
+                print("根目录, 不需要更新 _vnote.json 文件");
+              } else {
+                print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
+                await OneDriveDataDao.getFileContent(
+                        context, tokenModel.token.accessToken, configId)
+                    .then((value) async {
+                      print("拿到的 _vnote.json 文件数据为: " + value.toString());
+                  print("要干掉的文件/文件夹名字: " + document.name);
+                  DesktopConfigModel desktopConfigModel =
+                      DesktopConfigModel.fromJson(
+                          json.decode(value.toString()));
+                  print("干掉之前: ");
+                  print(json.encode(desktopConfigModel));
+                  if (document.isFile) {
+                    desktopConfigModel.delFile(document.name);
+                  } else {
+                    desktopConfigModel.deleteFolder(document.name);
+                  }
+                  print("干掉之后: ");
+                  print(json.encode(desktopConfigModel));
+                  // 修改成功_vnote.json 之后, 就是更新这个文件
+                    await OneDriveDataDao.updateContent(
+                        context,
+                        tokenModel.token.accessToken,
+                        configId,
+                        json.encode(desktopConfigModel));
+                });
+              }
             });
             await pr.hide();
           },
