@@ -13,7 +13,7 @@ class DesktopConfigModel {
 	}
 
 	void addNewFolder(Map<String, dynamic> json){
-		print("添加进入的是: " + json['name']);
+		//print("添加进入的是: " + json['name']);
 		this.subDirectories.add(new SubDirectories.fromJson(json));
 	}
 
@@ -116,7 +116,7 @@ class SubDirectories {
 
 	SubDirectories.fromJson(Map<String, dynamic> json) {
 		name = json['name'];
-		print("解析出来的名字为: " + name);
+		//print("解析出来的名字为: " + name);
 	}
 
 	Map<String, dynamic> toJson() {

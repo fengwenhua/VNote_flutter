@@ -330,26 +330,34 @@ class _DirectoryPageState extends State<DirectoryPage>
                                             context,
                                             tokenModel.token.accessToken,
                                             configId)
-                                            .then((value) {
+                                            .then((value) async {
                                               print("要添加的文件夹名称: " + newFolderName);
                                           Map<String, dynamic> newFolder = jsonDecode('{"name":"$newFolderName"}');
                                           DesktopConfigModel desktopConfigModel =
                                           DesktopConfigModel.fromJson(
                                               json.decode(value.toString()));
-                                          print("添加之前: ");
-                                          print(json.encode(desktopConfigModel));
+                                          //print("添加之前: ");
+                                          //print(json.encode(desktopConfigModel));
                                           desktopConfigModel
                                               .addNewFolder(newFolder);
                                           print("添加之后: ");
                                           print(json.encode(desktopConfigModel));
 
                                           // 添加成功_vnote.json 之后, 就是更新这个文件
-
+                                              await OneDriveDataDao.updateContent(context,
+                                                  tokenModel.token.accessToken, configId, json.encode(desktopConfigModel));
                                         });
                                       }
 
                                       // 下面是给新创建的目录新增一个 _vnote.json 文件
-
+                                      await OneDriveDataDao.uploadFile(
+                                          context,
+                                          tokenModel.token.accessToken,
+                                          id,
+                                          Utils.newFolderJson(),
+                                          "_vnote.json").then((data){
+                                         print("上传_vnote.json 文件之后返回的内容" + data.toString());
+                                      });
                                     }).then((_) async {
                                       await pr.hide();
                                     });
