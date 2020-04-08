@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fluro/fluro.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -223,6 +224,61 @@ class _DirectoryPageState extends State<DirectoryPage>
             actions: <Widget>[
               // 非隐藏起来的菜单
               new IconButton(
+                  icon: new Icon(Icons.add),
+                  tooltip: 'Add Folder',
+                  onPressed: () {
+                    print("点击添加文件夹的按钮");
+
+                    // 1. 弹框输入文件夹名字
+
+                    // 2. 调用接口上传(文件夹新建, _vnote.json 新建)
+
+                    // 3. 修改当前目录的 _vnote.json
+
+                    // 4. 都 ok 后更新本地 dataList
+
+                    String folderName = "";
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return CupertinoAlertDialog(
+                            title: Text('创建文件夹'),
+                            content: Card(
+                              elevation: 0.0,
+                              child: Column(
+                                children: <Widget>[
+                                  TextField(
+                                    decoration: InputDecoration(
+                                        hintText: '请输入文件夹名字',
+                                        filled: true,
+                                        fillColor: Colors.grey.shade50),
+                                    onChanged: (String value) {
+                                      folderName = value;
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                            actions: <Widget>[
+                              CupertinoDialogAction(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('取消'),
+                              ),
+                              CupertinoDialogAction(
+                                onPressed: () {
+                                  Navigator.pop(context);
+
+
+                                },
+                                child: Text('确定'),
+                              ),
+                            ],
+                          );
+                        });
+                  }),
+              new IconButton(
                   icon: new Icon(Icons.refresh),
                   tooltip: "Update",
                   onPressed: () async {
@@ -408,6 +464,44 @@ class _DirectoryPageState extends State<DirectoryPage>
         FlatButton(onPressed: cancelFunction, child: Text('取消')),
       ],
     );
+  }
+
+  showInputAlertDialog(context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return CupertinoAlertDialog(
+            title: Text('温馨提示'),
+            content: Card(
+              elevation: 0.0,
+              child: Column(
+                children: <Widget>[
+                  TextField(
+                    decoration: InputDecoration(
+                        hintText: '请输入内容',
+                        filled: true,
+                        fillColor: Colors.grey.shade50),
+                    onChanged: (String value) {},
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('取消'),
+              ),
+              CupertinoDialogAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('确定'),
+              ),
+            ],
+          );
+        });
   }
 
   Widget _deleteDialog(BuildContext context, Document document,
