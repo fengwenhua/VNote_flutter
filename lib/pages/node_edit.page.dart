@@ -23,9 +23,9 @@ class NoteEditPage extends StatefulWidget {
 
   NoteEditPage(
       {Key key,
-      @required String markdownSource,
-      @required String id,
-      @required String name})
+      String markdownSource,
+      String id,
+      String name})
       : this.markdownSource = markdownSource,
         this.id = id,
         this.name = name,
@@ -38,7 +38,6 @@ class NoteEditPage extends StatefulWidget {
 class _NoteEditPageState extends State<NoteEditPage> {
   String content;
   ProgressDialog pr;
-  String _choice = 'Nothing';
 
   @override
   void initState() {
