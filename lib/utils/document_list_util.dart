@@ -59,11 +59,11 @@ class DocumentListUtil {
             textColor: Colors.white,
             fontSize: 16.0);
 
-        Future.delayed(Duration(seconds: 3), () async {
-          Navigator.of(context).pop();
-          print('延时3s执行, 退出 app');
-          await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-        });
+//        Future.delayed(Duration(seconds: 3), () async {
+//          Navigator.of(context).pop();
+//          print('延时3s执行, 退出 app');
+//          await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+//        });
       }
     }
 

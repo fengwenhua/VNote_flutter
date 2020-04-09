@@ -7,6 +7,7 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
@@ -64,6 +65,8 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       });
       DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
       dataListModel.goAheadDataList(list);
+      DirAndFileCacheModel dirCacheModel = Provider.of<DirAndFileCacheModel>(context, listen: false);
+      dirCacheModel.addDirAndFileList("approot", list);
     });
   }
 

@@ -13,6 +13,7 @@ import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
 import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
@@ -142,13 +143,22 @@ class _DirectoryPageState extends State<DirectoryPage>
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     ParentIdModel parentIdModel =
         Provider.of<ParentIdModel>(context, listen: false);
+    DataListModel dataListModel =
+        Provider.of<DataListModel>(context, listen: false);
+    ConfigIdModel configIdModel =
+        Provider.of<ConfigIdModel>(context, listen: false);
+    DirAndFileCacheModel dirCacheModel =
+        Provider.of<DirAndFileCacheModel>(context, listen: false);
+    // 在根目录点击了更新
     if (id == "approot" || name == "VNote 根目录") {
       await DocumentListUtil.instance
           .getNotebookList(context, tokenModel.token.accessToken, (data) async {
         if (data.length > 0) {
-          DataListModel dataListModel =
-              Provider.of<DataListModel>(context, listen: false);
           dataListModel.updateCurrentDir(data);
+
+          // 可以在这里, 用 Map<String,List<Document>> 的模式, 将 id 和 dataList 对应起来
+          dirCacheModel.updateDirAndFileList(id, data);
+
           pr.hide().whenComplete(() {
             jumpToPosition(true);
           });
@@ -164,12 +174,13 @@ class _DirectoryPageState extends State<DirectoryPage>
           pr.hide().whenComplete(() {
             jumpToPosition(true);
           });
-          final _parentId = Provider.of<ParentIdModel>(context, listen: false);
-          _parentId.goBackParentId();
+
+          // 因为点击目录的时候, 已经记录的 parentId , 所以如果当前目录为空, 所以要撤销
+          parentIdModel.goBackParentId();
         }
       });
     } else {
-      // 网络请求
+      // update 用于判断在其他目录点击了更新或者进入其他目录
       await getChildData(tokenModel.token.accessToken, id).then((data) {
         // 显示
         if (data.length > 0) {
@@ -178,16 +189,14 @@ class _DirectoryPageState extends State<DirectoryPage>
           }
           position.add(controller.offset);
 
-          DataListModel dataListModel =
-              Provider.of<DataListModel>(context, listen: false);
           if (update) {
             dataListModel.updateCurrentDir(data);
+            dirCacheModel.updateDirAndFileList(id, data);
           } else {
             dataListModel.goAheadDataList(data);
+            dirCacheModel.addDirAndFileList(id, data);
             for (Document d in dataListModel.dataList) {
               if (d.name == "_vnote.json") {
-                ConfigIdModel configIdModel =
-                    Provider.of<ConfigIdModel>(context, listen: false);
                 configIdModel.updateConfigId(d.id);
                 break;
               }
@@ -209,8 +218,7 @@ class _DirectoryPageState extends State<DirectoryPage>
           pr.hide().whenComplete(() {
             jumpToPosition(true);
           });
-          final _parentId = Provider.of<ParentIdModel>(context, listen: false);
-          _parentId.goBackParentId();
+          parentIdModel.goBackParentId();
         }
       });
     }
@@ -237,6 +245,8 @@ class _DirectoryPageState extends State<DirectoryPage>
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     ConfigIdModel configIdModel =
         Provider.of<ConfigIdModel>(context, listen: false);
+    DirAndFileCacheModel dirCacheModel =
+        Provider.of<DirAndFileCacheModel>(context, listen: false);
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
@@ -290,6 +300,9 @@ class _DirectoryPageState extends State<DirectoryPage>
                               ),
                               CupertinoDialogAction(
                                 onPressed: () async {
+                                  String errorText = "";
+                                  // 应该先关闭询问对话框
+                                  Navigator.pop(context);
                                   await pr.show().then((_) async {
                                     await OneDriveDataDao.createFolder(
                                             context,
@@ -298,80 +311,109 @@ class _DirectoryPageState extends State<DirectoryPage>
                                             parentIdModel.parentId)
                                         .then((value) async {
                                       //print("创建目录返回来的数据: " + value.toString());
-
-                                      //OneDriveDataModel oneDriveDataModel =  OneDriveDataModel.fromJson(json.decode(value.toString()));
-                                      print("更新本地 dataList");
-                                      Map<String, dynamic> jsonData =
-                                          jsonDecode(value.toString());
-                                      String id = jsonData["id"];
-                                      String newFolderName = jsonData["name"];
-                                      String dateString =
-                                          jsonData['lastModifiedDateTime'];
-                                      DateTime date =
-                                          DateTime.parse(dateString);
-                                      Document doc = new Document(
-                                          id: id,
-                                          name: jsonData["name"],
-                                          isFile: false,
-                                          dateModified: date);
-                                      dataListModel.addEle(doc);
-
-                                      // 下面是更新当前目录的 _vnote.json 文件
-                                      String configId = configIdModel.configId;
-                                      if (configId == "approot") {
-                                        print("根目录, 不需要更新 _vnote.json 文件");
+                                      if (value == null) {
+                                        print("创建文件夹网络请求失败");
+                                        errorText = "创建文件夹的请求超时! 请重试!!";
                                       } else {
-                                        print(
-                                            "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 sub_directories 字段");
+                                        print("更新本地 dataList");
+                                        Map<String, dynamic> jsonData =
+                                            jsonDecode(value.toString());
+                                        String id = jsonData["id"];
+                                        String newFolderName = jsonData["name"];
+                                        String dateString =
+                                            jsonData['lastModifiedDateTime'];
+                                        DateTime date =
+                                            DateTime.parse(dateString);
+                                        Document doc = new Document(
+                                            id: id,
+                                            name: jsonData["name"],
+                                            isFile: false,
+                                            dateModified: date);
+                                        dataListModel.addEle(doc);
+                                        dirCacheModel.addDirOrFileEle(
+                                            parentIdModel.parentId, doc);
 
-                                        // 如果找到当前目录下的 _vnote.json 的 id???
+                                        // 下面是更新当前目录的 _vnote.json 文件
+                                        String configId =
+                                            configIdModel.configId;
+                                        if (configId == "approot") {
+                                          print("根目录, 不需要更新 _vnote.json 文件");
+                                        } else {
+                                          print(
+                                              "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 sub_directories 字段");
 
-                                        await OneDriveDataDao.getFileContent(
+                                          // 如果找到当前目录下的 _vnote.json 的 id???
+
+                                          await OneDriveDataDao.getFileContent(
+                                                  context,
+                                                  tokenModel.token.accessToken,
+                                                  configId)
+                                              .then((value) async {
+                                            if (value == null) {
+                                              errorText = "创建文件夹的请求成功, 但是下载 _vnote.json 失败!";
+                                            } else {
+                                              print("要添加的文件夹名称: " +
+                                                  newFolderName);
+                                              Map<String, dynamic> newFolder =
+                                                  jsonDecode(
+                                                      '{"name":"$newFolderName"}');
+                                              DesktopConfigModel
+                                                  desktopConfigModel =
+                                                  DesktopConfigModel.fromJson(
+                                                      json.decode(
+                                                          value.toString()));
+                                              //print("添加之前: ");
+                                              //print(json.encode(desktopConfigModel));
+                                              desktopConfigModel
+                                                  .addNewFolder(newFolder);
+                                              print("添加之后: ");
+                                              print(json
+                                                  .encode(desktopConfigModel));
+
+                                              // 添加成功_vnote.json 之后, 就是更新这个文件
+                                              await OneDriveDataDao
+                                                  .updateContent(
+                                                      context,
+                                                      tokenModel
+                                                          .token.accessToken,
+                                                      configId,
+                                                      json.encode(
+                                                          desktopConfigModel)).then((value){
+                                                            if(value == null){
+                                                              errorText = "更新 _vnote.json 失败!";
+                                                            }
+                                              });
+                                            }
+                                          });
+                                        }
+
+                                        // 下面是给新创建的目录新增一个 _vnote.json 文件
+                                        await OneDriveDataDao.uploadFile(
                                                 context,
                                                 tokenModel.token.accessToken,
-                                                configId)
-                                            .then((value) async {
-                                          print("要添加的文件夹名称: " + newFolderName);
-                                          Map<String, dynamic> newFolder =
-                                              jsonDecode(
-                                                  '{"name":"$newFolderName"}');
-                                          DesktopConfigModel
-                                              desktopConfigModel =
-                                              DesktopConfigModel.fromJson(json
-                                                  .decode(value.toString()));
-                                          //print("添加之前: ");
-                                          //print(json.encode(desktopConfigModel));
-                                          desktopConfigModel
-                                              .addNewFolder(newFolder);
-                                          print("添加之后: ");
-                                          print(
-                                              json.encode(desktopConfigModel));
-
-                                          // 添加成功_vnote.json 之后, 就是更新这个文件
-                                          await OneDriveDataDao.updateContent(
-                                              context,
-                                              tokenModel.token.accessToken,
-                                              configId,
-                                              json.encode(desktopConfigModel));
+                                                id,
+                                                Utils.newFolderJson(),
+                                                "_vnote.json")
+                                            .then((data) {
+                                          print("上传_vnote.json 文件之后返回的内容" +
+                                              data.toString());
                                         });
                                       }
-
-                                      // 下面是给新创建的目录新增一个 _vnote.json 文件
-                                      await OneDriveDataDao.uploadFile(
-                                              context,
-                                              tokenModel.token.accessToken,
-                                              id,
-                                              Utils.newFolderJson(),
-                                              "_vnote.json")
-                                          .then((data) {
-                                        print("上传_vnote.json 文件之后返回的内容" +
-                                            data.toString());
-                                      });
                                     }).then((_) async {
                                       await pr.hide();
+                                      if (errorText != "") {
+                                        Fluttertoast.showToast(
+                                            msg: errorText,
+                                            toastLength: Toast.LENGTH_LONG,
+                                            gravity: ToastGravity.CENTER,
+                                            timeInSecForIos: 3,
+                                            backgroundColor: Colors.red,
+                                            textColor: Colors.white,
+                                            fontSize: 16.0);
+                                      }
                                     });
                                   });
-                                  Navigator.pop(context);
+                                  //Navigator.pop(context);
                                 },
                                 child: Text('确定'),
                               ),
@@ -529,18 +571,37 @@ class _DirectoryPageState extends State<DirectoryPage>
       lastModified: document.dateModified,
       onPressedNext: () async {
         print("点开 ${document.name} 目录, 然后显示该目录下的所有文件");
-
-        // 这里可以先查看本地缓存
-
         // 记得将这个 id 记录下来, 以后刷新用
         final _parentId = Provider.of<ParentIdModel>(context, listen: false);
         _parentId.goAheadParentId(document.id, document.name);
 
-        // 转圈圈和网络请求
-        //_myClick(document);
-        await pr.show().then((_) {
-          _postData(document.id, document.name);
-        });
+        DirAndFileCacheModel dirAndFileCacheModel =
+            Provider.of<DirAndFileCacheModel>(context, listen: false);
+        DataListModel dataListModel =
+            Provider.of<DataListModel>(context, listen: false);
+        ConfigIdModel configIdModel =
+            Provider.of<ConfigIdModel>(context, listen: false);
+        List<Document> cache =
+            dirAndFileCacheModel.getDirAndFileCache(document.id);
+        // 这里可以先查看本地缓存???
+        if (cache != null) {
+          print("该目录本地有缓存");
+
+          dataListModel.goAheadDataList(cache);
+          position.add(controller.offset);
+          for (Document d in dataListModel.dataList) {
+            if (d.name == "_vnote.json") {
+              configIdModel.updateConfigId(d.id);
+              break;
+            }
+          }
+        } else {
+          // 转圈圈和网络请求
+          print("该目录本地没有缓存");
+          await pr.show().then((_) {
+            _postData(document.id, document.name);
+          });
+        }
       });
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
@@ -610,6 +671,10 @@ class _DirectoryPageState extends State<DirectoryPage>
       TokenModel tokenModel, DataListModel dataListModel) {
     ConfigIdModel configIdModel =
         Provider.of<ConfigIdModel>(context, listen: false);
+    DirAndFileCacheModel dirCacheModel =
+        Provider.of<DirAndFileCacheModel>(context, listen: false);
+    ParentIdModel parentIdModel =
+        Provider.of<ParentIdModel>(context, listen: false);
     return AlertDialog(
       title: Text('提示？'),
       content: document.isFile ? Text('确定删除该文件？') : Text('确定删除该文件夹? '),
@@ -630,6 +695,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                   context, tokenModel.token.accessToken, document.id);
               // 删除本地缓存的文件夹
               dataListModel.removeEle(document);
+              dirCacheModel.delDirOrFileEle(parentIdModel.parentId, document);
               // 同时要修改配置文件
               // 如果是顶层 approot 则不用管
               // 否则
@@ -641,7 +707,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                 await OneDriveDataDao.getFileContent(
                         context, tokenModel.token.accessToken, configId)
                     .then((value) async {
-                      print("拿到的 _vnote.json 文件数据为: " + value.toString());
+                  print("拿到的 _vnote.json 文件数据为: " + value.toString());
                   print("要干掉的文件/文件夹名字: " + document.name);
                   DesktopConfigModel desktopConfigModel =
                       DesktopConfigModel.fromJson(
@@ -656,11 +722,11 @@ class _DirectoryPageState extends State<DirectoryPage>
                   print("干掉之后: ");
                   print(json.encode(desktopConfigModel));
                   // 修改成功_vnote.json 之后, 就是更新这个文件
-                    await OneDriveDataDao.updateContent(
-                        context,
-                        tokenModel.token.accessToken,
-                        configId,
-                        json.encode(desktopConfigModel));
+                  await OneDriveDataDao.updateContent(
+                      context,
+                      tokenModel.token.accessToken,
+                      configId,
+                      json.encode(desktopConfigModel));
                 });
               }
             });

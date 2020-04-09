@@ -9,6 +9,7 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
@@ -132,6 +133,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 Provider.of<ParentIdModel>(context, listen: false);
                 DataListModel dataListModel =
                 Provider.of<DataListModel>(context, listen: false);
+                DirAndFileCacheModel dirAndFileCacheModel = Provider.of<DirAndFileCacheModel>(context,listen: false);
                 // 本地增加的所有图片
                 List<String> newImagesList = _newImageList.newImageList;
 
@@ -164,7 +166,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                           isFile: false,
                           dateModified: date);
                       dataListModel.addEle(doc);
-
+                      dirAndFileCacheModel.addDirOrFileEle(parentIdModel.parentId, doc);
                       print("接下来是更新这个 imageFolderId");
                       _imageFolderId.updateImageFolderId(id);
                       imageFolderId = _imageFolderId.imageFolderId;

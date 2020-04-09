@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
+import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/navigator_util.dart';
@@ -80,6 +81,8 @@ class _WebViewState extends State<WebView> {
       });
       DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
       dataListModel.goAheadDataList(list);
+      DirAndFileCacheModel dirCacheModel = Provider.of<DirAndFileCacheModel>(context, listen: false);
+      dirCacheModel.addDirAndFileList("approot", list);
     });
   }
 
