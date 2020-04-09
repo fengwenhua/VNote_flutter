@@ -286,7 +286,8 @@ class _DirectoryPageState extends State<DirectoryPage>
                     });
                   })
             ],
-            leading: parentIdModel.parentId == "approot" || parentIdModel.parentId == parentIdModel.genId
+            leading: parentIdModel.parentId == "approot" ||
+                    parentIdModel.parentId == parentIdModel.genId
                 ? IconButton(
                     icon: Icon(
                       Icons.dehaze,
@@ -330,13 +331,15 @@ class _DirectoryPageState extends State<DirectoryPage>
 
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
-    ConfigIdModel configIdModel = Provider.of<ConfigIdModel>(context, listen: false);
-    if (_parentId.parentId != "approot" || _parentId.parentId!= _parentId.genId) {
+    ConfigIdModel configIdModel =
+        Provider.of<ConfigIdModel>(context, listen: false);
+    if (_parentId.parentId != "approot" ||
+        _parentId.parentId != _parentId.genId) {
       print("不在根目录");
       _parentId.goBackParentId();
       dataListModel.goBackDataList();
-      for(Document d in dataListModel.dataList){
-        if(d.name == "_vnote.json"){
+      for (Document d in dataListModel.dataList) {
+        if (d.name == "_vnote.json") {
           configIdModel.updateConfigId(d.id);
           break;
         }
@@ -390,6 +393,12 @@ class _DirectoryPageState extends State<DirectoryPage>
             icon: Icons.create,
             onTap: () {
               print("点击了重命名");
+              showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return _renameDialog(
+                        context, document, tokenModel, dataListModel);
+                  });
             },
           ),
           IconSlideAction(
@@ -559,8 +568,8 @@ class _DirectoryPageState extends State<DirectoryPage>
               // 如果是顶层 approot 则不用管
               // 否则
               String configId = configIdModel.configId;
-              if (configId == "approot"||parentIdModel.parentId == parentIdModel.genId) {
-
+              if (configId == "approot" ||
+                  parentIdModel.parentId == parentIdModel.genId) {
                 print("根目录, 不需要更新 _vnote.json 文件");
               } else {
                 print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
@@ -592,6 +601,72 @@ class _DirectoryPageState extends State<DirectoryPage>
             });
             await pr.hide();
           },
+        ),
+      ],
+    );
+  }
+
+  Widget _renameDialog(BuildContext context, Document document,
+      TokenModel tokenModel, DataListModel dataListModel) {
+    DirAndFileCacheModel dirCacheModel =
+    Provider.of<DirAndFileCacheModel>(context, listen: false);
+    ParentIdModel parentIdModel =
+    Provider.of<ParentIdModel>(context, listen: false);
+    String fileOrFolderName = "";
+    return CupertinoAlertDialog(
+      title: document.isFile?Text('重命名文件'):Text("重命名文件夹"),
+      content: Card(
+        elevation: 0.0,
+        child: Column(
+          children: <Widget>[
+            TextField(
+                decoration: InputDecoration(
+                    hintText: '请输入新名字',
+                    filled: true,
+                    fillColor: Colors.grey.shade50),
+                onChanged: (String value) {
+                  fileOrFolderName = value;
+                },
+                controller: TextEditingController.fromValue(TextEditingValue(
+                    // 设置内容
+                    text: document.name,
+                    // 保持光标在最后
+                    selection: TextSelection.fromPosition(TextPosition(
+                        affinity: TextAffinity.downstream,
+                        offset: document.name.length))))),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        CupertinoDialogAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text('取消'),
+        ),
+        CupertinoDialogAction(
+          onPressed: () async {
+            Navigator.pop(context);
+            // 1. 发送请求更改名字
+            // 2. 更新 dataList 的 name
+            // 3. 更新 dircache 的 name
+            // 4. 更新 _vnote.json
+            await pr.show().then((_) async {
+              await OneDriveDataDao.rename(context, tokenModel.token.accessToken, document.id, fileOrFolderName).then((data){
+                print("重命名返回的数据: "+ data.toString());
+                  // 更新本地数据
+                  dataListModel.renameEle(document.id, fileOrFolderName);
+                  dirCacheModel.renameEle(parentIdModel.parentId, document.id, fileOrFolderName);
+                  // 更新 _vnote.json
+
+              });
+            }).then((_) async {
+              await pr.hide();
+            });
+
+
+          },
+          child: Text('确定'),
         ),
       ],
     );

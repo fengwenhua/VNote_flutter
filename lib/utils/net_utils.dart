@@ -24,7 +24,7 @@ class NetUtils {
     String errorMsg = "";
     int statusCode;
     bool chucuo = false;
-    while(true){
+    while (true) {
       try {
         Response response;
         var dio;
@@ -51,12 +51,51 @@ class NetUtils {
         _handError(errorCallBack, exception.toString());
       }
 
-      if(!chucuo){
+      if (!chucuo) {
         break;
       }
       print("delete 的时候出现异常, 再来一发!");
     }
+  }
 
+  Future<Response> patch(BuildContext context, String url, Function callBack,
+      {Map<String, dynamic> headers,
+      dynamic content,
+      Function errorCallBack}) async {
+    String errorMsg = "";
+    int statusCode;
+    bool chucuo = false;
+    while (true) {
+      try {
+        Response response;
+        var dio;
+        dio = new Dio(new BaseOptions(
+          method: "patch",
+          connectTimeout: 20000,
+          headers: headers,
+          contentType: "application/json",
+        ));
+        response = await dio.patch(url, data: content);
+        statusCode = response.statusCode;
+
+        if (statusCode < 0) {
+          errorMsg = "网络请求错误,状态码:" + statusCode.toString();
+          _handError(errorCallBack, errorMsg);
+        }
+        if (callBack != null) {
+          callBack(response.toString());
+        }
+        return response;
+
+      } catch (exception) {
+        chucuo = true;
+        _handError(errorCallBack, exception.toString());
+      }
+      if (!chucuo) {
+        break;
+      }
+      print("patch 的时候出现异常, 再来一发!");
+    }
   }
 
   /// put 请求, 用于文章内容更新, 图片上传
@@ -67,8 +106,7 @@ class NetUtils {
     String errorMsg = "";
     int statusCode;
     bool chucuo = false;
-    while(true){
-
+    while (true) {
       try {
         Response response;
         var dio;
@@ -97,12 +135,11 @@ class NetUtils {
         chucuo = true;
         _handError(errorCallBack, exception.toString());
       }
-      if(!chucuo){
+      if (!chucuo) {
         break;
       }
       print("put 的时候出现异常, 再来一发!");
     }
-
   }
 
   /// download 请求, 用于图片下载
@@ -190,7 +227,7 @@ class NetUtils {
     String errorMsg = "";
     int statusCode;
     bool chucuo = false;
-    while(true){
+    while (true) {
       try {
         Response response;
         var dio;
@@ -249,7 +286,7 @@ class NetUtils {
         chucuo = true;
         _handError(errorCallBack, exception.toString());
       }
-      if(!chucuo){
+      if (!chucuo) {
         break;
       }
       print("requests 出现异常, 再来一发!!!");

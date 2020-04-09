@@ -30,6 +30,19 @@ class DataListModel with ChangeNotifier{
     notifyListeners();
   }
 
+  void renameEle(String id, String name){
+    List<Document> list = _dataList.pop();
+    List<Document> newList = list.map((f){
+      if(f.id == id){
+        print("DataList 重命名!");
+        f.name = name;
+      }
+      return f;
+    }).toList();
+    _dataList.push(newList);
+    notifyListeners();
+  }
+
   void goAheadDataList(List<Document> newDataList){
     _dataList.push(newDataList);
     notifyListeners();

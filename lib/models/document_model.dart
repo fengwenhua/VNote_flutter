@@ -2,7 +2,7 @@ import 'package:meta/meta.dart';
 
 class Document {
   final String id;
-  final String name;
+  String name;
   final bool isFile;
   final DateTime dateModified;
   List<Document> childData;

@@ -170,6 +170,20 @@ class OneDriveDataDao {
         path: path);
   }
 
+  /// [rename] 是根据 [id] 和 [name] 重命名
+  static Future<Response> rename(
+      BuildContext context, String token, String id, String name) {
+    Map<String, dynamic> headers = {"Authorization": token};
+    String url = "https://graph.microsoft.com/v1.0/me/drive/items/$id";
+    String content = '''{
+  "name": "$name"
+}''';
+    return NetUtils.instance.patch(context, url, (data) {},
+        content: content, headers: headers, errorCallBack: (errorMsg) {
+      print("出了错误, 是超时吗? " + errorMsg);
+    });
+  }
+
   /// 根据文章 id 和 content 更新文章内容
   static Future<Response> updateContent(
       BuildContext context, String token, String id, String content) {

@@ -36,15 +36,28 @@ class DirAndFileCacheModel with ChangeNotifier {
   }
 
   /// 给某个列表添加一个元素(文件/文件夹)
-  void addDirOrFileEle(String id, Document newEle) {
+  void addDirOrFileEle(String parentId, Document newEle) {
     //print("传入 model 的 id 是: " + id);
-    List<Document> cur = this._dirCache[id];
+    List<Document> cur = this._dirCache[parentId];
     if (!cur.contains(newEle)) {
       print("cache 中没有这个元素!");
       cur.add(newEle);
-      this._dirCache[id] = cur;
+      this._dirCache[parentId] = cur;
       notifyListeners();
     }
+  }
+
+  void renameEle(String parentId, String id, String name){
+    List<Document> cur = this._dirCache[parentId];
+    List<Document> newList = cur.map((f){
+      if(f.id == id){
+        f.name = name;
+        print("DirCache 重命名");
+      }
+      return f;
+    }).toList();
+    this._dirCache[parentId] = newList;
+    notifyListeners();
   }
 
   /// 给某个列表删除一个元素(文件/文件夹)
