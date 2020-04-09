@@ -609,12 +609,15 @@ class _DirectoryPageState extends State<DirectoryPage>
   Widget _renameDialog(BuildContext context, Document document,
       TokenModel tokenModel, DataListModel dataListModel) {
     DirAndFileCacheModel dirCacheModel =
-    Provider.of<DirAndFileCacheModel>(context, listen: false);
+        Provider.of<DirAndFileCacheModel>(context, listen: false);
     ParentIdModel parentIdModel =
-    Provider.of<ParentIdModel>(context, listen: false);
+        Provider.of<ParentIdModel>(context, listen: false);
+    ConfigIdModel configIdModel =
+        Provider.of<ConfigIdModel>(context, listen: false);
     String fileOrFolderName = "";
+    String oldFileOrFolderName = document.name;
     return CupertinoAlertDialog(
-      title: document.isFile?Text('重命名文件'):Text("重命名文件夹"),
+      title: document.isFile ? Text('重命名文件') : Text("重命名文件夹"),
       content: Card(
         elevation: 0.0,
         child: Column(
@@ -652,19 +655,52 @@ class _DirectoryPageState extends State<DirectoryPage>
             // 3. 更新 dircache 的 name
             // 4. 更新 _vnote.json
             await pr.show().then((_) async {
-              await OneDriveDataDao.rename(context, tokenModel.token.accessToken, document.id, fileOrFolderName).then((data){
-                print("重命名返回的数据: "+ data.toString());
-                  // 更新本地数据
-                  dataListModel.renameEle(document.id, fileOrFolderName);
-                  dirCacheModel.renameEle(parentIdModel.parentId, document.id, fileOrFolderName);
-                  // 更新 _vnote.json
+              await OneDriveDataDao.rename(
+                      context,
+                      tokenModel.token.accessToken,
+                      document.id,
+                      fileOrFolderName)
+                  .then((data) async {
+                print("重命名返回的数据: " + data.toString());
+                // 更新本地数据
+                dataListModel.renameEle(document.id, fileOrFolderName);
+                dirCacheModel.renameEle(
+                    parentIdModel.parentId, document.id, fileOrFolderName);
+                // 更新 _vnote.json
+                // 重命名文件和文件夹是不一样的
+                // 根目录则不用修改 _vnote.json
+                if (configIdModel.configId == "approot" ||
+                    parentIdModel.parentId == parentIdModel.genId) {
+                  print("根目录, 不需要更新 _vnote.json 文件");
+                } else {
+                  print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
+                  await OneDriveDataDao.getFileContent(context,
+                          tokenModel.token.accessToken, configIdModel.configId)
+                      .then((value) async {
+                    print("拿到的 _vnote.json 文件数据为: " + value.toString());
+                    print("要修改的文件/文件夹名字: " + oldFileOrFolderName);
+                    DesktopConfigModel desktopConfigModel =
+                        DesktopConfigModel.fromJson(
+                            json.decode(value.toString()));
+                    if (document.isFile) {
+                      desktopConfigModel.renameFile(
+                          oldFileOrFolderName, fileOrFolderName);
+                    } else {
+                      desktopConfigModel.renameFolder(
+                          oldFileOrFolderName, fileOrFolderName);
+                    }
 
+                    await OneDriveDataDao.updateContent(
+                        context,
+                        tokenModel.token.accessToken,
+                        configIdModel.configId,
+                        json.encode(desktopConfigModel));
+                  });
+                }
               });
             }).then((_) async {
               await pr.hide();
             });
-
-
           },
           child: Text('确定'),
         ),

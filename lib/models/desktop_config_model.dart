@@ -16,6 +16,17 @@ class DesktopConfigModel {
 		this.files.removeWhere((f)=> f.name==name);
   }
 
+  void renameFile(String oldName, String newName){
+		List<Files> newList = this.files.map((f){
+			if(f.name == oldName){
+				print("在 _vnote.json 中给文件赋值");
+				f.name = newName;
+			}
+			return f;
+		}).toList();
+		this.files = newList;
+	}
+
 	void addNewFolder(Map<String, dynamic> json){
 		//print("添加进入的是: " + json['name']);
 		this.subDirectories.add(new SubDirectories.fromJson(json));
@@ -24,6 +35,18 @@ class DesktopConfigModel {
 	void deleteFolder(String name){
 		this.subDirectories.removeWhere((s)=>s.name==name);
   }
+
+  void renameFolder(String oldName, String newName){
+		List<SubDirectories> newList = this.subDirectories.map((f){
+			if(f.name == oldName){
+				print("在 _vnote.json 中给目录赋值");
+				f.name = newName;
+			}
+			return f;
+		}).toList();
+		this.subDirectories = newList;
+	}
+
 
 	DesktopConfigModel.fromJson(Map<String, dynamic> json) {
 		createdTime = json['created_time'];
