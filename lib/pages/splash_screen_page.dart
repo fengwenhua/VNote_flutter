@@ -65,8 +65,10 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       });
       DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
       dataListModel.goAheadDataList(list);
+      ParentIdModel parentIdModel =
+      Provider.of<ParentIdModel>(context, listen: false);
       DirAndFileCacheModel dirCacheModel = Provider.of<DirAndFileCacheModel>(context, listen: false);
-      dirCacheModel.addDirAndFileList("approot", list);
+      dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
     });
   }
 

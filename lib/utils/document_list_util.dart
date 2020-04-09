@@ -408,9 +408,11 @@ class DocumentListUtil {
         //print(json.encode(oneDriveDataModel));
         print("在这里拿到 vnote 文件夹的 id, 并且设置好 parentId");
         //oneDriveDataModel.value[0]?.parentReference?.id??"approot"
+        String genId = oneDriveDataModel.value[0]?.parentReference?.id ?? "approot";
         parentIdModel.goAheadParentId(
-            oneDriveDataModel.value[0]?.parentReference?.id ?? "approot",
+            genId,
             "VNote 根目录");
+        parentIdModel.setGenId(genId);
         print("同时设置_vnote.json 的 id, 当然, 因为这里是第一层, 没有这文件, 所以设置默认是 approot");
         ConfigIdModel configIdModel = Provider.of<ConfigIdModel>(context, listen: false);
         configIdModel.updateConfigId("approot");

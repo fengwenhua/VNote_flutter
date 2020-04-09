@@ -30,27 +30,30 @@ class DirAndFileCacheModel with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateDirAndFileList(String id, List<Document> list){
-    this._dirCache.update(id, (value)=>(value = list),ifAbsent: ()=>list);
+  void updateDirAndFileList(String id, List<Document> list) {
+    this._dirCache.update(id, (value) => (value = list), ifAbsent: () => list);
     notifyListeners();
   }
 
   /// 给某个列表添加一个元素(文件/文件夹)
-  void addDirOrFileEle(String id, Document newEle){
-      List<Document> cur = this._dirCache[id];
-      if(!cur.contains(newEle)){
-        print("cache 中没有这个元素!");
-        cur.add(newEle);
-        this._dirCache[id] = cur;
-        notifyListeners();
-      }
+  void addDirOrFileEle(String id, Document newEle) {
+    //print("传入 model 的 id 是: " + id);
+    List<Document> cur = this._dirCache[id];
+    if (!cur.contains(newEle)) {
+      print("cache 中没有这个元素!");
+      cur.add(newEle);
+      this._dirCache[id] = cur;
+      notifyListeners();
+    }
   }
 
   /// 给某个列表删除一个元素(文件/文件夹)
-  void delDirOrFileEle(String id, Document delELe){
+  void delDirOrFileEle(String id, Document delELe) {
     List<Document> cur = this._dirCache[id];
-    cur.remove(delELe);
-    this._dirCache[id] = cur;
-    notifyListeners();
+    if (cur != null) {
+      cur.remove(delELe);
+      this._dirCache[id] = cur;
+      notifyListeners();
+    }
   }
 }

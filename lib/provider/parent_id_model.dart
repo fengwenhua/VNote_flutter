@@ -5,9 +5,15 @@ import 'package:vnote/utils/my_stack.dart';
 class ParentIdModel with ChangeNotifier{
   MyStack<String> _parentId = MyStack<String>();
   MyStack<String> _parentName = MyStack<String>();
-
+  String _genId = "";
   String get parentId => _parentId.top();
   String get parentName => _parentName.top();
+  String get genId => _genId;
+
+  void setGenId(String id){
+    this._genId = id;
+    notifyListeners();
+  }
 
   void goAheadParentId(String newId, String newName){
     _parentId.push(newId);
