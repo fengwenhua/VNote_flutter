@@ -1,12 +1,5 @@
-import 'dart:io';
-
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'dart:convert';
-
-import 'package:path_provider/path_provider.dart';
 
 class NetUtils {
   factory NetUtils() => _getInstance();
@@ -30,30 +23,40 @@ class NetUtils {
       {Map<String, dynamic> headers, Function errorCallBack}) async {
     String errorMsg = "";
     int statusCode;
-    try {
-      Response response;
-      var dio;
-      dio = new Dio(new BaseOptions(
-        method: "delete",
-        connectTimeout: 20000,
-        headers: headers,
-        contentType: "text/plain",
-      ));
+    bool chucuo = false;
+    while(true){
+      try {
+        Response response;
+        var dio;
+        dio = new Dio(new BaseOptions(
+          method: "delete",
+          connectTimeout: 20000,
+          headers: headers,
+          contentType: "text/plain",
+        ));
 
-      response = await dio.delete(url);
-      statusCode = response.statusCode;
+        response = await dio.delete(url);
+        statusCode = response.statusCode;
 
-      if (statusCode < 0) {
-        errorMsg = "网络请求错误,状态码:" + statusCode.toString();
-        _handError(errorCallBack, errorMsg);
+        if (statusCode < 0) {
+          errorMsg = "网络请求错误,状态码:" + statusCode.toString();
+          _handError(errorCallBack, errorMsg);
+        }
+        if (callBack != null) {
+          callBack(response.toString(), statusCode.toString());
+        }
+        return response;
+      } catch (exception) {
+        chucuo = true;
+        _handError(errorCallBack, exception.toString());
       }
-      if (callBack != null) {
-        callBack(response.toString(), statusCode.toString());
+
+      if(!chucuo){
+        break;
       }
-      return response;
-    } catch (exception) {
-      _handError(errorCallBack, exception.toString());
+      print("delete 的时候出现异常, 再来一发!");
     }
+
   }
 
   /// put 请求, 用于文章内容更新, 图片上传
@@ -63,33 +66,43 @@ class NetUtils {
       Function errorCallBack}) async {
     String errorMsg = "";
     int statusCode;
-    try {
-      Response response;
-      var dio;
-      dio = new Dio(new BaseOptions(
-        method: "put",
-        connectTimeout: 20000,
-        headers: headers,
-        contentType: "text/plain",
-      ));
+    bool chucuo = false;
+    while(true){
 
-      response = await dio.put(url, data: content);
-      statusCode = response.statusCode;
+      try {
+        Response response;
+        var dio;
+        dio = new Dio(new BaseOptions(
+          method: "put",
+          connectTimeout: 20000,
+          headers: headers,
+          contentType: "text/plain",
+        ));
 
-      if (statusCode < 0) {
-        errorMsg = "网络请求错误,状态码:" + statusCode.toString();
-        _handError(errorCallBack, errorMsg);
-      }
-      if (callBack != null) {
+        response = await dio.put(url, data: content);
+        statusCode = response.statusCode;
+
+        if (statusCode < 0) {
+          errorMsg = "网络请求错误,状态码:" + statusCode.toString();
+          _handError(errorCallBack, errorMsg);
+        }
+        if (callBack != null) {
 //        String res2Json = json.encode(response.data);
 //        Map<String, dynamic> map = json.decode(res2Json);
 //        callBack(map["data"]);
-        callBack(response.toString());
+          callBack(response.toString());
+        }
+        return response;
+      } catch (exception) {
+        chucuo = true;
+        _handError(errorCallBack, exception.toString());
       }
-      return response;
-    } catch (exception) {
-      _handError(errorCallBack, exception.toString());
+      if(!chucuo){
+        break;
+      }
+      print("put 的时候出现异常, 再来一发!");
     }
+
   }
 
   /// download 请求, 用于图片下载
@@ -176,62 +189,70 @@ class NetUtils {
     print("传进来的url: " + url);
     String errorMsg = "";
     int statusCode;
-    try {
-      Response response;
-      var dio;
-      if (headers != null) {
-        //print("有 headers");
-        //print(headers.toString());
-        dio = new Dio(new BaseOptions(
-          connectTimeout: 20000,
-          receiveTimeout: 20000,
-          headers: headers,
-          contentType: contentType,
-        ));
-      } else {
-        dio = new Dio(new BaseOptions(
-          connectTimeout: 20000,
-          receiveTimeout: 20000,
-          contentType: contentType,
-        ));
-      }
-
-      if (method == GET) {
-        if (params != null && params.isNotEmpty) {
-          StringBuffer sb = new StringBuffer("?");
-          params.forEach((key, value) {
-            sb.write("$key" + "=" + "$value" + "&");
-          });
-          String paramStr = sb.toString();
-          paramStr = paramStr.substring(0, paramStr.length - 1);
-          url += paramStr;
-        }
-        response = await dio.get(url);
-      } else if (method == POST) {
-        if (params != null && params.isNotEmpty) {
-          response = await dio.post(url, data: params);
-        } else if (data != null && data.isNotEmpty) {
-          //print("创建文件夹的 post");
-          response = await dio.post(url, data: data);
+    bool chucuo = false;
+    while(true){
+      try {
+        Response response;
+        var dio;
+        if (headers != null) {
+          //print("有 headers");
+          //print(headers.toString());
+          dio = new Dio(new BaseOptions(
+            connectTimeout: 20000,
+            receiveTimeout: 20000,
+            headers: headers,
+            contentType: contentType,
+          ));
         } else {
-          response = await dio.post(url);
+          dio = new Dio(new BaseOptions(
+            connectTimeout: 20000,
+            receiveTimeout: 20000,
+            contentType: contentType,
+          ));
         }
-      }
 
-      statusCode = response.statusCode;
-      if (statusCode < 0) {
-        errorMsg = "网络请求错误,状态码:" + statusCode.toString();
-        _handError(errorCallBack, errorMsg);
-      }
-      if (callBack != null) {
+        if (method == GET) {
+          if (params != null && params.isNotEmpty) {
+            StringBuffer sb = new StringBuffer("?");
+            params.forEach((key, value) {
+              sb.write("$key" + "=" + "$value" + "&");
+            });
+            String paramStr = sb.toString();
+            paramStr = paramStr.substring(0, paramStr.length - 1);
+            url += paramStr;
+          }
+          response = await dio.get(url);
+        } else if (method == POST) {
+          if (params != null && params.isNotEmpty) {
+            response = await dio.post(url, data: params);
+          } else if (data != null && data.isNotEmpty) {
+            //print("创建文件夹的 post");
+            response = await dio.post(url, data: data);
+          } else {
+            response = await dio.post(url);
+          }
+        }
+
+        statusCode = response.statusCode;
+        if (statusCode < 0) {
+          errorMsg = "网络请求错误,状态码:" + statusCode.toString();
+          _handError(errorCallBack, errorMsg);
+        }
+        if (callBack != null) {
 //        String res2Json = json.encode(response.data);
 //        Map<String, dynamic> map = json.decode(res2Json);
 //        callBack(map["data"]);
-        callBack(response.toString());
+          callBack(response.toString());
+        }
+        return response;
+      } catch (exception) {
+        chucuo = true;
+        _handError(errorCallBack, exception.toString());
       }
-      return response;
-    } catch (exception) {
-      _handError(errorCallBack, exception.toString());
+      if(!chucuo){
+        break;
+      }
+      print("requests 出现异常, 再来一发!!!");
     }
   }
 

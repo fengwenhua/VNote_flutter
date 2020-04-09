@@ -330,14 +330,22 @@ class _DirectoryPageState extends State<DirectoryPage>
 
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
-    if (_parentId.parentId != "approot") {
+    ConfigIdModel configIdModel = Provider.of<ConfigIdModel>(context, listen: false);
+    if (_parentId.parentId != "approot" || _parentId.parentId!= _parentId.genId) {
       print("不在根目录");
       _parentId.goBackParentId();
       dataListModel.goBackDataList();
+      for(Document d in dataListModel.dataList){
+        if(d.name == "_vnote.json"){
+          configIdModel.updateConfigId(d.id);
+          break;
+        }
+      }
       jumpToPosition(false);
     } else {
       print("在根目录了, 所有没有返回的操作了, 也不需要给 parentid 弹栈了");
       print("打开侧滑菜单");
+      configIdModel.updateConfigId("approot");
       Navigator.pop(context);
     }
     return false;
