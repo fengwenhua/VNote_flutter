@@ -16,7 +16,6 @@ import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/widgets/markdown_text_input.dart';
 
-
 class NoteEditPage extends StatefulWidget {
   final String markdownSource;
   final String id;
@@ -130,10 +129,11 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 final _imageFolderId =
                     Provider.of<ImageFolderIdModel>(context, listen: false);
                 ParentIdModel parentIdModel =
-                Provider.of<ParentIdModel>(context, listen: false);
+                    Provider.of<ParentIdModel>(context, listen: false);
                 DataListModel dataListModel =
-                Provider.of<DataListModel>(context, listen: false);
-                DirAndFileCacheModel dirAndFileCacheModel = Provider.of<DirAndFileCacheModel>(context,listen: false);
+                    Provider.of<DataListModel>(context, listen: false);
+                DirAndFileCacheModel dirAndFileCacheModel =
+                    Provider.of<DirAndFileCacheModel>(context, listen: false);
                 // 本地增加的所有图片
                 List<String> newImagesList = _newImageList.newImageList;
 
@@ -142,31 +142,31 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 if (newImagesList.length > 0) {
                   String imageFolderId = _imageFolderId.imageFolderId;
 
-                  if(imageFolderId == "noimagefolder"){
+                  if (imageFolderId == "noimagefolder") {
                     print("没有 imagefolder 文件夹, 需要先创建 imageFolder 文件夹");
 
                     // 接下来是新建 _v_images 文件夹的过程???
                     await OneDriveDataDao.createFolder(
-                        context,
-                        tokenModel.token.accessToken,
-                        "_v_images",
-                        parentIdModel.parentId).then((data){
+                            context,
+                            tokenModel.token.accessToken,
+                            "_v_images",
+                            parentIdModel.parentId)
+                        .then((data) {
                       print("更新本地 dataList");
                       Map<String, dynamic> jsonData =
-                      jsonDecode(data.toString());
+                          jsonDecode(data.toString());
                       String id = jsonData["id"];
                       String newFolderName = jsonData["name"];
-                      String dateString =
-                      jsonData['lastModifiedDateTime'];
-                      DateTime date =
-                      DateTime.parse(dateString);
+                      String dateString = jsonData['lastModifiedDateTime'];
+                      DateTime date = DateTime.parse(dateString);
                       Document doc = new Document(
                           id: id,
                           name: newFolderName,
                           isFile: false,
                           dateModified: date);
                       dataListModel.addEle(doc);
-                      dirAndFileCacheModel.addDirOrFileEle(parentIdModel.parentId, doc);
+                      dirAndFileCacheModel.addDirOrFileEle(
+                          parentIdModel.parentId, doc);
                       print("接下来是更新这个 imageFolderId");
                       _imageFolderId.updateImageFolderId(id);
                       imageFolderId = _imageFolderId.imageFolderId;

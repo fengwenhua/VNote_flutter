@@ -7,9 +7,6 @@ class ConfigIdModel with ChangeNotifier {
   String get configId => _configId;
 
   void updateConfigId(String newId) {
-    print("***********************************************");
-    print("更新 _vnote.json 的 id");
-    print("***********************************************");
     _configId = newId;
     notifyListeners();
   }

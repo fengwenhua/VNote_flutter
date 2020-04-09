@@ -572,15 +572,15 @@ class _DirectoryPageState extends State<DirectoryPage>
                   DesktopConfigModel desktopConfigModel =
                       DesktopConfigModel.fromJson(
                           json.decode(value.toString()));
-                  print("干掉之前: ");
-                  print(json.encode(desktopConfigModel));
+                  //print("干掉之前: ");
+                  //print(json.encode(desktopConfigModel));
                   if (document.isFile) {
                     desktopConfigModel.delFile(document.name);
                   } else {
                     desktopConfigModel.deleteFolder(document.name);
                   }
-                  print("干掉之后: ");
-                  print(json.encode(desktopConfigModel));
+                  //print("干掉之后: ");
+                  //print(json.encode(desktopConfigModel));
                   // 修改成功_vnote.json 之后, 就是更新这个文件
                   await OneDriveDataDao.updateContent(
                       context,
