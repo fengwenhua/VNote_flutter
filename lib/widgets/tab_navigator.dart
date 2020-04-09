@@ -62,7 +62,7 @@ class _TabNavigatorState extends State<TabNavigator> {
               Fluttertoast.showToast(
                   msg: "请先进入笔记本, 再新建文件!",
                   toastLength: Toast.LENGTH_LONG,
-                  gravity: ToastGravity.BOTTOM,
+                  gravity: ToastGravity.CENTER,
                   timeInSecForIos: 3,
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
