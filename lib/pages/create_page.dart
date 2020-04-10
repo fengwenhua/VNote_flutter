@@ -92,6 +92,9 @@ class _CreatePageState extends State<CreatePage> {
                       if (!fileName.contains(".md")) {
                         fileName += ".md";
                       }
+                      // 去掉前后空格
+                      fileName = fileName.trim();
+                      content = content.trim();
 
                       await pr.show().then((_) async {
                         await OneDriveDataDao.uploadFile(

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class NetUtils {
   factory NetUtils() => _getInstance();
@@ -290,6 +291,14 @@ class NetUtils {
         break;
       }
       print("requests 出现异常, 再来一发!!!");
+      Fluttertoast.showToast(
+          msg: "requests 出现异常, 再来一发!!!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIos: 2,
+          backgroundColor: Color(0x9E9E9E),
+          textColor: Color(0xffffff));
+
     }
   }
 

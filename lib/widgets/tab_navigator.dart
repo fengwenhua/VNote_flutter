@@ -7,12 +7,11 @@ import 'package:vnote/pages/create_page.dart';
 import 'package:vnote/pages/directory_page.dart';
 import 'package:vnote/pages/label_page.dart';
 import 'package:vnote/pages/note_page.dart';
-import 'package:vnote/pages/search_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/utils/navigator_util.dart';
-import 'package:vnote/widgets/search_bar.dart';
+import 'package:vnote/pages/search_bar.dart';
 
 class TabNavigator extends StatefulWidget {
   @override

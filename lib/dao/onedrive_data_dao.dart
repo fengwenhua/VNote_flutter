@@ -251,7 +251,24 @@ class OneDriveDataDao {
   /// GET /me/drive/special/approot/search(q='{search-query}')?select=id,name,lastModifiedDateTime,parentReference,file,folder
   /// 注意返回来的, 有可能是其 parent 有响应的内容, 也跟着一起返回来, 所以我们要筛选 name 字段, 不管 parent
   static Future<Response> searchText(BuildContext context, String token, String searchText){
-
+    Map<String, dynamic> headers = {"Authorization": token};
+    String url =
+        "https://graph.microsoft.com/v1.0/me/drive/special/approot/search(q='{$searchText}')?select=id,name,lastModifiedDateTime,parentReference,file,folder";
+    return NetUtils.instance.get(
+        context,
+        url,
+            (data) {
+          print('返回的json数据如下1:');
+          print(data);
+          // 将原始数据写进本地
+          Application.sp.setString("search_data", data);
+          return OneDriveDataModel.fromJson(json.decode(data));
+        },
+        headers: headers,
+        errorCallBack: (errorMsg) {
+          print("error: " + errorMsg);
+          return null;
+        });
   }
 
   /// [recentFile] 用于获取最近的文件

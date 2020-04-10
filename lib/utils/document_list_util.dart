@@ -18,6 +18,7 @@ import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/preview_model.dart';
+import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/utils.dart';
 
 import 'global.dart';
@@ -35,6 +36,30 @@ class DocumentListUtil {
       _instance = new DocumentListUtil._internal();
     }
     return _instance;
+  }
+
+  Future<List<Document>> getSearchList(BuildContext context, String key) async {
+    print("调用 getSearchList!");
+    TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
+    List<Document> result = new List<Document>();
+    Response response = await OneDriveDataDao.searchText(
+        context, tokenModel.token.accessToken, key).then((data){
+          print("搜索拿到数据: " + data.toString());
+          return data;
+    });
+
+    OneDriveDataModel bean = OneDriveDataModel.fromJson(response.data);
+    for (Value value in bean.value) {
+      if (value.name.contains(key)) {
+        Document temp = new Document(
+            id: value.id,
+            name: value.name,
+            isFile: value.file == null ? false : true,
+            dateModified: DateTime.parse(value.lastModifiedDateTime));
+        result.add(temp);
+      }
+    }
+    return result;
   }
 
   Future<List<Document>> getNotebookList(
@@ -408,13 +433,13 @@ class DocumentListUtil {
         //print(json.encode(oneDriveDataModel));
         print("在这里拿到 vnote 文件夹的 id, 并且设置好 parentId");
         //oneDriveDataModel.value[0]?.parentReference?.id??"approot"
-        String genId = oneDriveDataModel.value[0]?.parentReference?.id ?? "approot";
-        parentIdModel.goAheadParentId(
-            genId,
-            "VNote 根目录");
+        String genId =
+            oneDriveDataModel.value[0]?.parentReference?.id ?? "approot";
+        parentIdModel.goAheadParentId(genId, "VNote 根目录");
         parentIdModel.setGenId(genId);
         print("同时设置_vnote.json 的 id, 当然, 因为这里是第一层, 没有这文件, 所以设置默认是 approot");
-        ConfigIdModel configIdModel = Provider.of<ConfigIdModel>(context, listen: false);
+        ConfigIdModel configIdModel =
+            Provider.of<ConfigIdModel>(context, listen: false);
         configIdModel.updateConfigId("approot");
       }
     });
