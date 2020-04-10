@@ -32,10 +32,12 @@ var mdPreviewHandler = new Handler(
   String content = params["content"].first;
   String id = params["id"].first;
   String name = params["name"].first;
+  String type = params["type"].first; //0代表编辑, 1 代表新建
   return new NotePreviewPage(
     markdownSource: content,
     id: id,
     name: name,
+    type: type
   );
 });
 
@@ -55,5 +57,6 @@ var mdEditHandler = new Handler(
 // 新建文件页面
 var newFileHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
-  return CreatePage();
+  return new CreatePage(
+  );
 });

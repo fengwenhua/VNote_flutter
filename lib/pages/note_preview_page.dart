@@ -18,15 +18,18 @@ class NotePreviewPage extends StatefulWidget {
   final String markdownSource;
   final String id;
   final String name;
+  final String type;
 
   NotePreviewPage(
       {Key key,
       @required String markdownSource,
       @required String id,
-      @required String name})
+      @required String name,
+      @required String type})
       : this.markdownSource = markdownSource,
         this.id = id,
         this.name = name,
+        this.type = type,
         super(key: key);
   @override
   _NotePreviewPageState createState() => _NotePreviewPageState();
@@ -48,7 +51,8 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
-    final _imageFolderIdModel =Provider.of<ImageFolderIdModel>(context, listen: false);
+    final _imageFolderIdModel =
+        Provider.of<ImageFolderIdModel>(context, listen: false);
 
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
@@ -130,9 +134,11 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
               color: Colors.white,
               onPressed: () {
                 print("点击编辑");
+                // 1 代表新建
+                String route = "";
 
-                String route =
-                    '/edit?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(widget.id)}&name=${Uri.encodeComponent(widget.name)}';
+                  route =
+                      '/edit?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(widget.id)}&name=${Uri.encodeComponent(widget.name)}';
                 Application.router
                     .navigateTo(context, route,
                         transition: TransitionType.fadeIn)

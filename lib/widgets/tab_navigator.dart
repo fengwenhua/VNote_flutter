@@ -68,7 +68,11 @@ class _TabNavigatorState extends State<TabNavigator> {
                   textColor: Colors.white,
                   fontSize: 16.0);
             } else {
-              Application.router.navigateTo(context, "/newFile",
+              String route =
+              '/newFile?content=${Uri.encodeComponent("null")}&id=${Uri.encodeComponent("null")}&name=${Uri.encodeComponent("null")}';
+
+              Application.router
+                  .navigateTo(context, "/newFile",
                   transition: TransitionType.fadeIn);
             }
           },

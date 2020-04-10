@@ -96,7 +96,7 @@ class _DirectoryPageState extends State<DirectoryPage>
       await Future.delayed(Duration(milliseconds: 100), () {
         prt.hide().whenComplete(() {
           String route =
-              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
+              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
           Application.router
               .navigateTo(context, route, transition: TransitionType.fadeIn);
         });
@@ -126,7 +126,7 @@ class _DirectoryPageState extends State<DirectoryPage>
           print("跳转到预览页面");
           prt.hide().whenComplete(() {
             String route =
-                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}';
+                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
             Application.router
                 .navigateTo(context, route, transition: TransitionType.fadeIn);
           });
@@ -828,6 +828,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                           "_vnote.json")
                       .then((data) {
                     print("上传_vnote.json 文件之后返回的内容" + data.toString());
+                    // 也许可以给新创建的这个目录缓存上直接加上这个 _vnote.json
                   });
                 }
               }).then((_) async {
