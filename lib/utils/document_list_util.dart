@@ -51,6 +51,10 @@ class DocumentListUtil {
     OneDriveDataModel bean = OneDriveDataModel.fromJson(response.data);
     for (Value value in bean.value) {
       if (value.name.contains(key)) {
+        if(value.name.endsWith(".json")){
+          print("跳过 json 配置文件");
+          continue;
+        }
         Document temp = new Document(
             id: value.id,
             name: value.name,

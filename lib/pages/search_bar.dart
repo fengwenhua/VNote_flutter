@@ -30,7 +30,11 @@ class _SearchBarDemoState extends State<SearchBarDemo> {
           onPressed: () {
             showSearch(context: context, delegate: SearchBarDelegate());
           }),
-    ]));
+
+    ]),
+    body: Center(
+      child: Text("暂时只支持搜索文件名"),
+    ),);
   }
 }
 
@@ -42,7 +46,7 @@ List<String> searchList = [
   "nvfengsi"
 ];
 
-List<String> recentSuggest = ["wangcai推荐-1", "nvfengsi推荐-2"];
+List<String> recentSuggest = ["搜索推荐 1", "搜索推荐 2"];
 
 class SearchBarDelegate extends SearchDelegate<String> {
   //初始化加载
