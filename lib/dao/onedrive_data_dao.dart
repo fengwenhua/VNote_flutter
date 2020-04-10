@@ -247,6 +247,19 @@ class OneDriveDataDao {
         });
   }
 
+  /// [searchText] 是用于搜索
+  /// GET /me/drive/special/approot/search(q='{search-query}')?select=id,name,lastModifiedDateTime,parentReference,file,folder
+  /// 注意返回来的, 有可能是其 parent 有响应的内容, 也跟着一起返回来, 所以我们要筛选 name 字段, 不管 parent
+  static Future<Response> searchText(BuildContext context, String token, String searchText){
+
+  }
+
+  /// [recentFile] 用于获取最近的文件
+  /// GET /me/drive/recent
+  static Future<Response> recentFile(BuildContext context, String token){
+
+  }
+
   /// [createFolder] 用于在[parentId]之下创建新文件夹[folderName]
   /// POST /me/drive/items/{parent-item-id}/children
   /// 上传之后如果重名则服务器会自动重命名
@@ -276,4 +289,6 @@ class OneDriveDataDao {
           print("出了错误, 是超时吗? " + errorMsg);
         });
   }
+
+
 }
