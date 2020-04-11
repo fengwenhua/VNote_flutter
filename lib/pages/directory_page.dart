@@ -117,7 +117,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               msg: "网络连接超时!!!",
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
-              timeInSecForIos: 3,
+              timeInSecForIosWeb: 3,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -167,7 +167,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               msg: "GG, 笔记本都没了??",
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.BOTTOM,
-              timeInSecForIos: 3,
+              timeInSecForIosWeb: 3,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -211,7 +211,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               msg: "该文件夹内容为空",
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.BOTTOM,
-              timeInSecForIos: 3,
+              timeInSecForIosWeb: 3,
               backgroundColor: Colors.red,
               textColor: Colors.white,
               fontSize: 16.0);
@@ -838,7 +838,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                       msg: errorText,
                       toastLength: Toast.LENGTH_LONG,
                       gravity: ToastGravity.CENTER,
-                      timeInSecForIos: 3,
+                      timeInSecForIosWeb: 3,
                       backgroundColor: Colors.red,
                       textColor: Colors.white,
                       fontSize: 16.0);

@@ -86,12 +86,15 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       await OnedriveTokenDao.refreshToken(context, tokenModel.token.refreshToken).then((value) async {
         if(value.data != -1) {
 
-          await getNotebook(tokenModel.token.accessToken).then((data){
+          await getNotebook(tokenModel.token.accessToken).then((data) async {
 
             // 初始化, 爸爸是谁, 这里用 approot标记
             // 以后每点进去或者返回来, 都要刷新这个值
             //final _parentId =Provider.of<ParentIdModel>(context, listen: false);
             //_parentId.goAheadParentId("approot", "目录");
+
+            // 权限申请
+            await DocumentListUtil.instance.requestPermission();
 
             print("跳转到主页");
             NavigatorUtil.goHomePage(context);
@@ -101,6 +104,8 @@ class _SplashScreenPageState extends State<SplashScreenPage>
       });
     }else{
       // 否则跳到微软登录界面
+      // 权限申请
+      await DocumentListUtil.instance.requestPermission();
       print("跳转到微软登录界面");
       NavigatorUtil.goLoginPage(context);
     }

@@ -227,7 +227,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                                   " 次",
                               toastLength: Toast.LENGTH_LONG,
                               gravity: ToastGravity.BOTTOM,
-                              timeInSecForIos: 3,
+                              timeInSecForIosWeb: 3,
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                               fontSize: 16.0);
@@ -240,7 +240,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                               msg: "已经重试 3 次, 他妈的不管了!",
                               toastLength: Toast.LENGTH_LONG,
                               gravity: ToastGravity.BOTTOM,
-                              timeInSecForIos: 3,
+                              timeInSecForIosWeb: 3,
                               backgroundColor: Colors.red,
                               textColor: Colors.white,
                               fontSize: 16.0);

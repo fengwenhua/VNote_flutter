@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:permission_handler/permission_handler.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
@@ -15,7 +13,6 @@ import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
 import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
-import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/preview_model.dart';
 import 'package:vnote/provider/token_model.dart';
@@ -43,15 +40,16 @@ class DocumentListUtil {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     List<Document> result = new List<Document>();
     Response response = await OneDriveDataDao.searchText(
-        context, tokenModel.token.accessToken, key).then((data){
-          print("搜索拿到数据: " + data.toString());
-          return data;
+            context, tokenModel.token.accessToken, key)
+        .then((data) {
+      print("搜索拿到数据: " + data.toString());
+      return data;
     });
 
     OneDriveDataModel bean = OneDriveDataModel.fromJson(response.data);
     for (Value value in bean.value) {
       if (value.name.contains(key)) {
-        if(value.name.endsWith(".json")){
+        if (value.name.endsWith(".json")) {
           print("跳过 json 配置文件");
           continue;
         }
@@ -83,7 +81,7 @@ class DocumentListUtil {
             msg: "特么的没有数据, 请重启 app",
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.CENTER,
-            timeInSecForIos: 3,
+            timeInSecForIosWeb: 3,
             backgroundColor: Colors.red,
             textColor: Colors.white,
             fontSize: 16.0);
@@ -658,6 +656,34 @@ class DocumentListUtil {
     return OneDriveDataModel.fromJson(
         json.decode(Application.sp.getString("raw_data")));
   }
+
+  Future requestPermission() async {
+    // 申请权限
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.photos,
+      Permission.camera,
+      Permission.storage,
+    ].request();
+
+    // 申请结果
+    if (statuses[Permission.storage] == PermissionStatus.granted) {
+      Fluttertoast.showToast(msg: "存储权限申请通过");
+    } else {
+      Fluttertoast.showToast(msg: "存储权限申请被拒绝");
+    }
+
+    if (statuses[Permission.camera] == PermissionStatus.granted) {
+      Fluttertoast.showToast(msg: "相机权限申请通过");
+    } else {
+      Fluttertoast.showToast(msg: "相机权限申请被拒绝");
+    }
+
+    if (statuses[Permission.photos] == PermissionStatus.granted) {
+      Fluttertoast.showToast(msg: "相册权限申请通过");
+    } else {
+      Fluttertoast.showToast(msg: "相册权限申请被拒绝");
+    }
+  }
 }
 
 class Item {
@@ -666,18 +692,4 @@ class Item {
   String path;
   String name;
   String fullPath;
-}
-
-Future requestPermission() async {
-  // 申请权限
-  Map<PermissionGroup, PermissionStatus> permissions =
-      await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-  // 申请结果
-  PermissionStatus permission =
-      await PermissionHandler().checkPermissionStatus(PermissionGroup.storage);
-  if (permission == PermissionStatus.granted) {
-    Fluttertoast.showToast(msg: "权限申请通过");
-  } else {
-    Fluttertoast.showToast(msg: "权限申请被拒绝");
-  }
 }

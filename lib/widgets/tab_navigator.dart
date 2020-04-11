@@ -63,7 +63,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                   msg: "请先进入笔记本, 再新建文件!",
                   toastLength: Toast.LENGTH_LONG,
                   gravity: ToastGravity.CENTER,
-                  timeInSecForIos: 3,
+                  timeInSecForIosWeb: 3,
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
                   fontSize: 16.0);
@@ -169,7 +169,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                 title: Text(
                   "搜索",
                   style: TextStyle(
-                    color: _currentIndex != 3 ? _defaultColor : _activeColor,
+                    color: _currentIndex != 2 ? _defaultColor : _activeColor,
                   ),
                 )),
           ],

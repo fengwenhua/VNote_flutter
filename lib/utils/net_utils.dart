@@ -295,7 +295,7 @@ class NetUtils {
           msg: "requests 出现异常, 再来一发!!!",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
-          timeInSecForIos: 2,
+          timeInSecForIosWeb: 2,
           backgroundColor: Color(0x9E9E9E),
           textColor: Color(0xffffff));
 

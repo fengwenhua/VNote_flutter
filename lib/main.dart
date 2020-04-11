@@ -15,8 +15,6 @@ import 'package:vnote/application.dart';
 import 'package:vnote/route/navigate_service.dart';
 import 'package:vnote/route/routes.dart';
 import 'package:vnote/utils/log_util.dart';
-import 'package:vnote/utils/net_utils.dart';
-import 'package:vnote/widgets/tab_navigator.dart';
 
 void main() {
   // 初始化路由

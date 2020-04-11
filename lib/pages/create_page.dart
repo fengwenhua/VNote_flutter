@@ -173,7 +173,7 @@ class _CreatePageState extends State<CreatePage> {
                           msg: "起码先起个名字再保存啊~~",
                           toastLength: Toast.LENGTH_LONG,
                           gravity: ToastGravity.CENTER,
-                          timeInSecForIos: 3,
+                          timeInSecForIosWeb: 3,
                           backgroundColor: Colors.red,
                           textColor: Colors.white,
                           fontSize: 16.0);
