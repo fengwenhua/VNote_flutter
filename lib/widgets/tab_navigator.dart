@@ -112,7 +112,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                       ListTile(
                         title: Text("关于"),
                         leading: Icon(
-                          Icons.code,
+                          Icons.priority_high,
                           color: Colors.orange,
                         ),
                         onTap: () {},
