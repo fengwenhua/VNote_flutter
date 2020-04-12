@@ -69,13 +69,26 @@ class SearchBarDelegate extends SearchDelegate<String> {
       icon: AnimatedIcon(
           icon: AnimatedIcons.menu_arrow, progress: transitionAnimation),
       //关闭上下文，当前页面
-      onPressed: () => close(context, null),
+      onPressed: () {
+        // 如果搜索框没有内容则直接返回
+        // 如果有内容则清空搜索框,然后显示搜索建议
+        if(query.isEmpty){
+          close(context, null);
+        }else{
+          query = "";
+          showSuggestions(context);
+        }
+        },
     );
   }
 
   //重写搜索结果
   @override
   Widget buildResults(BuildContext context) {
+    if(query.isEmpty){
+      print("搜索框没有输入内容!");
+      return new Center(child: Text("请输入搜索关键词!",style: TextStyle(color: Colors.red)),);
+    }
     return buildSearchFutureBuilder(context, query);
   }
 
@@ -214,6 +227,18 @@ class SearchBarDelegate extends SearchDelegate<String> {
 
   Future<List<Document>> getSearchData(BuildContext context, String key) async {
     return DocumentListUtil.instance.getSearchList(context, key);
+  }
+
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+    return theme.copyWith(
+      primaryColor: Colors.blue,
+      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.white),
+      primaryColorBrightness: Brightness.light,
+      primaryTextTheme: theme.textTheme,
+    );
   }
 
   @override
