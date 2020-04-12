@@ -1,6 +1,6 @@
 # vnote
 
-A Flutter application for VNote.
+用 Flutter 写的 Android 移动端!
 
 ## 为了能够正常下载图片
 `dio` 要修改`form_data.dart`, 才能成功上传

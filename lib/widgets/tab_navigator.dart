@@ -46,64 +46,91 @@ class _TabNavigatorState extends State<TabNavigator> {
     ScreenUtil.init(context, width: 750, height: 1334);
 
     return Scaffold(
-        floatingActionButton: _currentIndex==1? FloatingActionButton(
-          child: Icon(
-            Icons.add,
-            color: Colors.white,
-            size: 40,
-          ),
-          onPressed: () {
-            print('FloatingActionButton');
-            // 这里应该点击进入 create 页面
-            ParentIdModel parentIdModel =
-                Provider.of<ParentIdModel>(context, listen: false);
-            if (parentIdModel.parentId == parentIdModel.genId) {
-              print("在根目录, 没办法新建文件");
-              Fluttertoast.showToast(
-                  msg: "请先进入笔记本, 再新建文件!",
-                  toastLength: Toast.LENGTH_LONG,
-                  gravity: ToastGravity.CENTER,
-                  timeInSecForIosWeb: 3,
-                  backgroundColor: Colors.red,
-                  textColor: Colors.white,
-                  fontSize: 16.0);
-            } else {
-              String route =
-              '/newFile?content=${Uri.encodeComponent("null")}&id=${Uri.encodeComponent("null")}&name=${Uri.encodeComponent("null")}';
+        floatingActionButton: _currentIndex == 1
+            ? FloatingActionButton(
+                child: Icon(
+                  Icons.add,
+                  color: Colors.white,
+                  size: 40,
+                ),
+                onPressed: () {
+                  print('FloatingActionButton');
+                  // 这里应该点击进入 create 页面
+                  ParentIdModel parentIdModel =
+                      Provider.of<ParentIdModel>(context, listen: false);
+                  if (parentIdModel.parentId == parentIdModel.genId) {
+                    print("在根目录, 没办法新建文件");
+                    Fluttertoast.showToast(
+                        msg: "请先进入笔记本, 再新建文件!",
+                        toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 3,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  } else {
+                    String route =
+                        '/newFile?content=${Uri.encodeComponent("null")}&id=${Uri.encodeComponent("null")}&name=${Uri.encodeComponent("null")}';
 
-              Application.router
-                  .navigateTo(context, "/newFile",
-                  transition: TransitionType.fadeIn);
-            }
-          },
-        ):null,
+                    Application.router.navigateTo(context, "/newFile",
+                        transition: TransitionType.fadeIn);
+                  }
+                },
+              )
+            : null,
         drawer: Drawer(
           child: MediaQuery.removePadding(
               context: context,
               removeTop: true,
               child: ListView(
                 children: <Widget>[
-                  UserAccountsDrawerHeader(
-                    accountName: Text("江南小虫虫"),
-                    accountEmail: Text("807296772@qq.com"),
-                    currentAccountPicture: GestureDetector(
-                      child: CircleAvatar(
-                        backgroundImage: ExactAssetImage('images/vnote.png'),
+                  DrawerHeader(
+                    decoration: BoxDecoration(
+                      color: Colors.lightBlue,
+                    ),
+                    child: Center(
+                      child: SizedBox(
+                        width: 60.0,
+                        height: 60.0,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          backgroundImage: ExactAssetImage('images/vnote.png'),
+                        ),
                       ),
                     ),
                   ),
-                  ListTile(
-                    title: Text("退出登录"),
-                    leading: Icon(
-                      Icons.arrow_drop_down_circle,
-                      color: Colors.orange,
-                    ),
-                    onTap: () {
-                      // 关闭侧滑菜单
-                      Navigator.of(context).pop();
-                      // 执行清除token的操作, 并且进入登录界面
-                      NavigatorUtil.goLoginPage(context);
-                    },
+                  Column(
+                    children: <Widget>[
+                      ListTile(
+                        title: Text("使用教程"),
+                        leading: Icon(
+                          Icons.local_library,
+                          color: Colors.orange,
+                        ),
+                        onTap: () {},
+                      ),
+                      ListTile(
+                        title: Text("关于"),
+                        leading: Icon(
+                          Icons.code,
+                          color: Colors.orange,
+                        ),
+                        onTap: () {},
+                      ),
+                      ListTile(
+                        title: Text("退出登录"),
+                        leading: Icon(
+                          Icons.arrow_drop_down_circle,
+                          color: Colors.orange,
+                        ),
+                        onTap: () {
+                          // 关闭侧滑菜单
+                          Navigator.of(context).pop();
+                          // 执行清除token的操作, 并且进入登录界面
+                          NavigatorUtil.goLoginPage(context);
+                        },
+                      ),
+                    ],
                   )
                 ],
               )),
