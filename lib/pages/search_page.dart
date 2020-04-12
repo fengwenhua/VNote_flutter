@@ -14,12 +14,12 @@ import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/widgets/file_widget.dart';
 
-class SearchBarDemo extends StatefulWidget {
+class SearchPage extends StatefulWidget {
   @override
-  _SearchBarDemoState createState() => _SearchBarDemoState();
+  _SearchPageState createState() => _SearchPageState();
 }
 
-class _SearchBarDemoState extends State<SearchBarDemo> {
+class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,8 +92,11 @@ class SearchBarDelegate extends SearchDelegate<String> {
               );
             case ConnectionState.done:
               if (snapshot.hasError) {
-                return new Text('出错误: ${snapshot.error}',
-                    style: TextStyle(color: Colors.red));
+                return new Center(child: Text('出错误: ${snapshot.error}',
+                    style: TextStyle(color: Colors.red)),);
+              }
+              if(snapshot.data.length<=0){
+                return new Center(child: Text("找不到\"$key\", 换一个关键词呗!"),);
               }
               return new ListView.builder(
                   physics: BouncingScrollPhysics(),
@@ -112,9 +115,9 @@ class SearchBarDelegate extends SearchDelegate<String> {
                   });
 
             case ConnectionState.none:
-              return new Text('请输入搜索内容!');
+              return new Center(child: Text('请输入搜索内容!'),);
             default:
-              return Text("出问题了!");
+              return new Center(child: Text("出问题了!"),);
           }
         },
         future: getSearchData(context, key));

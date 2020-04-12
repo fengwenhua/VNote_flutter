@@ -667,21 +667,27 @@ class DocumentListUtil {
 
     // 申请结果
     if (statuses[Permission.storage] == PermissionStatus.granted) {
-      Fluttertoast.showToast(msg: "存储权限申请通过");
+      //Fluttertoast.showToast(msg: "存储权限申请通过");
+      print("存储权限申请通过");
     } else {
-      Fluttertoast.showToast(msg: "存储权限申请被拒绝");
+      //Fluttertoast.showToast(msg: "存储权限申请被拒绝");
+      print("存储权限申请被拒绝");
     }
 
     if (statuses[Permission.camera] == PermissionStatus.granted) {
-      Fluttertoast.showToast(msg: "相机权限申请通过");
+      //Fluttertoast.showToast(msg: "相机权限申请通过");
+      print("相机权限申请通过");
     } else {
-      Fluttertoast.showToast(msg: "相机权限申请被拒绝");
+      //Fluttertoast.showToast(msg: "相机权限申请被拒绝");
+      print("相机权限申请被拒绝");
     }
 
     if (statuses[Permission.photos] == PermissionStatus.granted) {
-      Fluttertoast.showToast(msg: "相册权限申请通过");
+      //Fluttertoast.showToast(msg: "相册权限申请通过");
+      print("相册权限申请通过");
     } else {
-      Fluttertoast.showToast(msg: "相册权限申请被拒绝");
+      //Fluttertoast.showToast(msg: "相册权限申请被拒绝");
+      print("相册权限申请被拒绝");
     }
   }
 }

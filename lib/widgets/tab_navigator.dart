@@ -11,7 +11,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/utils/navigator_util.dart';
-import 'package:vnote/pages/search_bar.dart';
+import 'package:vnote/pages/search_page.dart';
 
 class TabNavigator extends StatefulWidget {
   @override
@@ -208,7 +208,7 @@ class _TabNavigatorState extends State<TabNavigator> {
             children: <Widget>[
               NotePage(),
               DirectoryPage(documents: model.dataList),
-              SearchBarDemo()
+              SearchPage()
             ],
             physics: new NeverScrollableScrollPhysics(), //禁止滑动
           ),
