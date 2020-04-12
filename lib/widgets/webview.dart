@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
@@ -68,6 +69,7 @@ class _WebViewState extends State<WebView> {
     _onHttpError =
         webviewReference.onHttpError.listen((WebViewHttpError error) {
       print("出现错误?");
+      Fluttertoast.showToast(msg: "没联网! 请重启 app 试试!");
       print(error);
     });
   }
