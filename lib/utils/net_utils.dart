@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class NetUtils {
@@ -286,6 +287,16 @@ class NetUtils {
       } catch (exception) {
         chucuo = true;
         _handError(errorCallBack, exception.toString());
+        if(exception.toString().contains("[404]")){
+          chucuo = false;
+          Fluttertoast.showToast(
+              msg: "该资源已经从服务器中删除了~~~请刷新当前目录!!",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 2,
+              backgroundColor: Colors.red,
+              textColor: Colors.white);
+        }
       }
       if (!chucuo) {
         break;
@@ -296,8 +307,8 @@ class NetUtils {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 2,
-          backgroundColor: Color(0x9E9E9E),
-          textColor: Color(0xffffff));
+          backgroundColor:  Colors.red,
+          textColor:  Colors.white);
 
     }
   }

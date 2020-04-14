@@ -113,14 +113,14 @@ class _DirectoryPageState extends State<DirectoryPage>
           if (prt.isShowing()) {
             prt.hide();
           }
-          Fluttertoast.showToast(
-              msg: "网络连接超时!!!",
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.CENTER,
-              timeInSecForIosWeb: 3,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
+//          Fluttertoast.showToast(
+//              msg: "网络连接超时!!!",
+//              toastLength: Toast.LENGTH_LONG,
+//              gravity: ToastGravity.CENTER,
+//              timeInSecForIosWeb: 3,
+//              backgroundColor: Colors.red,
+//              textColor: Colors.white,
+//              fontSize: 16.0);
         } else {
           // 这里需要跳转到预览页面
           print("跳转到预览页面");
