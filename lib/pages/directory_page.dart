@@ -318,7 +318,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                     ),
                     onPressed: onWillPop,
                   )),
-        body: dataListModel.dataList==null
+        body: dataListModel.dataList==null || dataListModel.dataList.length==0
             ? Center(
                 child: Text("没有笔记本, 赶紧, 右上角创建!"),
               )
