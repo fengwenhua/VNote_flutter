@@ -182,44 +182,49 @@ class _DirectoryPageState extends State<DirectoryPage>
     } else {
       // update 用于判断在其他目录点击了更新或者进入其他目录
       await getChildData(tokenModel.token.accessToken, id).then((data) {
-        // 显示
-        if (data.length > 0) {
-          if (update) {
-            position.removeLast();
-          }
-          position.add(controller.offset);
+        if(data==null){
+          print("获取的数据为空, 不处理!");
+        }else{
+          // 显示
+          if (data.length > 0) {
+            if (update) {
+              position.removeLast();
+            }
+            position.add(controller.offset);
 
-          if (update) {
-            dataListModel.updateCurrentDir(data);
-            dirCacheModel.updateDirAndFileList(id, data);
-          } else {
-            dataListModel.goAheadDataList(data);
-            dirCacheModel.addDirAndFileList(id, data);
-            for (Document d in dataListModel.dataList) {
-              if (d.name == "_vnote.json") {
-                configIdModel.updateConfigId(d.id);
-                break;
+            if (update) {
+              dataListModel.updateCurrentDir(data);
+              dirCacheModel.updateDirAndFileList(id, data);
+            } else {
+              dataListModel.goAheadDataList(data);
+              dirCacheModel.addDirAndFileList(id, data);
+              for (Document d in dataListModel.dataList) {
+                if (d.name == "_vnote.json") {
+                  configIdModel.updateConfigId(d.id);
+                  break;
+                }
               }
             }
+            //initPathFiles(document.childData);
+            pr.hide().whenComplete(() {
+              jumpToPosition(true);
+            });
+          } else {
+            Fluttertoast.showToast(
+                msg: "该文件夹内容为空",
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 3,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+            pr.hide().whenComplete(() {
+              jumpToPosition(true);
+            });
+            parentIdModel.goBackParentId();
           }
-          //initPathFiles(document.childData);
-          pr.hide().whenComplete(() {
-            jumpToPosition(true);
-          });
-        } else {
-          Fluttertoast.showToast(
-              msg: "该文件夹内容为空",
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 3,
-              backgroundColor: Colors.red,
-              textColor: Colors.white,
-              fontSize: 16.0);
-          pr.hide().whenComplete(() {
-            jumpToPosition(true);
-          });
-          parentIdModel.goBackParentId();
         }
+
       });
     }
   }

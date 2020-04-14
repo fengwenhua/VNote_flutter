@@ -180,15 +180,15 @@ class DocumentListUtil {
     List<Document> result = new List<Document>();
     OneDriveDataModel oneDriveDataModel;
 
-    while (true) {
+
       oneDriveDataModel = await _getChildFromNetwork(context, token, id);
       if (oneDriveDataModel != null) {
-        break;
+
       } else {
         print("gg, 特么的没有数据呀1!!!");
-        print("再来一发1");
+        return null;
       }
-    }
+
 
     print("目录如下:");
     // 1. 根据 file 和 folder 字段来判断是文件还是文件夹

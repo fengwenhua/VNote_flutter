@@ -290,7 +290,7 @@ class NetUtils {
         if(exception.toString().contains("[404]")){
           chucuo = false;
           Fluttertoast.showToast(
-              msg: "该资源已经从服务器中删除了~~~请刷新当前目录!!",
+              msg: "该资源已经从服务器中删除了~~~",
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 2,
