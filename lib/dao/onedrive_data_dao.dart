@@ -250,14 +250,15 @@ class OneDriveDataDao {
   /// [searchText] 是用于搜索
   /// GET /me/drive/special/approot/search(q='{search-query}')?select=id,name,lastModifiedDateTime,parentReference,file,folder
   /// 注意返回来的, 有可能是其 parent 有响应的内容, 也跟着一起返回来, 所以我们要筛选 name 字段, 不管 parent
-  static Future<Response> searchText(BuildContext context, String token, String searchText){
+  static Future<Response> searchText(
+      BuildContext context, String token, String searchText) {
     Map<String, dynamic> headers = {"Authorization": token};
     String url =
         "https://graph.microsoft.com/v1.0/me/drive/special/approot/search(q='{$searchText}')?select=id,name,lastModifiedDateTime,parentReference,file,folder";
     return NetUtils.instance.get(
         context,
         url,
-            (data) {
+        (data) {
           print('返回的json数据如下1:');
           print(data);
           // 将原始数据写进本地
@@ -273,9 +274,7 @@ class OneDriveDataDao {
 
   /// [recentFile] 用于获取最近的文件
   /// GET /me/drive/recent
-  static Future<Response> recentFile(BuildContext context, String token){
-
-  }
+  static Future<Response> recentFile(BuildContext context, String token) {}
 
   /// [createFolder] 用于在[parentId]之下创建新文件夹[folderName]
   /// POST /me/drive/items/{parent-item-id}/children
@@ -283,8 +282,14 @@ class OneDriveDataDao {
   static Future<Response> createFolder(
       BuildContext context, String token, String folderName, String parentId) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL =
-        "https://graph.microsoft.com/v1.0/me/drive/items/$parentId/children";
+    String URL;
+    if (parentId == "approot") {
+      URL =
+          "https://graph.microsoft.com/v1.0/me/drive/special/approot/children";
+    } else {
+      URL =
+          "https://graph.microsoft.com/v1.0/me/drive/items/$parentId/children";
+    }
 
     String data = '''{
   "name": "$folderName",
@@ -306,6 +311,4 @@ class OneDriveDataDao {
           print("出了错误, 是超时吗? " + errorMsg);
         });
   }
-
-
 }

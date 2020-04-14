@@ -4,7 +4,13 @@ import 'package:vnote/utils/my_stack.dart';
 
 class DataListModel with ChangeNotifier{
   MyStack<List<Document>> _dataList = MyStack<List<Document>>();
-  List<Document> get dataList => _dataList.top();
+  List<Document> get dataList {
+    if(_dataList.isNotEmpty){
+      return _dataList.top();
+    }else{
+     return null;
+    }
+  }
 
   void removeEle(Document document){
     List<Document> list = _dataList.pop();
@@ -23,7 +29,14 @@ class DataListModel with ChangeNotifier{
   /// 添加新元素
   void addEle(Document document){
     // 先弹出来
-    List<Document> list = _dataList.pop();
+    List<Document> list;
+    if(_dataList.isNotEmpty){
+      list = _dataList.pop();
+    }else{
+      print("根目录没有数据的情况");
+      list = new List<Document>();
+    }
+
     list.add(document);
     // 然后压回去
     _dataList.push(list);

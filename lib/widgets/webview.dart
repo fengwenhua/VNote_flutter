@@ -77,14 +77,21 @@ class _WebViewState extends State<WebView> {
   /// 该方法在 splash_screen_page.dart 定义过一次
   Future<List<Document>> getNotebook(String accessToken) async{
     return await DocumentListUtil.instance.getNotebookList(context, accessToken, (list){
-      print("获取了笔记本List, 如下:");
-      list.forEach((i) {
-        print(i.name);
-      });
-      DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
-      dataListModel.goAheadDataList(list);
       DirAndFileCacheModel dirCacheModel = Provider.of<DirAndFileCacheModel>(context, listen: false);
-      dirCacheModel.addDirAndFileList("approot", list);
+      if(list.length==0){
+        print("笔记本莫得数据!");
+        dirCacheModel.addDirAndFileList("approot", null);
+      }else{
+        print("获取了笔记本List, 如下:");
+        list.forEach((i) {
+          print(i.name);
+        });
+        DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
+        dataListModel.goAheadDataList(list);
+
+        dirCacheModel.addDirAndFileList("approot", list);
+      }
+
     });
   }
 

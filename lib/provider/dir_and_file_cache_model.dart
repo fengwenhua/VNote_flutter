@@ -39,12 +39,22 @@ class DirAndFileCacheModel with ChangeNotifier {
   void addDirOrFileEle(String parentId, Document newEle) {
     //print("传入 model 的 id 是: " + id);
     List<Document> cur = this._dirCache[parentId];
-    if (!cur.contains(newEle)) {
-      print("cache 中没有这个元素!");
+    if(cur==null){
+      // 根目录没有数据
+      print("根目录没有数据");
+      cur = new List<Document>();
       cur.add(newEle);
       this._dirCache[parentId] = cur;
       notifyListeners();
+    }else{
+      if (!cur.contains(newEle)) {
+        print("cache 中没有这个元素!");
+        cur.add(newEle);
+        this._dirCache[parentId] = cur;
+        notifyListeners();
+      }
     }
+
   }
 
   void renameEle(String parentId, String id, String name){

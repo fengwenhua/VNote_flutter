@@ -12,6 +12,7 @@ import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
 import 'package:vnote/provider/config_id_model.dart';
+import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/preview_model.dart';
@@ -69,29 +70,36 @@ class DocumentListUtil {
       {bool fromNetwork = false}) async {
     List<Document> result = new List<Document>();
     OneDriveDataModel oneDriveDataModel;
-    while (true) {
-      oneDriveDataModel = await _getNoteBookFromNetwork(context, token);
-      if (oneDriveDataModel != null) {
-        break;
-      } else {
-        print("gg, 特么的没有数据呀!!!");
-        print("再来一发");
+    DirAndFileCacheModel dirCacheModel =
+    Provider.of<DirAndFileCacheModel>(context, listen: false);
+    oneDriveDataModel = await _getNoteBookFromNetwork(context, token);
+    if (oneDriveDataModel != null) {
+      print("拿到 oneDriveDataModel");
+      if (oneDriveDataModel.value.length == 0) {
+        print("onedrive 没有数据, 直接返回!");
+        if (callBack != null) {
+          callBack(result);
+        }
+        return result;
+      }
+    } else {
+      print("gg, 特么的没有数据呀!!!");
+      print("再来一发");
 
-        Fluttertoast.showToast(
-            msg: "特么的没有数据, 请重启 app",
-            toastLength: Toast.LENGTH_LONG,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIosWeb: 3,
-            backgroundColor: Colors.red,
-            textColor: Colors.white,
-            fontSize: 16.0);
+      Fluttertoast.showToast(
+          msg: "特么的没有数据, 请重启 app",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 3,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
 
 //        Future.delayed(Duration(seconds: 3), () async {
 //          Navigator.of(context).pop();
 //          print('延时3s执行, 退出 app');
 //          await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
 //        });
-      }
     }
 
     print("笔记本如下:");
@@ -180,15 +188,12 @@ class DocumentListUtil {
     List<Document> result = new List<Document>();
     OneDriveDataModel oneDriveDataModel;
 
-
-      oneDriveDataModel = await _getChildFromNetwork(context, token, id);
-      if (oneDriveDataModel != null) {
-
-      } else {
-        print("gg, 特么的没有数据呀1!!!");
-        return null;
-      }
-
+    oneDriveDataModel = await _getChildFromNetwork(context, token, id);
+    if (oneDriveDataModel != null) {
+    } else {
+      print("gg, 特么的没有数据呀1!!!");
+      return null;
+    }
 
     print("目录如下:");
     // 1. 根据 file 和 folder 字段来判断是文件还是文件夹
@@ -431,18 +436,23 @@ class DocumentListUtil {
             OneDriveDataModel.fromJson(json.decode(value.toString()));
         ParentIdModel parentIdModel =
             Provider.of<ParentIdModel>(context, listen: false);
-        //print("Model内容如下:");
-        //print(json.encode(oneDriveDataModel));
+
+        String genId;
+        if (oneDriveDataModel.value.length == 0) {
+          print("麻蛋, 没有笔记本!!");
+          genId = "approot";
+        } else {
+          print("有笔记本!");
+          genId = oneDriveDataModel.value[0]?.parentReference?.id;
+        }
         print("在这里拿到 vnote 文件夹的 id, 并且设置好 parentId");
-        //oneDriveDataModel.value[0]?.parentReference?.id??"approot"
-        String genId =
-            oneDriveDataModel.value[0]?.parentReference?.id ?? "approot";
         parentIdModel.goAheadParentId(genId, "VNote 根目录");
         parentIdModel.setGenId(genId);
         print("同时设置_vnote.json 的 id, 当然, 因为这里是第一层, 没有这文件, 所以设置默认是 approot");
         ConfigIdModel configIdModel =
             Provider.of<ConfigIdModel>(context, listen: false);
         configIdModel.updateConfigId("approot");
+
       }
     });
     return oneDriveDataModel;

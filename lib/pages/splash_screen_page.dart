@@ -59,16 +59,23 @@ class _SplashScreenPageState extends State<SplashScreenPage>
   /// 趁播放 logo 的时候, 将一级目录(笔记本)下载下来
   Future<List<Document>> getNotebook(String accessToken) async{
     return await DocumentListUtil.instance.getNotebookList(context, accessToken, (list){
-      print("获取了笔记本List, 如下:");
-      list.forEach((i) {
-        print(i.name);
-      });
-      DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
-      dataListModel.goAheadDataList(list);
       ParentIdModel parentIdModel =
       Provider.of<ParentIdModel>(context, listen: false);
       DirAndFileCacheModel dirCacheModel = Provider.of<DirAndFileCacheModel>(context, listen: false);
-      dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
+      if(list.length == 0){
+        print("笔记本没有数据!");
+        dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
+
+      }else{
+        print("获取了笔记本List, 如下:");
+        list.forEach((i) {
+          print(i.name);
+        });
+        DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
+        dataListModel.goAheadDataList(list);
+        dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
+      }
+
     });
   }
 

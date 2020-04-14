@@ -27,12 +27,6 @@ import 'package:progress_dialog/progress_dialog.dart';
 import '../application.dart';
 
 class DirectoryPage extends StatefulWidget {
-  List<Document> documents;
-
-  DirectoryPage({Key key, @required List<Document> documents})
-      : this.documents = documents,
-        super(key: key);
-
   @override
   _DirectoryPageState createState() => _DirectoryPageState();
 }
@@ -44,7 +38,7 @@ class _DirectoryPageState extends State<DirectoryPage>
   ProgressDialog pr;
   ScrollController controller = ScrollController();
   List<double> position = [];
-  List<Document> rootDocuments = <Document>[];
+  //List<Document> rootDocuments = <Document>[];
   final SlidableController slidableController = SlidableController();
 
   /// 根据点击的 id 来查找目录
@@ -153,16 +147,30 @@ class _DirectoryPageState extends State<DirectoryPage>
     if (id == "approot" || name == "VNote 根目录") {
       await DocumentListUtil.instance
           .getNotebookList(context, tokenModel.token.accessToken, (data) async {
-        if (data.length > 0) {
-          dataListModel.updateCurrentDir(data);
+        if (data != null) {
+          if(data.length==0){
+            print("进来 0");
+            Fluttertoast.showToast(
+                msg: "没有笔记本!",
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 3,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }else{
+            print("进来 1");
+            dataListModel.updateCurrentDir(data);
 
-          // 可以在这里, 用 Map<String,List<Document>> 的模式, 将 id 和 dataList 对应起来
-          dirCacheModel.updateDirAndFileList(id, data);
+            // 可以在这里, 用 Map<String,List<Document>> 的模式, 将 id 和 dataList 对应起来
+            dirCacheModel.updateDirAndFileList(id, data);
 
+          }
           pr.hide().whenComplete(() {
             jumpToPosition(true);
           });
         } else {
+          print("进来 2");
           Fluttertoast.showToast(
               msg: "GG, 笔记本都没了??",
               toastLength: Toast.LENGTH_LONG,
@@ -233,7 +241,6 @@ class _DirectoryPageState extends State<DirectoryPage>
   void initState() {
     super.initState();
     //print("进入 directory_page 的 initState 方法");
-    rootDocuments = widget.documents;
   }
 
   @override
@@ -311,9 +318,9 @@ class _DirectoryPageState extends State<DirectoryPage>
                     ),
                     onPressed: onWillPop,
                   )),
-        body: dataListModel.dataList.length == 0
+        body: dataListModel.dataList==null
             ? Center(
-                child: Text("该目录为空"),
+                child: Text("没有笔记本, 赶紧, 右上角创建!"),
               )
             : Scrollbar(
                 child: ListView.builder(
@@ -360,15 +367,18 @@ class _DirectoryPageState extends State<DirectoryPage>
   }
 
   void jumpToPosition(bool isEnter) async {
-    if (isEnter)
-      controller.jumpTo(0.0);
-    else {
-      try {
-        await Future.delayed(Duration(milliseconds: 1));
-        controller?.jumpTo(position[position.length - 1]);
-      } catch (e) {}
-      position.removeLast();
+    if(controller.hasClients){
+      if (isEnter)
+        controller.jumpTo(0.0);
+      else {
+        try {
+          await Future.delayed(Duration(milliseconds: 1));
+          controller?.jumpTo(position[position.length - 1]);
+        } catch (e) {}
+        position.removeLast();
+      }
     }
+
   }
 
   List<Widget> getListWidget(List<Document> childDocuments) {

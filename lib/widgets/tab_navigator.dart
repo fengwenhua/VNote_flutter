@@ -207,7 +207,7 @@ class _TabNavigatorState extends State<TabNavigator> {
             controller: _controller,
             children: <Widget>[
               NotePage(),
-              DirectoryPage(documents: model.dataList),
+              DirectoryPage(),
               SearchPage()
             ],
             physics: new NeverScrollableScrollPhysics(), //禁止滑动
