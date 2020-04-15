@@ -28,6 +28,8 @@ class _AboutPageState extends State<AboutPage> {
             )),
         body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               SizedBox(
                 width: 60.0,
