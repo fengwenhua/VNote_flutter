@@ -24,7 +24,7 @@ class _NotePageState extends State<NotePage>{
           )
       ),
       body: Center(
-        child: Text("笔记"),
+        child: Text("笔记(onedrive 接口限制, 正在思考)"),
       ),
     );
   }

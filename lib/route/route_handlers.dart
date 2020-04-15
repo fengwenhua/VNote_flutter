@@ -1,11 +1,13 @@
 // 用于初始化跳转到各个页面的handle, 并获取到上个页面传递过来的值, 然后在初始化要跳转到的页面
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:vnote/pages/about_page.dart';
 import 'package:vnote/pages/create_page.dart';
 import 'package:vnote/pages/login_page.dart';
 import 'package:vnote/pages/node_edit.page.dart';
 import 'package:vnote/pages/note_preview_page.dart';
 import 'package:vnote/pages/splash_screen_page.dart';
+import 'package:vnote/pages/tutorial_page.dart';
 import 'package:vnote/widgets/tab_navigator.dart';
 
 // splash 页面
@@ -60,3 +62,17 @@ var newFileHandler = new Handler(
   return new CreatePage(
   );
 });
+
+// 关于页面
+var aboutHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
+      return new AboutPage(
+      );
+    });
+
+// 教程页面
+var tutorialHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
+      return new TutorialPage(
+      );
+    });

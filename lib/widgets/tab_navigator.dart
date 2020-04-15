@@ -107,7 +107,9 @@ class _TabNavigatorState extends State<TabNavigator> {
                           Icons.local_library,
                           color: Colors.orange,
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Application.router.navigateTo(context, "/tutorial",transition: TransitionType.fadeIn);
+                        },
                       ),
                       ListTile(
                         title: Text("关于"),
@@ -115,7 +117,9 @@ class _TabNavigatorState extends State<TabNavigator> {
                           Icons.priority_high,
                           color: Colors.orange,
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          Application.router.navigateTo(context, "/about",transition: TransitionType.fadeIn);
+                        },
                       ),
                       ListTile(
                         title: Text("退出登录"),

@@ -11,6 +11,8 @@ class Routes{
   static String preview = "/preview";
   static String edit = "/edit";
   static String newFile = "/newFile";
+  static String about = "/about";
+  static String tutorial = "/tutorial";
 
   static void configureRoutes(Router router){
     router.notFoundHandler = new Handler(
@@ -25,6 +27,8 @@ class Routes{
     router.define(preview, handler: mdPreviewHandler);
     router.define(edit, handler: mdEditHandler);
     router.define(newFile, handler: newFileHandler);
+    router.define(about, handler: aboutHandler);
+    router.define(tutorial, handler: tutorialHandler);
   }
 
 }
