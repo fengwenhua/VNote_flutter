@@ -12,6 +12,7 @@ import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/utils/navigator_util.dart';
 import 'package:vnote/pages/search_page.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class TabNavigator extends StatefulWidget {
   @override
@@ -61,7 +62,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                   if (parentIdModel.parentId == parentIdModel.genId) {
                     print("在根目录, 没办法新建文件");
                     Fluttertoast.showToast(
-                        msg: "请先进入笔记本, 再新建文件!",
+                        msg: translate("tab.tips"),
                         toastLength: Toast.LENGTH_LONG,
                         gravity: ToastGravity.CENTER,
                         timeInSecForIosWeb: 3,
@@ -102,29 +103,40 @@ class _TabNavigatorState extends State<TabNavigator> {
                   Column(
                     children: <Widget>[
                       ListTile(
-                        title: Text("使用教程"),
+                        title: Text(translate("drawer.language")),
+                        leading: Icon(Icons.settings, color: Colors.orange),
+                        onTap: () {
+                          print("点击语言设置");
+                          Application.router.navigateTo(context, "/language",
+                              transition: TransitionType.fadeIn);
+                        },
+                      ),
+                      ListTile(
+                        title: Text(translate("drawer.tutorial")),
                         leading: Icon(
                           Icons.local_library,
                           color: Colors.orange,
                         ),
                         onTap: () {
-                          Application.router.navigateTo(context, "/tutorial",transition: TransitionType.fadeIn);
+                          Application.router.navigateTo(context, "/tutorial",
+                              transition: TransitionType.fadeIn);
                         },
                       ),
                       ListTile(
-                        title: Text("关于"),
+                        title: Text(translate("drawer.about")),
                         leading: Icon(
                           Icons.priority_high,
                           color: Colors.orange,
                         ),
                         onTap: () {
-                          Application.router.navigateTo(context, "/about",transition: TransitionType.fadeIn);
+                          Application.router.navigateTo(context, "/about",
+                              transition: TransitionType.fadeIn);
                         },
                       ),
                       ListTile(
-                        title: Text("退出登录"),
+                        title: Text(translate("drawer.logout")),
                         leading: Icon(
-                          Icons.arrow_drop_down_circle,
+                          Icons.power_settings_new,
                           color: Colors.orange,
                         ),
                         onTap: () {
@@ -162,7 +174,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                   color: _activeColor,
                 ),
                 title: Text(
-                  "笔记",
+                  translate("tab.note"),
                   style: TextStyle(
                     color: _currentIndex != 0 ? _defaultColor : _activeColor,
                   ),
@@ -180,7 +192,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                   color: _activeColor,
                 ),
                 title: Text(
-                  "文件夹",
+                  translate("tab.dir"),
                   style: TextStyle(
                     color: _currentIndex != 1 ? _defaultColor : _activeColor,
                   ),
@@ -198,7 +210,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                   color: _activeColor,
                 ),
                 title: Text(
-                  "搜索",
+                  translate("tab.search"),
                   style: TextStyle(
                     color: _currentIndex != 2 ? _defaultColor : _activeColor,
                   ),
@@ -209,11 +221,7 @@ class _TabNavigatorState extends State<TabNavigator> {
           builder: (context, DataListModel model, _) => PageView(
             onPageChanged: _pageChange,
             controller: _controller,
-            children: <Widget>[
-              NotePage(),
-              DirectoryPage(),
-              SearchPage()
-            ],
+            children: <Widget>[NotePage(), DirectoryPage(), SearchPage()],
             physics: new NeverScrollableScrollPhysics(), //禁止滑动
           ),
         ));

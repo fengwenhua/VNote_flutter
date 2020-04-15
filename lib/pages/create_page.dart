@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -58,11 +58,11 @@ class _CreatePageState extends State<CreatePage> {
         Provider.of<ConfigIdModel>(context, listen: false);
 
     pr = new ProgressDialog(context);
-    pr.style(message: '文件创建 ing');
+    pr.style(message: translate("createFileTips"));
 
     return Scaffold(
         appBar: AppBar(
-          title: Text("当前目录: " + parentIdModel.parentName),
+          title: Text(translate("edit.currentDir") + parentIdModel.parentName),
           automaticallyImplyLeading: false,
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
@@ -192,7 +192,7 @@ class _CreatePageState extends State<CreatePage> {
               decoration: InputDecoration(
                   contentPadding: EdgeInsets.all(10.0),
                   icon: Icon(Icons.title),
-                  hintText: '请输入文件名'),
+                  hintText: translate("edit.fileNameTips")),
               autofocus: false,
               onChanged: (data) {
                 fileName = data;
@@ -202,7 +202,7 @@ class _CreatePageState extends State<CreatePage> {
               child: MarkdownTextInput(
                 (String value) => setState(() => content = value),
                 content,
-                label: '输入 markdown 内容',
+                label: translate("edit.contentTips"),
               ),
             )
           ],
@@ -215,10 +215,10 @@ class _CreatePageState extends State<CreatePage> {
         barrierDismissible: true,
         builder: (BuildContext context) {
           return AlertDialog(
-            content: Text('是否放弃编辑?'),
+            content: Text(translate("giveUpDialog.content")),
             title: Center(
                 child: Text(
-              '警告',
+              translate("giveUpDialog.title"),
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 20.0,
@@ -231,13 +231,13 @@ class _CreatePageState extends State<CreatePage> {
                     Navigator.of(context).pop();
                     Navigator.pop(context);
                   },
-                  child: Text('确定')),
+                  child: Text(translate("giveUpDialog.ok"))),
               FlatButton(
                   onPressed: () {
                     print("点击了放弃修改的取消");
                     Navigator.of(context).pop();
                   },
-                  child: Text('取消')),
+                  child: Text(translate("giveUpDialog.cancel"))),
             ],
           );
         });

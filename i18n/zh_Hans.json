@@ -1,0 +1,85 @@
+{
+  "search": {
+    "appbar": "搜索框",
+    "tips": "暂时只支持搜索文件名",
+    "noInputTips": "请输入搜索关键词"
+  },
+  "note": {
+    "appbar": "个人笔记",
+    "tips": "OneDrive 接口限制"
+  },
+  "about": {
+    "name": "关于",
+    "version": "版本",
+    "checkUpdate": "检查更新"
+  },
+  "tab": {
+    "note": "笔记",
+    "dir": "文件夹",
+    "search": "搜索",
+    "tips": "确定请先进入笔记本, 再新建文件!"
+  },
+  "drawer": {
+    "language": "语言设置",
+    "tutorial": "教程",
+    "about": "关于",
+    "logout": "退出登录"
+  },
+  "language": {
+    "name": {
+      "en": "英语",
+      "zh": "中文"
+    }
+  },
+  "createDialog": {
+    "title": "创建文件夹",
+    "hintTips": "请输入文件夹名字",
+    "ok": "确定",
+    "cancel": "取消"
+  },
+  "renameDialog": {
+    "dirTitle": "重命名文件夹",
+    "fileTitle": "重命名文件",
+    "hintTips": "请输入新名字",
+    "ok": "确定",
+    "cancel": "取消"
+  },
+  "delDialog": {
+    "name": "删除",
+    "dirTitle": "确定删除该文件夹?",
+    "fileTitle": "确定删除该文件?",
+    "ok": "ok",
+    "cancel": "cancel"
+  },
+  "giveUpDialog": {
+    "title": "警告",
+    "content": "是否放弃编辑",
+    "ok": "确定",
+    "cancel": "取消"
+  },
+  "item": {
+    "delete": "删除",
+    "rename": "重命名"
+  },
+  "waitTips": "慢慢等吧...",
+  "noNoteBookTips": "没有笔记本!",
+  "createFileTips": "文件创建中...",
+  "updateContentTips": "更新内容中...",
+  "uploadTips": "开始上传...",
+  "uploadingTips": "上传中...",
+  "networkErrorTips": "网络异常, 再试一次",
+  "edit": {
+    "title": "编辑",
+    "currentDir": "当前目录: ",
+    "fileNameTips": "请输入文件名",
+    "contentTips": "输入 markdown 内容"
+  },
+  "picDialog": {
+    "title": "温馨提示",
+    "takePic": "拍照",
+    "selectPic": "选择图片",
+    "tips": "请输入图片名字",
+    "ok": "确定",
+    "cancel": "取消"
+  }
+}

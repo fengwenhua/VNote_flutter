@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class NetUtils {
@@ -303,7 +304,7 @@ class NetUtils {
       }
       print("requests 出现异常, 再来一发!!!");
       Fluttertoast.showToast(
-          msg: "requests 出现异常, 再来一发!!!",
+          msg: translate("networkErrorTips"),
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 2,

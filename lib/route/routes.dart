@@ -13,6 +13,7 @@ class Routes{
   static String newFile = "/newFile";
   static String about = "/about";
   static String tutorial = "/tutorial";
+  static String language = "/language";
 
   static void configureRoutes(Router router){
     router.notFoundHandler = new Handler(
@@ -29,6 +30,7 @@ class Routes{
     router.define(newFile, handler: newFileHandler);
     router.define(about, handler: aboutHandler);
     router.define(tutorial, handler: tutorialHandler);
+    router.define(language, handler: languageHandler);
   }
 
 }

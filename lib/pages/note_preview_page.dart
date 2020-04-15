@@ -54,44 +54,46 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
     final _imageFolderIdModel =
         Provider.of<ImageFolderIdModel>(context, listen: false);
 
+    print("开始找图片");
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
         // 在这里更新 imageFolderid , 也就是 _v_images 文件夹的 id
         // 这里再次更新是为了预防某个叼毛, 将_v_images 干掉...
 
         _imageFolderIdModel.updateImageFolderId(d.id);
-
-        await DocumentListUtil.instance
-            .getMDFileContentFromNetwork(
-                context, tokenModel.token.accessToken, id, pr1)
-            .then((value) {
-          if (value == null) {
-            print("gg, 拿不到更新的数据");
-            if (pr1.isShowing()) {
-              pr1.hide();
-            }
-
-            Fluttertoast.showToast(
-                msg: "网络超时, 拿不到更新的数据",
-                toastLength: Toast.LENGTH_LONG,
-                gravity: ToastGravity.CENTER,
-                timeInSecForIosWeb: 3,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0);
-          } else {
-            print("拿到更新的数据");
-            pr1.hide().whenComplete(() {
-              // 这里需要修改
-              setState(() {
-                content = value;
-              });
-            });
-          }
-        });
         break;
       }
     }
+
+    print("准备从网络获取 md 内容");
+    await DocumentListUtil.instance
+        .getMDFileContentFromNetwork(
+        context, tokenModel.token.accessToken, id, pr1)
+        .then((value) {
+      if (value == null) {
+        print("gg, 拿不到更新的数据");
+        if (pr1.isShowing()) {
+          pr1.hide();
+        }
+
+        Fluttertoast.showToast(
+            msg: "网络超时, 拿不到更新的数据",
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        print("拿到更新的数据");
+        pr1.hide().whenComplete(() {
+          // 这里需要修改
+          setState(() {
+            content = value;
+          });
+        });
+      }
+    });
   }
 
   @override

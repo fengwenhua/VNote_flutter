@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vnote/utils/global.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class NotePage extends StatefulWidget{
   @override
@@ -13,7 +14,7 @@ class _NotePageState extends State<NotePage>{
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('个人笔记', style: TextStyle(fontSize: fontSize40)),
+        title: Text(translate("note.appbar"), style: TextStyle(fontSize: fontSize40)),
         leading: IconButton(
             icon: Icon(Icons.dehaze, color: Colors.white,),
             onPressed: (){
@@ -24,7 +25,7 @@ class _NotePageState extends State<NotePage>{
           )
       ),
       body: Center(
-        child: Text("笔记(onedrive 接口限制, 正在思考)"),
+        child: Text(translate("note.tips")),
       ),
     );
   }

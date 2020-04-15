@@ -1,0 +1,85 @@
+{
+  "search": {
+    "appbar": "Search Box",
+    "tips": "Only file name search is supported for the time being.",
+    "noInputTips": "Please enter search key"
+  },
+  "note": {
+    "appbar": "Personal Notes",
+    "tips": "OneDrive interface restrictions"
+  },
+  "about": {
+    "name": "About",
+    "version": "version",
+    "checkUpdate": "checkUpdate"
+  },
+  "tab": {
+    "note": "Notes",
+    "dir": "Directories",
+    "search": "Search",
+    "tips": "Make sure you go to your notebook first, then create a new file!"
+  },
+  "drawer": {
+    "language": "Language",
+    "tutorial": "Tutorial",
+    "about": "About",
+    "logout": "Logout"
+  },
+  "language": {
+    "name": {
+      "en": "English",
+      "zh": "Chinese"
+    }
+  },
+  "createDialog": {
+    "title": "Create a folder",
+    "hintTips": "Enter the folder name",
+    "ok": "ok",
+    "cancel": "cancel"
+  },
+  "renameDialog": {
+    "dirTitle": "rename folder",
+    "fileTitle": "rename file",
+    "hintTips": "Please enter a new name",
+    "ok": "ok",
+    "cancel": "cancel"
+  },
+  "delDialog": {
+    "name": "delete",
+    "dirTitle": "Make sure to delete the folder?",
+    "fileTitle": "Make sure to delete the document?",
+    "ok": "ok",
+    "cancel": "cancel"
+  },
+  "giveUpDialog": {
+    "title": "Warning",
+    "content": "Whether to abandon editing",
+    "ok": "ok",
+    "cancel": "cancel"
+  },
+  "item": {
+    "delete": "Delete",
+    "rename": "Rename"
+  },
+  "waitTips": "Just wait...",
+  "createFileTips": "File creation in progress...",
+  "noNoteBookTips": "No notebooks!",
+  "updateContentTips": "Content being updated",
+  "uploadTips": "Start uploading",
+  "uploadingTips": "Uploading...",
+  "networkErrorTips": "Network anomaly, try again.",
+  "edit": {
+    "title": "Edit",
+    "currentDir": "Current Directory: ",
+    "fileNameTips": "Please input fileName",
+    "contentTips": "Please input markdown content"
+  },
+  "picDialog": {
+    "title": "warm reminder",
+    "takePic": "take a photo",
+    "selectPic": "select a photo",
+    "tips": "Please enter the name of the picture.",
+    "ok": "ok",
+    "cancel": "cancel"
+  }
+}

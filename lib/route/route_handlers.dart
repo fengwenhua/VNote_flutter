@@ -3,6 +3,7 @@ import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:vnote/pages/about_page.dart';
 import 'package:vnote/pages/create_page.dart';
+import 'package:vnote/pages/language_page.dart';
 import 'package:vnote/pages/login_page.dart';
 import 'package:vnote/pages/node_edit.page.dart';
 import 'package:vnote/pages/note_preview_page.dart';
@@ -76,3 +77,10 @@ var tutorialHandler = new Handler(
       return new TutorialPage(
       );
     });
+
+// 语言设置页码
+var languageHandler = new Handler(
+  handlerFunc: (BuildContext context, Map<String,List<Object>> params){
+    return new LanguagePage();
+  }
+);

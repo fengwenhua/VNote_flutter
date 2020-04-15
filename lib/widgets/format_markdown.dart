@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
@@ -114,7 +115,7 @@ Future<String> _showInputDialog(BuildContext context) async {
       context: context,
       builder: (context) {
         return CupertinoAlertDialog(
-          title: Text('温馨提示'),
+          title: Text(translate("picDialog.title")),
           content:
               new StatefulBuilder(builder: (context, StateSetter setState) {
             return Card(
@@ -122,9 +123,13 @@ Future<String> _showInputDialog(BuildContext context) async {
               child: SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
-                    Row(
+                    Column(
+                      mainAxisSize:MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
-                        RaisedButton(
+                        MaterialButton(
+                          color: Colors.blue,
+                          textColor: Colors.white,
                           onPressed: () async {
                             File image = await ImagePicker.pickImage(
                                 source: ImageSource.camera);
@@ -132,9 +137,11 @@ Future<String> _showInputDialog(BuildContext context) async {
                               _image = image;
                             });
                           },
-                          child: Text("拍照"),
+                          child: Text(translate("picDialog.takePic")),
                         ),
-                        RaisedButton(
+                        MaterialButton(
+                          color: Colors.blue,
+                          textColor: Colors.white,
                           onPressed: () async {
                             File image = await ImagePicker.pickImage(
                                 source: ImageSource.gallery);
@@ -142,13 +149,13 @@ Future<String> _showInputDialog(BuildContext context) async {
                               _image = image;
                             });
                           },
-                          child: Text("选择照片"),
+                          child: Text(translate("picDialog.selectPic")),
                         ),
                       ],
                     ),
                     TextField(
                       decoration: InputDecoration(
-                          hintText: '请输入图片名字',
+                          hintText: translate("picDialog.tips"),
                           filled: true,
                           fillColor: Colors.grey.shade50),
                       onChanged: (String value) {
@@ -168,14 +175,19 @@ Future<String> _showInputDialog(BuildContext context) async {
                 print("取消图片");
                 Navigator.pop(context, Action.Cancel);
               },
-              child: Text('取消'),
+              child: Text(translate("picDialog.cancel")),
             ),
             CupertinoDialogAction(
               onPressed: () {
                 print("确定图片");
-                Navigator.pop(context, Action.Ok);
+                if(_image?.path!=null){
+                  Navigator.pop(context, Action.Ok);
+                }else{
+                  Navigator.pop(context);
+                }
+
               },
-              child: Text('确定'),
+              child: Text(translate("picDialog.ok")),
             ),
           ],
         );
@@ -224,6 +236,7 @@ Future<String> _showInputDialog(BuildContext context) async {
       return "#####";
       break;
     default:
+      return "#####";
       break;
   }
 }

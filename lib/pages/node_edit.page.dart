@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +22,7 @@ class NoteEditPage extends StatefulWidget {
   final String id;
   final String name;
 
-  NoteEditPage(
-      {Key key,
-      String markdownSource,
-      String id,
-      String name})
+  NoteEditPage({Key key, String markdownSource, String id, String name})
       : this.markdownSource = markdownSource,
         this.id = id,
         this.name = name,
@@ -51,10 +48,10 @@ class _NoteEditPageState extends State<NoteEditPage> {
         barrierDismissible: true,
         builder: (BuildContext context) {
           return AlertDialog(
-            content: Text('是否放弃编辑?'),
+            content: Text(translate("giveUpDialog.content")),
             title: Center(
                 child: Text(
-              '警告',
+              translate("giveUpDialog.title"),
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 20.0,
@@ -67,13 +64,13 @@ class _NoteEditPageState extends State<NoteEditPage> {
                     Navigator.of(context).pop();
                     Navigator.pop(context, widget.markdownSource);
                   },
-                  child: Text('确定')),
+                  child: Text(translate("giveUpDialog.ok"))),
               FlatButton(
                   onPressed: () {
                     print("点击了放弃修改的取消");
                     Navigator.of(context).pop();
                   },
-                  child: Text('取消')),
+                  child: Text(translate("giveUpDialog.cancel"))),
             ],
           );
         });
@@ -83,11 +80,11 @@ class _NoteEditPageState extends State<NoteEditPage> {
   Widget build(BuildContext context) {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     pr = new ProgressDialog(context);
-    pr.style(message: '更新内容 ing');
+    pr.style(message: translate("updateContentTips"));
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('编辑'),
+        title: Text(translate("edit.title")),
         automaticallyImplyLeading: false,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -177,7 +174,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                   uploadPR = new ProgressDialog(context,
                       type: ProgressDialogType.Download, isDismissible: true);
                   uploadPR.style(
-                      message: '开始上传...',
+                      message: translate("uploadTips"),
                       borderRadius: 10.0,
                       backgroundColor: Colors.white,
                       progressWidget: CircularProgressIndicator(),
@@ -259,7 +256,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                           progress: double.parse(
                               (100.0 / newImagesList.length * (i + 1))
                                   .toStringAsFixed(1)),
-                          message: "uploading...",
+                          message: translate("uploadingTips"),
                           progressWidget: Container(
                               padding: EdgeInsets.all(8.0),
                               child: CircularProgressIndicator()),
@@ -305,7 +302,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
       body: MarkdownTextInput(
         (String value) => setState(() => content = value),
         content,
-        label: '输入 markdown 内容',
+        label: translate("edit.contentTips"),
       ),
     );
   }

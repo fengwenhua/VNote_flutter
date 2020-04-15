@@ -13,6 +13,7 @@ import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/widgets/file_widget.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -23,18 +24,18 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('搜索框'), actions: <Widget>[
-      // 放大镜效果
-      IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            showSearch(context: context, delegate: SearchBarDelegate());
-          }),
-
-    ]),
-    body: Center(
-      child: Text("暂时只支持搜索文件名"),
-    ),);
+      appBar: AppBar(title: Text(translate("search.appbar")), actions: <Widget>[
+        // 放大镜效果
+        IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(context: context, delegate: SearchBarDelegate());
+            }),
+      ]),
+      body: Center(
+        child: Text(translate("search.tips")),
+      ),
+    );
   }
 }
 
@@ -72,22 +73,25 @@ class SearchBarDelegate extends SearchDelegate<String> {
       onPressed: () {
         // 如果搜索框没有内容则直接返回
         // 如果有内容则清空搜索框,然后显示搜索建议
-        if(query.isEmpty){
+        if (query.isEmpty) {
           close(context, null);
-        }else{
+        } else {
           query = "";
           showSuggestions(context);
         }
-        },
+      },
     );
   }
 
   //重写搜索结果
   @override
   Widget buildResults(BuildContext context) {
-    if(query.isEmpty){
+    if (query.isEmpty) {
       print("搜索框没有输入内容!");
-      return new Center(child: Text("请输入搜索关键词!",style: TextStyle(color: Colors.red)),);
+      return new Center(
+        child: Text(translate("search.noInputTips"),
+            style: TextStyle(color: Colors.red)),
+      );
     }
     return buildSearchFutureBuilder(context, query);
   }
@@ -105,11 +109,15 @@ class SearchBarDelegate extends SearchDelegate<String> {
               );
             case ConnectionState.done:
               if (snapshot.hasError) {
-                return new Center(child: Text('出错误: ${snapshot.error}',
-                    style: TextStyle(color: Colors.red)),);
+                return new Center(
+                  child: Text('出错误: ${snapshot.error}',
+                      style: TextStyle(color: Colors.red)),
+                );
               }
-              if(snapshot.data.length<=0){
-                return new Center(child: Text("找不到\"$key\", 换一个关键词呗!"),);
+              if (snapshot.data.length <= 0) {
+                return new Center(
+                  child: Text("找不到\"$key\", 换一个关键词呗!"),
+                );
               }
               return new ListView.builder(
                   physics: BouncingScrollPhysics(),
@@ -128,9 +136,13 @@ class SearchBarDelegate extends SearchDelegate<String> {
                   });
 
             case ConnectionState.none:
-              return new Center(child: Text('请输入搜索内容!'),);
+              return new Center(
+                child: Text('请输入搜索内容!'),
+              );
             default:
-              return new Center(child: Text("出问题了!"),);
+              return new Center(
+                child: Text("出问题了!"),
+              );
           }
         },
         future: getSearchData(context, key));
@@ -144,7 +156,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
         onPressedNext: () async {
           ProgressDialog pr;
           pr = new ProgressDialog(context, isDismissible: true);
-          pr.style(message: '慢慢等吧...');
+          pr.style(message: translate("waitTips"));
           print("点击了 ${document.name} 文件");
           // 转圈圈和下载 md 文件
           await pr.show().then((_) {
@@ -228,7 +240,6 @@ class SearchBarDelegate extends SearchDelegate<String> {
   Future<List<Document>> getSearchData(BuildContext context, String key) async {
     return DocumentListUtil.instance.getSearchList(context, key);
   }
-
 
   @override
   ThemeData appBarTheme(BuildContext context) {

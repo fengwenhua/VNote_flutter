@@ -87,7 +87,6 @@ class OneDriveDataDao {
       BuildContext context, String token, String id) {
     Map<String, dynamic> headers = {"Authorization": token};
     String URL = "https://graph.microsoft.com/v1.0/me/drive/items/$id/content";
-
     return NetUtils.instance.get(
         context,
         URL,

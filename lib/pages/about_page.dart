@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:vnote/utils/global.dart';
 
 class AboutPage extends StatefulWidget {
@@ -12,7 +13,7 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Text('关于',
+            title: Text(translate("about.name"),
                 style: TextStyle(fontSize: fontSize40, color: Colors.black)),
             elevation: 0.5,
             brightness: Brightness.light,
@@ -39,18 +40,18 @@ class _AboutPageState extends State<AboutPage> {
                   backgroundImage: ExactAssetImage('images/vnote.png'),
                 ),
               ),
-              MaterialButton(
-                color: Colors.blue,
-                textColor: Colors.white,
-                child: Text('评价'),
-                onPressed: () {
-                  print("点击了评价");
-                },
+              Row(
+                mainAxisSize:MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Text(translate("about.version")),
+                  Text(": 0.1")
+                ],
               ),
               MaterialButton(
                 color: Colors.blue,
                 textColor: Colors.white,
-                child: Text('检查更新'),
+                child: Text(translate("about.checkUpdate")),
                 onPressed: () {
                   print("点击了检查更新");
                 },
