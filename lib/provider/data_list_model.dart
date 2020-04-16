@@ -68,7 +68,8 @@ class DataListModel with ChangeNotifier{
 
   void updateCurrentDir(List<Document> newDataList){
     // 首先先干掉当前的
-    _dataList.pop();
+    if(_dataList.isNotEmpty)
+        _dataList.pop();
     // 在添加新的
     _dataList.push(newDataList);
     notifyListeners();

@@ -89,6 +89,15 @@ class _CreatePageState extends State<CreatePage> {
                       // put 请求
                       // dataList dirCache
                       // json
+                      if(fileName==null){
+                        fileName = "untitled";
+                      }
+                      fileName=fileName.trim();
+                      if(content==null){
+                        content = "";
+                      }
+                      content=content.trim();
+
                       if (!fileName.contains(".md")) {
                         fileName += ".md";
                       }
