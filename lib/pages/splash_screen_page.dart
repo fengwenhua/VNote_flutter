@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_translate/flutter_translate.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
@@ -89,10 +91,29 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     tokenModel.initToken();
     if(tokenModel.token != null){
       print("本地有 token");
+
+      Fluttertoast.showToast(
+          msg: translate(
+              "splash.refreshToken"),
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 3,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+
       // 本地有token, 应该刷新一下token, 然后跳到主页
       await OnedriveTokenDao.refreshToken(context, tokenModel.token.refreshToken).then((value) async {
         if(value.data != -1) {
-
+          Fluttertoast.showToast(
+              msg: translate(
+                  "splash.getNotebook"),
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 3,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
           await getNotebook(tokenModel.token.accessToken).then((data) async {
 
             // 初始化, 爸爸是谁, 这里用 approot标记

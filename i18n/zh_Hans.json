@@ -86,5 +86,9 @@
   "permission": {
     "camera_access_denied": "没有拍照权限",
     "photo_access_denied": "没有相册权限"
+  },
+  "splash": {
+    "refreshToken": "刷新 token",
+    "getNotebook": "获取笔记本"
   }
 }

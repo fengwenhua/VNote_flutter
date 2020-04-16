@@ -86,5 +86,9 @@
   "permission": {
     "camera_access_denied": "camera_access_denied",
     "photo_access_denied": "photo_access_denied"
+  },
+  "splash": {
+    "refreshToken": "Refresh the token",
+    "getNotebook": "Get notebook"
   }
 }
