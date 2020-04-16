@@ -26,7 +26,7 @@ class NavigatorUtil {
 
   /// 退出登录
   static void goLogoutPage(BuildContext context) {
-    _navigateTo(context, Routes.logout, clearStack: true);
+    _navigateTo(context, Routes.logout, clearStack: false);
   }
 
   /// 首页

@@ -43,7 +43,7 @@ class Utils {
   }
 
   /// [newFileJson] 用于新建文件时, 返回_vnote.json 所需要的内容
-  static String newFileJson(String fileName){
+  static String newFileJson(String fileName) {
     String time = Utils.getFormattedDateTimeForJson(dateTime: DateTime.now());
     String jsonData = '''        {
             "attachment_folder": "",
@@ -90,5 +90,35 @@ class Utils {
     String appImagePath = appDocPath + '/image';
     print("设置图片文件夹: " + appImagePath);
     Application.sp.setString("appImagePath", appImagePath);
+  }
+
+  static Future<void> deleteCacheDir() async {
+    final cacheDir = await getTemporaryDirectory();
+    print("cacheDir 大小: " + cacheDir.statSync().size.toString());
+    final file = File(cacheDir.path);
+    final isExists = await file.exists();
+    if (isExists) {
+      await file.delete(recursive: true);
+    }
+  }
+
+  static Future<void> deleteAppDir() async {
+    final appDir = await getApplicationSupportDirectory();
+    print("appDir 大小: " + appDir.statSync().size.toString());
+    final file = File(appDir.path);
+    final isExists = await file.exists();
+    if (isExists) {
+      await file.delete(recursive: true);
+    }
+  }
+
+  static Future<void> removeAllCache() async {
+    final appDir = await getApplicationDocumentsDirectory();
+    print("appDir 大小: " + appDir.statSync().size.toString());
+    final file = File(appDir.path);
+    final isExists = await file.exists();
+    if (isExists) {
+      await file.delete(recursive: true);
+    }
   }
 }

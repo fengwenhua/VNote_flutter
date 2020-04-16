@@ -20,8 +20,7 @@ class _LogoutPageState extends State<LogoutPage> {
               color: Colors.white,
             ),
             onPressed: () async {
-              // 退出应用
-              await pop();
+              Navigator.of(context).pop();
             },
           )),
       body: WebView(
