@@ -24,6 +24,7 @@ class DataListModel with ChangeNotifier{
     return length;
   }
 
+  /// 删除元素
   void removeEle(Document document){
     List<Document> list = _dataList.pop();
     print("要干掉的是" + document.name);
@@ -48,8 +49,14 @@ class DataListModel with ChangeNotifier{
       print("根目录没有数据的情况");
       list = new List<Document>();
     }
+    // 文件就插到后面
+    if(document.isFile){
+      list.add(document);
+    }else{
+      // 文件夹就查到一开始
+      list.insert(0, document);
+    }
 
-    list.add(document);
     // 然后压回去
     _dataList.push(list);
     notifyListeners();

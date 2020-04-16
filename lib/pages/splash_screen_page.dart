@@ -96,7 +96,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
           msg: translate(
               "splash.refreshToken"),
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+          gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 2,
           backgroundColor: Colors.red,
           textColor: Colors.white,
@@ -109,7 +109,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
               msg: translate(
                   "splash.getNotebook"),
               toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.CENTER,
+              gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 2,
               backgroundColor: Colors.red,
               textColor: Colors.white,

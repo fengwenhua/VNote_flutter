@@ -89,7 +89,7 @@
     "photo_access_denied": "没有相册权限"
   },
   "splash": {
-    "refreshToken": "刷新 token",
-    "getNotebook": "获取笔记本"
+    "refreshToken": "刷新 token, 请等待...",
+    "getNotebook": "获取笔记本, 请等待..."
   }
 }
