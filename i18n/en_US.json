@@ -21,10 +21,14 @@
     "tips": "Make sure you go to your notebook first, then create a new file!"
   },
   "drawer": {
+    "settings":"Settings",
+    "logout": "Logout"
+  },
+  "settings": {
+    "name": "Settings",
     "language": "Language",
     "tutorial": "Tutorial",
-    "about": "About",
-    "logout": "Logout"
+    "about": "About"
   },
   "language": {
     "name": {

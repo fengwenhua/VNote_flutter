@@ -21,10 +21,14 @@
     "tips": "确定请先进入笔记本, 再新建文件!"
   },
   "drawer": {
+    "settings":"设置",
+    "logout": "退出登录"
+  },
+  "settings": {
+    "name": "设置",
     "language": "语言设置",
     "tutorial": "教程",
-    "about": "关于",
-    "logout": "退出登录"
+    "about": "关于"
   },
   "language": {
     "name": {

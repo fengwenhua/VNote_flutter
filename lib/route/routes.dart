@@ -2,9 +2,10 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:vnote/pages/login_page.dart';
+import 'package:vnote/pages/webview_page.dart';
 import 'package:vnote/route/route_handlers.dart';
 
-class Routes{
+class Routes {
   static String root = "/";
   static String home = "/home";
   static String login = "/login";
@@ -14,13 +15,15 @@ class Routes{
   static String about = "/about";
   static String tutorial = "/tutorial";
   static String language = "/language";
+  static String settings = "/settings";
+  static String webViewPage = '/webview';
 
-  static void configureRoutes(Router router){
+  static void configureRoutes(Router router) {
     router.notFoundHandler = new Handler(
-      handlerFunc: (BuildContext context, Map<String, List<String>> params){
-        print("Route was not found!!");
-        return LoginPage();
-      });
+        handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+      print("Route was not found!!");
+      return LoginPage();
+    });
 
     router.define(root, handler: splashHandler);
     router.define(login, handler: loginHandler);
@@ -31,6 +34,7 @@ class Routes{
     router.define(about, handler: aboutHandler);
     router.define(tutorial, handler: tutorialHandler);
     router.define(language, handler: languageHandler);
+    router.define(settings, handler: settingsHandler);
+    router.define(webViewPage, handler: webViewHandler);
   }
-
 }

@@ -7,8 +7,10 @@ import 'package:vnote/pages/language_page.dart';
 import 'package:vnote/pages/login_page.dart';
 import 'package:vnote/pages/node_edit.page.dart';
 import 'package:vnote/pages/note_preview_page.dart';
+import 'package:vnote/pages/setting_page.dart';
 import 'package:vnote/pages/splash_screen_page.dart';
 import 'package:vnote/pages/tutorial_page.dart';
+import 'package:vnote/pages/webview_page.dart';
 import 'package:vnote/widgets/tab_navigator.dart';
 
 // splash 页面
@@ -78,9 +80,25 @@ var tutorialHandler = new Handler(
       );
     });
 
-// 语言设置页码
+// 语言设置页面
 var languageHandler = new Handler(
   handlerFunc: (BuildContext context, Map<String,List<Object>> params){
     return new LanguagePage();
   }
+);
+
+// 语言设置页面
+var settingsHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String,List<Object>> params){
+      return new SettingPage();
+    }
+);
+
+// webview
+var webViewHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String,List<Object>> params){
+      String title = params['title']?.first;
+      String url = params['url']?.first;
+      return WebViewPage(title: title, url: url);
+    }
 );

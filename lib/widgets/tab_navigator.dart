@@ -103,33 +103,11 @@ class _TabNavigatorState extends State<TabNavigator> {
                   Column(
                     children: <Widget>[
                       ListTile(
-                        title: Text(translate("drawer.language")),
-                        leading: Icon(Icons.settings, color: Colors.orange),
+                        title: Text(translate("drawer.settings")),
+                        leading: Icon(Icons.settings, color: Colors.blue),
                         onTap: () {
-                          print("点击语言设置");
-                          Application.router.navigateTo(context, "/language",
-                              transition: TransitionType.fadeIn);
-                        },
-                      ),
-                      ListTile(
-                        title: Text(translate("drawer.tutorial")),
-                        leading: Icon(
-                          Icons.local_library,
-                          color: Colors.orange,
-                        ),
-                        onTap: () {
-                          Application.router.navigateTo(context, "/tutorial",
-                              transition: TransitionType.fadeIn);
-                        },
-                      ),
-                      ListTile(
-                        title: Text(translate("drawer.about")),
-                        leading: Icon(
-                          Icons.priority_high,
-                          color: Colors.orange,
-                        ),
-                        onTap: () {
-                          Application.router.navigateTo(context, "/about",
+                          print("点击设置");
+                          Application.router.navigateTo(context, "/settings",
                               transition: TransitionType.fadeIn);
                         },
                       ),
@@ -137,7 +115,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                         title: Text(translate("drawer.logout")),
                         leading: Icon(
                           Icons.power_settings_new,
-                          color: Colors.orange,
+                          color: Colors.blue,
                         ),
                         onTap: () {
                           // 关闭侧滑菜单
