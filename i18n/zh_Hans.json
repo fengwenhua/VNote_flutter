@@ -2,7 +2,8 @@
   "search": {
     "appbar": "搜索框",
     "tips": "暂时只支持搜索文件名",
-    "noInputTips": "请输入搜索关键词"
+    "noInputTips": "请输入搜索关键词",
+    "changeOther": "找不到\"{key}\", 换一个关键词呗!"
   },
   "note": {
     "appbar": "个人笔记",

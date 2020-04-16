@@ -2,7 +2,8 @@
   "search": {
     "appbar": "Search Box",
     "tips": "Only file name search is supported for the time being.",
-    "noInputTips": "Please enter search key"
+    "noInputTips": "Please enter search key",
+    "changeOther": "Can't find the \"{key}\", change the keyword."
   },
   "note": {
     "appbar": "Personal Notes",

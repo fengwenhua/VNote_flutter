@@ -116,7 +116,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
               }
               if (snapshot.data.length <= 0) {
                 return new Center(
-                  child: Text("找不到\"$key\", 换一个关键词呗!"),
+                  child: Text(translate("search.changeOther",args: {'key':'$key'})),
                 );
               }
               return new ListView.builder(
