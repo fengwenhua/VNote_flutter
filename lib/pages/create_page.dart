@@ -23,7 +23,6 @@ import 'package:vnote/widgets/markdown_text_input.dart';
 import 'package:vnote/widgets/webview.dart';
 
 class CreatePage extends StatefulWidget {
-
   @override
   _CreatePageState createState() => _CreatePageState();
 }
@@ -69,9 +68,9 @@ class _CreatePageState extends State<CreatePage> {
             color: Colors.white,
             onPressed: () {
               print("放弃修改, 直接返回?");
-              if(fileName==null&&content==null){
+              if (fileName == null && content == null) {
                 Navigator.of(context).pop();
-              }else{
+              } else {
                 showAlertDialog(context);
               }
             },
@@ -82,24 +81,23 @@ class _CreatePageState extends State<CreatePage> {
                 color: Colors.white,
                 onPressed: () async {
                   print("点击预览, 准备保存新文件");
-                  if(fileId != null){
+                  if (fileId != null) {
                     print("如果有 id, 说明已经存过了, 接下来是更新操作即可!");
-
-                  }else{
+                  } else {
                     print("没有 id, 说明没有存过, 接下来是保存新文件的操作!");
                     // 文件名和内容至少一个才继续下去
                     if (fileName != null || content != null) {
                       // put 请求
                       // dataList dirCache
                       // json
-                      if(fileName==null){
+                      if (fileName == null) {
                         fileName = "untitled";
                       }
-                      fileName=fileName.trim();
-                      if(content==null){
+                      fileName = fileName.trim();
+                      if (content == null) {
                         content = "";
                       }
-                      content=content.trim();
+                      content = content.trim();
 
                       if (!fileName.contains(".md")) {
                         fileName += ".md";
@@ -110,16 +108,16 @@ class _CreatePageState extends State<CreatePage> {
 
                       await pr.show().then((_) async {
                         await OneDriveDataDao.uploadFile(
-                            context,
-                            tokenModel.token.accessToken,
-                            parentIdModel.parentId,
-                            content,
-                            fileName)
+                                context,
+                                tokenModel.token.accessToken,
+                                parentIdModel.parentId,
+                                content,
+                                fileName)
                             .then((value) async {
                           print("上传 $fileName 文件之后返回的内容" + value.toString());
                           // 更新本地数据
                           Map<String, dynamic> jsonData =
-                          jsonDecode(value.toString());
+                              jsonDecode(value.toString());
                           String id = jsonData["id"];
                           fileId = id;
                           String newFileName = jsonData["name"];
@@ -136,16 +134,17 @@ class _CreatePageState extends State<CreatePage> {
                               parentIdModel.parentId, doc);
                           // 下面是更新当前目录的 _vnote.json 文件
                           String configId = configIdModel.configId;
-                          print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 files 字段");
-                          await OneDriveDataDao.getFileContent(
-                              context, tokenModel.token.accessToken, configId)
+                          print(
+                              "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 files 字段");
+                          await OneDriveDataDao.getFileContent(context,
+                                  tokenModel.token.accessToken, configId)
                               .then((value) async {
                             print("要添加的文件名称: " + newFileName);
                             Map<String, dynamic> newFileMap =
-                            jsonDecode(Utils.newFileJson(newFileName));
+                                jsonDecode(Utils.newFileJson(newFileName));
                             DesktopConfigModel desktopConfigModel =
-                            DesktopConfigModel.fromJson(
-                                json.decode(value.toString()));
+                                DesktopConfigModel.fromJson(
+                                    json.decode(value.toString()));
                             //print("添加之前: ");
                             //print(json.encode(desktopConfigModel));
                             desktopConfigModel.addNewFile(newFileMap);
@@ -155,10 +154,10 @@ class _CreatePageState extends State<CreatePage> {
 
                             print("添加成功_vnote.json 之后, 就是更新这个文件");
                             await OneDriveDataDao.updateContent(
-                                context,
-                                tokenModel.token.accessToken,
-                                configId,
-                                json.encode(desktopConfigModel))
+                                    context,
+                                    tokenModel.token.accessToken,
+                                    configId,
+                                    json.encode(desktopConfigModel))
                                 .then((value) {
                               if (value != null) {
                                 print("_vnote.json 更新成功");
@@ -174,9 +173,11 @@ class _CreatePageState extends State<CreatePage> {
                         // 搞完进入预览页面, 销毁本页面
                         String route =
                             '/preview?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(fileId)}&name=${Uri.encodeComponent(fileName)}&type=${Uri.encodeComponent("1")}';
-                        Application.router.navigateTo(context, route,
-                            transition: TransitionType.fadeIn).then((result){
-                              print("搞定直接滚");
+                        Application.router
+                            .navigateTo(context, route,
+                                transition: TransitionType.fadeIn)
+                            .then((result) {
+                          print("搞定直接滚");
                           Navigator.of(context).pop();
                         });
                       });
@@ -191,8 +192,6 @@ class _CreatePageState extends State<CreatePage> {
                           fontSize: 16.0);
                     }
                   }
-
-
                 }),
           ],
         ),

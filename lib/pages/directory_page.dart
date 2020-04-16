@@ -81,6 +81,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     }
 
     if (!hasImageFolder) {
+      print("没有_v_images");
       _imageFolderIdAndConfigIdModel.updateImageFolderId("noimagefolder");
     }
 
@@ -378,7 +379,13 @@ class _DirectoryPageState extends State<DirectoryPage>
     }
   }
 
-  List<Widget> getListWidget(List<Document> childDocuments) {
+  List<Widget> getListWidget(List<Document> documents) {
+    List<Document> childDocuments = new List<Document>();
+
+    documents.forEach((f){
+      childDocuments.add(f);
+    });
+
     // 在黑名单之中, 都不显示
     childDocuments.removeWhere((s){
       return BLACK_NAME.contains(s.name);
