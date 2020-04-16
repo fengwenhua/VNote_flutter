@@ -18,6 +18,7 @@ class Routes {
   static String language = "/language";
   static String settings = "/settings";
   static String webViewPage = '/webview';
+  static String theme = '/theme';
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = new Handler(
@@ -38,5 +39,6 @@ class Routes {
     router.define(language, handler: languageHandler);
     router.define(settings, handler: settingsHandler);
     router.define(webViewPage, handler: webViewHandler);
+    router.define(theme, handler: themeHandler);
   }
 }

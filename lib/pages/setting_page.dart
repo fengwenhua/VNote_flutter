@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vnote/application.dart';
+import 'package:vnote/res/colors.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/click_item.dart';
 
@@ -16,15 +17,13 @@ class _SettingPageState extends State<SettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(translate("settings.name"),
-              style: TextStyle(fontSize: fontSize40, color: Colors.black)),
+          title: Text(
+            translate("settings.name"),
+          ),
           elevation: 0.5,
-          brightness: Brightness.light,
-          backgroundColor: Colors.white,
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: Colors.black,
             ),
             onPressed: () {
               Navigator.of(context).pop();
@@ -49,7 +48,8 @@ class _SettingPageState extends State<SettingPage> {
           ClickItem(
               title: translate("settings.darkModel"),
               onTap: () {
-                Fluttertoast.showToast(msg: "实现 ing");
+                Application.router.navigateTo(context, "/theme",
+                    transition: TransitionType.fadeIn);
               }),
           ClickItem(
               title: translate("settings.checkUpdate"),

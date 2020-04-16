@@ -10,6 +10,7 @@ import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/preview_model.dart';
+import 'package:vnote/provider/theme_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/route/navigate_service.dart';
@@ -61,6 +62,9 @@ void main() async {
           ),
           ChangeNotifierProvider<DirAndFileCacheModel>(
             create: (context) => DirAndFileCacheModel(),
+          ),
+          ChangeNotifierProvider<ThemeProvider>(
+            create: (context)=>ThemeProvider(),
           )
         ],
         child: MyApp(),
@@ -75,29 +79,30 @@ class MyApp extends StatelessWidget {
 
     return LocalizationProvider(
       state: LocalizationProvider.of(context).state,
-      child: MaterialApp(
-        title: 'VNote',
-        localizationsDelegates: [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-          localizationDelegate,
-          const FallbackCupertinoLocalisationsDelegate(),
-        ],
-        supportedLocales: localizationDelegate.supportedLocales,
-        locale: localizationDelegate.currentLocale,
-        debugShowCheckedModeBanner: false, // 去除调试
-        navigatorKey: Application.getIt<NavigateService>().key,
-        theme: ThemeData(
-            platform: TargetPlatform.iOS,
-            brightness: Brightness.light,
-            primaryColor: Colors.blue,
-            splashColor: Colors.transparent,
-            tooltipTheme: TooltipThemeData(verticalOffset: -100000)),
-        home: SplashScreenPage(),
-        // 初始化路由
-        onGenerateRoute: Application.router.generator,
-      ),
+      child: Consumer<ThemeProvider>(
+        builder: (context,ThemeProvider provider,child){
+          return MaterialApp(
+            title: 'VNote',
+            localizationsDelegates: [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              localizationDelegate,
+              const FallbackCupertinoLocalisationsDelegate(),
+            ],
+            supportedLocales: localizationDelegate.supportedLocales,
+            locale: localizationDelegate.currentLocale,
+            debugShowCheckedModeBanner: false, // 去除调试
+            navigatorKey: Application.getIt<NavigateService>().key,
+            theme: provider.getTheme(),
+            darkTheme: provider.getTheme(isDarkMode: true),
+            themeMode: provider.getThemeMode(),
+            home: SplashScreenPage(),
+            // 初始化路由
+            onGenerateRoute: Application.router.generator,
+          );
+        },
+      )
     );
   }
 }

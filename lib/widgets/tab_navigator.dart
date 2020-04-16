@@ -6,7 +6,6 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/pages/create_page.dart';
 import 'package:vnote/pages/directory_page.dart';
-import 'package:vnote/pages/label_page.dart';
 import 'package:vnote/pages/note_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vnote/provider/data_list_model.dart';

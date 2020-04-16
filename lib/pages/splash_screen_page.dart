@@ -11,6 +11,7 @@ import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
+import 'package:vnote/provider/theme_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
@@ -34,11 +35,12 @@ class _SplashScreenPageState extends State<SplashScreenPage>
   void initState() {
     super.initState();
 
-    _scaleTween = Tween(begin: 0,end: 1);
-    _logoController =  AnimationController(
-        vsync: this, duration: Duration(milliseconds: 500))..drive(_scaleTween);
+    _scaleTween = Tween(begin: 0, end: 1);
+    _logoController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500))
+          ..drive(_scaleTween);
 
-    Future.delayed(Duration(milliseconds: 500),(){
+    Future.delayed(Duration(milliseconds: 500), () {
       //启动动画
       _logoController.forward();
     });
@@ -55,46 +57,47 @@ class _SplashScreenPageState extends State<SplashScreenPage>
               });
             }
           });
-
   }
 
   /// 趁播放 logo 的时候, 将一级目录(笔记本)下载下来
-  Future<List<Document>> getNotebook(String accessToken) async{
-    return await DocumentListUtil.instance.getNotebookList(context, accessToken, (list){
+  Future<List<Document>> getNotebook(String accessToken) async {
+    return await DocumentListUtil.instance.getNotebookList(context, accessToken,
+        (list) {
       ParentIdModel parentIdModel =
-      Provider.of<ParentIdModel>(context, listen: false);
-      DirAndFileCacheModel dirCacheModel = Provider.of<DirAndFileCacheModel>(context, listen: false);
-      if(list.length == 0){
+          Provider.of<ParentIdModel>(context, listen: false);
+      DirAndFileCacheModel dirCacheModel =
+          Provider.of<DirAndFileCacheModel>(context, listen: false);
+      if (list.length == 0) {
         print("笔记本没有数据!");
         dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
-
-      }else{
+      } else {
         print("获取了笔记本List, 如下:");
         list.forEach((i) {
           print(i.name);
         });
-        DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
+        DataListModel dataListModel =
+            Provider.of<DataListModel>(context, listen: false);
         dataListModel.goAheadDataList(list);
         dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
       }
-
     });
   }
 
-  void goPage() async{
+  void goPage() async {
     // 初始化shared_preferences
     await Application.initSp();
+
+    Provider.of<ThemeProvider>(context, listen: false).syncTheme();
     Utils.setImageFolder();
     // 第一次安装完后, 这里提示错误
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     // 从本地存储中读取token
     tokenModel.initToken();
-    if(tokenModel.token != null){
+    if (tokenModel.token != null) {
       print("本地有 token");
 
       Fluttertoast.showToast(
-          msg: translate(
-              "splash.refreshToken"),
+          msg: translate("splash.refreshToken"),
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 2,
@@ -103,11 +106,12 @@ class _SplashScreenPageState extends State<SplashScreenPage>
           fontSize: 16.0);
 
       // 本地有token, 应该刷新一下token, 然后跳到主页
-      await OnedriveTokenDao.refreshToken(context, tokenModel.token.refreshToken).then((value) async {
-        if(value.data != -1) {
+      await OnedriveTokenDao.refreshToken(
+              context, tokenModel.token.refreshToken)
+          .then((value) async {
+        if (value.data != -1) {
           Fluttertoast.showToast(
-              msg: translate(
-                  "splash.getNotebook"),
+              msg: translate("splash.getNotebook"),
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 2,
@@ -115,7 +119,6 @@ class _SplashScreenPageState extends State<SplashScreenPage>
               textColor: Colors.white,
               fontSize: 16.0);
           await getNotebook(tokenModel.token.accessToken).then((data) async {
-
             // 初始化, 爸爸是谁, 这里用 approot标记
             // 以后每点进去或者返回来, 都要刷新这个值
             //final _parentId =Provider.of<ParentIdModel>(context, listen: false);
@@ -130,7 +133,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
           // 跳转到主页
         }
       });
-    }else{
+    } else {
       // 否则跳到微软登录界面
       // 权限申请
       await DocumentListUtil.instance.requestPermission();

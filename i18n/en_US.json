@@ -98,5 +98,11 @@
   "splash": {
     "refreshToken": "Refresh the token, Please wait...",
     "getNotebook": "Get notebook, Please wait..."
+  },
+  "theme": {
+    "title": "Theme switch",
+    "followSystem": "Follow the system",
+    "open": "Open",
+    "close": "Close"
   }
 }

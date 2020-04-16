@@ -1,11 +1,13 @@
-
 import 'dart:async';
 import 'dart:math';
 
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
+import 'package:vnote/provider/theme_model.dart';
+import 'package:vnote/res/colors.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/click_item.dart';
 
@@ -15,13 +17,34 @@ class AboutPage extends StatefulWidget {
 }
 
 class _AboutPageState extends State<AboutPage> {
-
-  var _styles = [FlutterLogoStyle.stacked, FlutterLogoStyle.markOnly, FlutterLogoStyle.horizontal];
-  var _colors = [Colors.red, Colors.green, Colors.brown, Colors.blue, Colors.purple, Colors.pink, Colors.amber];
+  String theme;
+  var _styles = [
+    FlutterLogoStyle.stacked,
+    FlutterLogoStyle.markOnly,
+    FlutterLogoStyle.horizontal
+  ];
+  var _colors = [
+    Colors.red,
+    Colors.green,
+    Colors.brown,
+    Colors.blue,
+    Colors.purple,
+    Colors.pink,
+    Colors.amber
+  ];
   var _curves = [
-    Curves.ease, Curves.easeIn, Curves.easeInOutCubic, Curves.easeInOut,
-    Curves.easeInQuad, Curves.easeInCirc, Curves.easeInBack, Curves.easeInOutExpo,
-    Curves.easeInToLinear, Curves.easeOutExpo, Curves.easeInOutSine, Curves.easeOutSine,
+    Curves.ease,
+    Curves.easeIn,
+    Curves.easeInOutCubic,
+    Curves.easeInOut,
+    Curves.easeInQuad,
+    Curves.easeInCirc,
+    Curves.easeInBack,
+    Curves.easeInOutExpo,
+    Curves.easeInToLinear,
+    Curves.easeOutExpo,
+    Curves.easeInOutSine,
+    Curves.easeOutSine,
   ];
 
   // 取随机颜色
@@ -44,11 +67,10 @@ class _AboutPageState extends State<AboutPage> {
         if (!mounted) {
           return;
         }
-        setState(() {
-
-        });
+        setState(() {});
       });
     });
+    theme = Application.sp.getString("AppTheme");
   }
 
   @override
@@ -62,15 +84,11 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(translate("about.name"),
-              style: TextStyle(fontSize: fontSize40, color: Colors.black)),
+          title: Text(translate("about.name")),
           elevation: 0.5,
-          brightness: Brightness.light,
-          backgroundColor: Colors.white,
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: Colors.black,
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -91,17 +109,19 @@ class _AboutPageState extends State<AboutPage> {
               title: 'Github',
               content: 'Go Star',
               onTap: () {
-                String route = '/webview?url=${Uri.encodeComponent("https://github.com/fengwenhua/VNote_flutter")}&title=${Uri.encodeComponent("VNote_flutter")}';
-                Application.router.navigateTo(context, route,transition: TransitionType.fadeIn);
-              }
-          ),
+                String route =
+                    '/webview?url=${Uri.encodeComponent("https://github.com/fengwenhua/VNote_flutter")}&title=${Uri.encodeComponent("VNote_flutter")}';
+                Application.router.navigateTo(context, route,
+                    transition: TransitionType.fadeIn);
+              }),
           ClickItem(
               title: 'developer',
               onTap: () {
-                String route = '/webview?url=${Uri.encodeComponent("https://fengwenhua.top/")}&title=${Uri.encodeComponent("作者博客")}';
-                Application.router.navigateTo(context, route,transition: TransitionType.fadeIn);
-              }
-          ),
+                String route =
+                    '/webview?url=${Uri.encodeComponent("https://fengwenhua.top/")}&title=${Uri.encodeComponent("作者博客")}';
+                Application.router.navigateTo(context, route,
+                    transition: TransitionType.fadeIn);
+              }),
         ],
       ),
     );

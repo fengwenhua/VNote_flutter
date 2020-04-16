@@ -10,6 +10,7 @@ import 'package:vnote/pages/node_edit.page.dart';
 import 'package:vnote/pages/note_preview_page.dart';
 import 'package:vnote/pages/setting_page.dart';
 import 'package:vnote/pages/splash_screen_page.dart';
+import 'package:vnote/pages/theme_page.dart';
 import 'package:vnote/pages/tutorial_page.dart';
 import 'package:vnote/pages/webview_page.dart';
 import 'package:vnote/widgets/tab_navigator.dart';
@@ -107,5 +108,12 @@ var webViewHandler = new Handler(
       String title = params['title']?.first;
       String url = params['url']?.first;
       return WebViewPage(title: title, url: url);
+    }
+);
+
+// 主题页面
+var themeHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String,List<Object>> params){
+      return new ThemePage();
     }
 );

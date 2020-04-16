@@ -98,5 +98,11 @@
   "splash": {
     "refreshToken": "刷新 token, 请等待...",
     "getNotebook": "获取笔记本, 请等待..."
+  },
+  "theme": {
+    "title": "主题切换",
+    "followSystem": "跟随系统",
+    "open": "打开",
+    "close": "关闭"
   }
 }

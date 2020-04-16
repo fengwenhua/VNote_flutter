@@ -16,13 +16,16 @@ class LanguagePage extends StatelessWidget {
           // 对APP当前语言进行高亮显示
           style: TextStyle(
               color:
-                  '${localizationDelegate.currentLocale.languageCode}_${localizationDelegate.currentLocale.countryCode}' == value
+                  '${localizationDelegate.currentLocale.languageCode}_${localizationDelegate.currentLocale.countryCode}' ==
+                          value
                       ? color
                       : null),
         ),
-        trailing: '${localizationDelegate.currentLocale.languageCode}_${localizationDelegate.currentLocale.countryCode}' == value
-            ? Icon(Icons.done, color: color)
-            : null,
+        trailing:
+            '${localizationDelegate.currentLocale.languageCode}_${localizationDelegate.currentLocale.countryCode}' ==
+                    value
+                ? Icon(Icons.done, color: color)
+                : null,
         onTap: () {
           print("点击切换语言");
           print(value);
@@ -34,15 +37,14 @@ class LanguagePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-          title: Text(translate(
-              'language.name.${localizationDelegate.currentLocale.languageCode}'),style: TextStyle(fontSize: fontSize40, color: Colors.black),),
+          title: Text(
+            translate(
+                'language.name.${localizationDelegate.currentLocale.languageCode}'),
+          ),
           elevation: 0.5,
-          brightness: Brightness.light,
-          backgroundColor: Colors.white,
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,
-              color: Colors.black,
             ),
             onPressed: () {
               Navigator.pop(context);
