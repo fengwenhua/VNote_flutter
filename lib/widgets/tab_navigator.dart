@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
+import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/pages/create_page.dart';
 import 'package:vnote/pages/directory_page.dart';
 import 'package:vnote/pages/label_page.dart';
@@ -120,8 +121,12 @@ class _TabNavigatorState extends State<TabNavigator> {
                         onTap: () {
                           // 关闭侧滑菜单
                           Navigator.of(context).pop();
-                          // 执行清除token的操作, 并且进入登录界面
-                          NavigatorUtil.goLoginPage(context);
+                          // 进入注销界面
+                          // 1. 删除之前从 OAuth 流收到的任何已缓存 access_token 或 refresh_token 值。
+                          // 2. 在应用中执行任意注销操作（例如，清除本地状态、删除所有缓存项等）
+                          // 3. 使用以下 URL 调用授权 Web 服务：
+                          NavigatorUtil.goLogoutPage(context);
+                          //NavigatorUtil.goLoginPage(context);
                         },
                       ),
                     ],

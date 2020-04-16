@@ -5,6 +5,7 @@ import 'package:vnote/pages/about_page.dart';
 import 'package:vnote/pages/create_page.dart';
 import 'package:vnote/pages/language_page.dart';
 import 'package:vnote/pages/login_page.dart';
+import 'package:vnote/pages/logout_page.dart';
 import 'package:vnote/pages/node_edit.page.dart';
 import 'package:vnote/pages/note_preview_page.dart';
 import 'package:vnote/pages/setting_page.dart';
@@ -24,6 +25,12 @@ var loginHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
   return LoginPage();
 });
+
+// logout 页面
+var logoutHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
+      return LogoutPage();
+    });
 
 // home 页面
 var homeHandler = new Handler(

@@ -9,6 +9,7 @@ class Routes {
   static String root = "/";
   static String home = "/home";
   static String login = "/login";
+  static String logout = "/logout";
   static String preview = "/preview";
   static String edit = "/edit";
   static String newFile = "/newFile";
@@ -27,6 +28,7 @@ class Routes {
 
     router.define(root, handler: splashHandler);
     router.define(login, handler: loginHandler);
+    router.define(logout, handler: logoutHandler);
     router.define(home, handler: homeHandler);
     router.define(preview, handler: mdPreviewHandler);
     router.define(edit, handler: mdEditHandler);

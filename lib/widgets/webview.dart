@@ -142,7 +142,7 @@ class _WebViewState extends State<WebView> {
       initialChild: Container(
         color: Colors.white,
         child: Center(
-          child: Text("等待 Onedrive 响应中...由于不可描述的原因, 请耐心等待!!"),
+          child: Text("等待 Onedrive 响应中..."),
         ),
       ),
     ));

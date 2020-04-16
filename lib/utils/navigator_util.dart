@@ -24,6 +24,11 @@ class NavigatorUtil {
     _navigateTo(context, Routes.login, clearStack: true);
   }
 
+  /// 退出登录
+  static void goLogoutPage(BuildContext context) {
+    _navigateTo(context, Routes.logout, clearStack: true);
+  }
+
   /// 首页
   static void goHomePage(BuildContext context) {
     _navigateTo(context, Routes.home, clearStack: true);
