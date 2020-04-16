@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -49,6 +50,17 @@ class _WebViewState extends State<WebView> {
     // 页面url变化监听
     _onUrlChanged = webviewReference.onUrlChanged.listen((String url) {
       print("url变了: " + url);
+      if(url.contains("username")){
+        Fluttertoast.showToast(
+            msg: translate("requestsTips"),
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+
       if (url.contains("code=")) {
         // 这里要解析code出来
         String code = url?.split("code=")[1];

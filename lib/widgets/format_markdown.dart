@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/provider/new_images_model.dart';
@@ -35,10 +37,11 @@ class FormatMarkdown {
           print("返回来的整体是: " + res);
           print("返回来的名字是: " + res.split("#####")[0]);
           print("返回来的路径是: " + res.split("#####")[1]);
-          if(res.split("#####")[1] == ""){
+          if (res.split("#####")[1] == "") {
             changedData = "";
-          }else{
-            changedData = '![${res.split("#####")[0]}](${res.split("#####")[1]})';
+          } else {
+            changedData =
+                '![${res.split("#####")[0]}](${res.split("#####")[1]})';
           }
           print("changeData 是: " + changedData);
           cursorIndex = changedData.length;
@@ -124,18 +127,35 @@ Future<String> _showInputDialog(BuildContext context) async {
                 child: Column(
                   children: <Widget>[
                     Column(
-                      mainAxisSize:MainAxisSize.min,
+                      mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         MaterialButton(
                           color: Colors.blue,
                           textColor: Colors.white,
                           onPressed: () async {
-                            File image = await ImagePicker.pickImage(
-                                source: ImageSource.camera);
-                            setState(() {
-                              _image = image;
-                            });
+                            try {
+                              File image = await ImagePicker.pickImage(
+                                  source: ImageSource.camera);
+                              setState(() {
+                                _image = image;
+                              });
+                            } catch (e) {
+                              print("异常是: " + e.toString());
+                              Fluttertoast.showToast(
+                                  msg: translate(
+                                      "permission.camera_access_denied"),
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 3,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+                              Future.delayed(Duration(seconds: 1), () {
+                                print('延时1s执行');
+                                openAppSettings();
+                              });
+                            }
                           },
                           child: Text(translate("picDialog.takePic")),
                         ),
@@ -143,11 +163,29 @@ Future<String> _showInputDialog(BuildContext context) async {
                           color: Colors.blue,
                           textColor: Colors.white,
                           onPressed: () async {
-                            File image = await ImagePicker.pickImage(
-                                source: ImageSource.gallery);
-                            setState(() {
-                              _image = image;
-                            });
+                            try {
+                              File image = await ImagePicker.pickImage(
+                                  source: ImageSource.gallery);
+                              setState(() {
+                                _image = image;
+                              });
+                            } catch (e) {
+                              print("异常是: " + e.toString());
+                              Fluttertoast.showToast(
+                                  msg: translate(
+                                      "permission.photo_access_denied"),
+                                  toastLength: Toast.LENGTH_LONG,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 3,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0);
+
+                              Future.delayed(Duration(seconds: 1), () {
+                                print('延时1s执行');
+                                openAppSettings();
+                              });
+                            }
                           },
                           child: Text(translate("picDialog.selectPic")),
                         ),
@@ -180,12 +218,11 @@ Future<String> _showInputDialog(BuildContext context) async {
             CupertinoDialogAction(
               onPressed: () {
                 print("确定图片");
-                if(_image?.path!=null){
+                if (_image?.path != null) {
                   Navigator.pop(context, Action.Ok);
-                }else{
+                } else {
                   Navigator.pop(context);
                 }
-
               },
               child: Text(translate("picDialog.ok")),
             ),
@@ -223,7 +260,8 @@ Future<String> _showInputDialog(BuildContext context) async {
       // 重命名
       String newPath = imgPath + Platform.pathSeparator + newName;
       return await file.copy(newPath).then((_) {
-        final _newImageList = Provider.of<NewImageListModel>(context, listen: false);
+        final _newImageList =
+            Provider.of<NewImageListModel>(context, listen: false);
         _newImageList.addImage(newPath);
 
         var temp = _imgName.trim() + "#####" + newPath.trim();

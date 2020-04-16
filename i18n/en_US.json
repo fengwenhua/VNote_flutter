@@ -68,6 +68,7 @@
   "uploadTips": "Start uploading",
   "uploadingTips": "Uploading...",
   "networkErrorTips": "Network anomaly, try again.",
+  "requestsTips": "Requesting, please wait.",
   "edit": {
     "title": "Edit",
     "currentDir": "Current Directory: ",
@@ -81,5 +82,9 @@
     "tips": "Please enter the name of the picture.",
     "ok": "ok",
     "cancel": "cancel"
+  },
+  "permission": {
+    "camera_access_denied": "camera_access_denied",
+    "photo_access_denied": "photo_access_denied"
   }
 }

@@ -68,6 +68,7 @@
   "uploadTips": "开始上传...",
   "uploadingTips": "上传中...",
   "networkErrorTips": "网络异常, 再试一次",
+  "requestsTips": "请求中, 请等待...",
   "edit": {
     "title": "编辑",
     "currentDir": "当前目录: ",
@@ -81,5 +82,9 @@
     "tips": "请输入图片名字",
     "ok": "确定",
     "cancel": "取消"
+  },
+  "permission": {
+    "camera_access_denied": "没有拍照权限",
+    "photo_access_denied": "没有相册权限"
   }
 }
