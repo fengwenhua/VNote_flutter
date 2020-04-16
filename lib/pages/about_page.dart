@@ -96,7 +96,7 @@ class _AboutPageState extends State<AboutPage> {
               }
           ),
           ClickItem(
-              title: '作者',
+              title: 'developer',
               onTap: () {
                 String route = '/webview?url=${Uri.encodeComponent("https://fengwenhua.top/")}&title=${Uri.encodeComponent("作者博客")}';
                 Application.router.navigateTo(context, route,transition: TransitionType.fadeIn);

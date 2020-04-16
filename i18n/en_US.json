@@ -28,7 +28,10 @@
     "name": "Settings",
     "language": "Language",
     "tutorial": "Tutorial",
-    "about": "About"
+    "about": "About",
+    "clearCache": "ClearCache",
+    "darkModel": "DarkModel",
+    "checkUpdate": "CheckUpdate"
   },
   "language": {
     "name": {

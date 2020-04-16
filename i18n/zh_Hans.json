@@ -27,8 +27,11 @@
   "settings": {
     "name": "设置",
     "language": "语言设置",
-    "tutorial": "教程",
-    "about": "关于"
+    "tutorial": "简易教程",
+    "about": "关于我们",
+    "clearCache": "清除缓存",
+    "darkModel": "夜间模式",
+    "checkUpdate": "检查更新"
   },
   "language": {
     "name": {
