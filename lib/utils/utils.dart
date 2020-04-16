@@ -92,9 +92,9 @@ class Utils {
     Application.sp.setString("appImagePath", appImagePath);
   }
 
-  static Future<void> deleteCacheDir() async {
+  static Future<void> deleteTemp() async {
     final cacheDir = await getTemporaryDirectory();
-    print("cacheDir 大小: " + cacheDir.statSync().size.toString());
+    print("tempDir 大小: " + cacheDir.statSync().size.toString());
     final file = File(cacheDir.path);
     final isExists = await file.exists();
     if (isExists) {
@@ -102,9 +102,9 @@ class Utils {
     }
   }
 
-  static Future<void> deleteAppDir() async {
+  static Future<void> deleteAppSupport() async {
     final appDir = await getApplicationSupportDirectory();
-    print("appDir 大小: " + appDir.statSync().size.toString());
+    print("appSupport 大小: " + appDir.statSync().size.toString());
     final file = File(appDir.path);
     final isExists = await file.exists();
     if (isExists) {
@@ -112,9 +112,9 @@ class Utils {
     }
   }
 
-  static Future<void> removeAllCache() async {
+  static Future<void> deleteAppDoc() async {
     final appDir = await getApplicationDocumentsDirectory();
-    print("appDir 大小: " + appDir.statSync().size.toString());
+    print("appDoc 大小: " + appDir.statSync().size.toString());
     final file = File(appDir.path);
     final isExists = await file.exists();
     if (isExists) {

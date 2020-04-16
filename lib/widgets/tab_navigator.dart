@@ -126,9 +126,9 @@ class _TabNavigatorState extends State<TabNavigator> {
                           // 1. 删除之前从 OAuth 流收到的任何已缓存 access_token 或 refresh_token 值。
                           // 2. 在应用中执行任意注销操作（例如，清除本地状态、删除所有缓存项等）
                           // 3. 使用以下 URL 调用授权 Web 服务：
-                          //Utils.deleteAppDir();
-                          //Utils.deleteCacheDir();
-                          Utils.removeAllCache();
+                          //Utils.deleteTemp();
+                          //Utils.deleteAppSupport();
+                          Utils.deleteAppDoc();
                           NavigatorUtil.goLogoutPage(context);
                           //NavigatorUtil.goLoginPage(context);
                         },
