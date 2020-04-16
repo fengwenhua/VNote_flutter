@@ -9,6 +9,8 @@
         <key>NSAllowsArbitraryLoadsInWebContent</key>
         <true/>
     </dict>
+    <key>CFBundleAllowMixedLocalizations</key>
+    <true/>
     <key>NSPhotoLibraryUsageDescription</key>
     <string>The app tries to use your photos</string>
     <key>NSCameraUsageDescription</key>
