@@ -324,7 +324,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                     child: ListView.builder(
                       physics: BouncingScrollPhysics(),
                       controller: controller,
-                      itemCount: dataListModel.dataList.length,
+                      itemCount: dataListModel.getLength(),
                       itemBuilder: (context, index) {
                         return getListWidget(dataListModel.dataList)
                             .elementAt(index);
@@ -379,6 +379,11 @@ class _DirectoryPageState extends State<DirectoryPage>
   }
 
   List<Widget> getListWidget(List<Document> childDocuments) {
+    // 在黑名单之中, 都不显示
+    childDocuments.removeWhere((s){
+      return BLACK_NAME.contains(s.name);
+    });
+
     return childDocuments.map((document) {
       //print("要处理的是: " + document.name);
 

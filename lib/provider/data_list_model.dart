@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vnote/models/document_model.dart';
+import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/my_stack.dart';
 
 class DataListModel with ChangeNotifier{
@@ -10,6 +11,17 @@ class DataListModel with ChangeNotifier{
     }else{
      return null;
     }
+  }
+
+  /// 因为在显示的时候需要干掉一些黑名单, 所以要重新计算长度
+  int getLength(){
+    int length = _dataList.top().length;
+    _dataList.top().forEach((f){
+      if(BLACK_NAME.contains(f.name)){
+        length--;
+      }
+    });
+    return length;
   }
 
   void removeEle(Document document){

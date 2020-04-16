@@ -69,8 +69,11 @@ class _CreatePageState extends State<CreatePage> {
             color: Colors.white,
             onPressed: () {
               print("放弃修改, 直接返回?");
-              showAlertDialog(context);
-              //Navigator.pop(context, widget.markdownSource);
+              if(fileName==null&&content==null){
+                Navigator.of(context).pop();
+              }else{
+                showAlertDialog(context);
+              }
             },
           ),
           actions: <Widget>[
