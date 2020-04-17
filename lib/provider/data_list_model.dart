@@ -28,13 +28,19 @@ class DataListModel with ChangeNotifier{
   void removeEle(Document document){
     List<Document> list = _dataList.pop();
     print("要干掉的是" + document.name);
-    list.remove(document);
+    //list.remove(document);
+    list.removeWhere((test)=>test.name==document.name);
 //    print("是否还在: ${list.contains(document)}" );
 //    print("这个鬼 list 还有: ");
 //    list.forEach((i){
 //      print(i.name);
 //    });
 //    print("!~~~~~~~~分割服~~~~~~~");
+//    print("还剩下啥?");
+//    list.forEach((f){
+//      print(f.name);
+//    });
+//    print("~~~~~以上~~~~~");
     _dataList.push(list);
     notifyListeners();
   }
