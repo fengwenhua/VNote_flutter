@@ -53,6 +53,22 @@ class _NotePageState extends State<NotePage> {
             tooltip: "Update",
             onPressed: () async {
               print("点击刷新");
+              // 这里应该重新比对???
+              LocalDocumentProvider localDocumentProvider =
+              Provider.of<LocalDocumentProvider>(context, listen: false);
+              await Utils.model2ListDocument().then((data) {
+                print("directory_page 这里拿到 _myNote.json 的数据");
+                localDocumentProvider.updateList(data);
+                Fluttertoast.showToast(
+                    msg: "本地缓存读取完成!",
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIosWeb: 3,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+
+              });
             })
       ],),
       body: Consumer<LocalDocumentProvider>(

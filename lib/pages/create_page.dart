@@ -10,10 +10,12 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/desktop_config_model.dart';
 import 'package:vnote/models/document_model.dart';
+import 'package:vnote/models/personal_note_model.dart';
 import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
+import 'package:vnote/provider/local_document_provider.dart';
 import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
@@ -169,6 +171,20 @@ class _CreatePageState extends State<CreatePage> {
                         await pr.hide();
                         print("新建后将内容存入本地");
                         Application.sp.setString(fileId, content);
+
+                        PersonalNoteModel personalNoteModel =
+                        await Utils.getPersonalNoteModel();
+                        Map<String, dynamic> newFileMap =
+                        jsonDecode(Utils.newLocalFileJson(fileId, fileName));
+                        personalNoteModel.addNewFile(newFileMap);
+                        LocalDocumentProvider localDocumentProvider =
+                        Provider.of<LocalDocumentProvider>(context, listen: false);
+
+                        Utils.writeModelToFile(personalNoteModel);
+                        await Utils.model2ListDocument().then((data) {
+                          print("directory_page 这里拿到 _myNote.json 的数据");
+                          localDocumentProvider.updateList(data);
+                        });
 
                         // 搞完进入预览页面, 销毁本页面
                         String route =

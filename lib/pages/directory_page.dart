@@ -124,13 +124,14 @@ class _DirectoryPageState extends State<DirectoryPage>
           print("跳转到预览页面");
 
           print("同时也要写进 _myNote.json");
+          // 先更新 model
+          // 先写到文件
+          // 然后再更新provider
           PersonalNoteModel personalNoteModel =
               await Utils.getPersonalNoteModel();
           Map<String, dynamic> newFileMap =
               jsonDecode(Utils.newLocalFileJson(document.id, document.name));
           personalNoteModel.addNewFile(newFileMap);
-
-          // 更新 provider
           LocalDocumentProvider localDocumentProvider =
               Provider.of<LocalDocumentProvider>(context, listen: false);
 
@@ -632,6 +633,19 @@ class _DirectoryPageState extends State<DirectoryPage>
                   //print(json.encode(desktopConfigModel));
                   if (document.isFile) {
                     desktopConfigModel.delFile(document.name);
+
+                    PersonalNoteModel personalNoteModel =
+                        await Utils.getPersonalNoteModel();
+                    personalNoteModel.delFile(document.id);
+                    LocalDocumentProvider localDocumentProvider =
+                        Provider.of<LocalDocumentProvider>(this.context,
+                            listen: false);
+
+                    Utils.writeModelToFile(personalNoteModel);
+                    await Utils.model2ListDocument().then((data) {
+                      print("directory_page del 这里拿到 _myNote.json 的数据");
+                      localDocumentProvider.updateList(data);
+                    });
                   } else {
                     desktopConfigModel.deleteFolder(document.name);
                   }
@@ -742,6 +756,20 @@ class _DirectoryPageState extends State<DirectoryPage>
                       if (document.isFile) {
                         desktopConfigModel.renameFile(
                             oldFileOrFolderName, fileOrFolderName);
+
+                        PersonalNoteModel personalNoteModel =
+                        await Utils.getPersonalNoteModel();
+
+                        personalNoteModel.renameFile(oldFileOrFolderName, fileOrFolderName);
+                        LocalDocumentProvider localDocumentProvider =
+                        Provider.of<LocalDocumentProvider>(this.context, listen: false);
+
+                        Utils.writeModelToFile(personalNoteModel);
+                        await Utils.model2ListDocument().then((data) {
+                          print("directory_page rename 这里拿到 _myNote.json 的数据");
+                          localDocumentProvider.updateList(data);
+                        });
+
                       } else {
                         desktopConfigModel.renameFolder(
                             oldFileOrFolderName, fileOrFolderName);

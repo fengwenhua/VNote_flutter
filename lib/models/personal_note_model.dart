@@ -15,8 +15,8 @@ class PersonalNoteModel {
     this.files.add(new Files.fromJson(json));
   }
 
-  void delFile(String name) {
-    this.files.removeWhere((f) => f.name == name);
+  void delFile(String id) {
+    this.files.removeWhere((f) => f.id == id);
   }
 
   void renameFile(String oldName, String newName) {
