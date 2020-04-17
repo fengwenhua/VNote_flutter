@@ -12,10 +12,12 @@ import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/desktop_config_model.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
+import 'package:vnote/models/personal_note_model.dart';
 import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
+import 'package:vnote/provider/local_document_provider.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
@@ -101,7 +103,7 @@ class _DirectoryPageState extends State<DirectoryPage>
       // 本地没有, 从网络下载
       print("从网络下载文章");
       await getMDFileContent(tokenModel.token.accessToken, document.id, prt)
-          .then((data) {
+          .then((data) async {
         print("看看这玩意张啥样:");
         print(data);
         if (data == null) {
@@ -120,6 +122,24 @@ class _DirectoryPageState extends State<DirectoryPage>
         } else {
           // 这里需要跳转到预览页面
           print("跳转到预览页面");
+
+          print("同时也要写进 _myNote.json");
+          PersonalNoteModel personalNoteModel =
+              await Utils.getPersonalNoteModel();
+          Map<String, dynamic> newFileMap =
+              jsonDecode(Utils.newLocalFileJson(document.id, document.name));
+          personalNoteModel.addNewFile(newFileMap);
+
+          // 更新 provider
+          LocalDocumentProvider localDocumentProvider =
+              Provider.of<LocalDocumentProvider>(context, listen: false);
+
+          Utils.writeModelToFile(personalNoteModel);
+          await Utils.model2ListDocument().then((data) {
+            print("directory_page 这里拿到 _myNote.json 的数据");
+            localDocumentProvider.updateList(data);
+          });
+
           prt.hide().whenComplete(() {
             String route =
                 '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
@@ -382,12 +402,12 @@ class _DirectoryPageState extends State<DirectoryPage>
   List<Widget> getListWidget(List<Document> documents) {
     List<Document> childDocuments = new List<Document>();
 
-    documents.forEach((f){
+    documents.forEach((f) {
       childDocuments.add(f);
     });
 
     // 在黑名单之中, 都不显示
-    childDocuments.removeWhere((s){
+    childDocuments.removeWhere((s) {
       return BLACK_NAME.contains(s.name);
     });
 
@@ -501,6 +521,7 @@ class _DirectoryPageState extends State<DirectoryPage>
         lastModified: document.dateModified,
         onPressedNext: () async {
           print("点击了 ${document.name} 文件");
+
           // 转圈圈和下载 md 文件
           await pr.show().then((_) {
             _getMDFile(document, pr);
@@ -569,7 +590,9 @@ class _DirectoryPageState extends State<DirectoryPage>
         Provider.of<ParentIdModel>(context, listen: false);
     return AlertDialog(
       title: Text(translate("delDialog.name")),
-      content: document.isFile ? Text(translate("delDialog.fileTitle")) : Text(translate("delDialog.dirTitle")),
+      content: document.isFile
+          ? Text(translate("delDialog.fileTitle"))
+          : Text(translate("delDialog.dirTitle")),
       actions: <Widget>[
         FlatButton(
           child: Text(translate("delDialog.cancel")),

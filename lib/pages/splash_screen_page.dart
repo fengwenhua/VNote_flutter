@@ -10,6 +10,7 @@ import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/dir_and_file_cache_model.dart';
+import 'package:vnote/provider/local_document_provider.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/theme_model.dart';
 import 'package:vnote/provider/token_model.dart';
@@ -89,6 +90,15 @@ class _SplashScreenPageState extends State<SplashScreenPage>
 
     Provider.of<ThemeProvider>(context, listen: false).syncTheme();
     Utils.setImageFolder();
+
+    LocalDocumentProvider localDocumentProvider =
+    Provider.of<LocalDocumentProvider>(context, listen: false);
+
+    await Utils.model2ListDocument().then((data){
+      print("这里拿到 _myNote.json 的数据");
+      localDocumentProvider.updateList(data);
+    });
+
     // 第一次安装完后, 这里提示错误
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     // 从本地存储中读取token

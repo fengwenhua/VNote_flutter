@@ -553,6 +553,8 @@ class DocumentListUtil {
         // 存入本地
         print("存入本地, 顺便将图片路径也存一下");
         Application.sp.setString(id, data);
+
+
         Application.sp.setString("appImagePath", appImagePath);
         print("##########################################");
 

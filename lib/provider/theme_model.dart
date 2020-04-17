@@ -14,6 +14,10 @@ class ThemeProvider extends ChangeNotifier {
 
   void syncTheme() {
     String theme = Application.sp.getString('AppTheme');
+    if(theme==null){
+      Application.sp.setString("AppTheme", "System");
+      theme = "System";
+    }
     if (theme.isNotEmpty && theme != themes[ThemeMode.system]) {
       notifyListeners();
     }

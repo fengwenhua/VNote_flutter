@@ -1,8 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vnote/application.dart';
+import 'package:vnote/models/document_model.dart';
+import 'package:vnote/models/personal_note_model.dart';
 
 class Utils {
   static String getFormattedDateTime({@required DateTime dateTime}) {
@@ -18,12 +21,27 @@ class Utils {
 
   static String getFormattedDateTimeForJson({@required DateTime dateTime}) {
     String day = '${dateTime.day}';
+    if(int.parse(day)<10){
+      day = '0${dateTime.day}';
+    }
     String month = '${dateTime.month}';
+    if(int.parse(month)<10){
+      month = '0${dateTime.month}';
+    }
     String year = '${dateTime.year}';
 
     String hour = '${dateTime.hour}';
+    if(int.parse(hour)<10){
+      hour = '0${dateTime.hour}';
+    }
     String minute = '${dateTime.minute}';
+    if(int.parse(minute)<10){
+      minute = '0${dateTime.minute}';
+    }
     String second = '${dateTime.second}';
+    if(int.parse(second)<10){
+      second = '0${dateTime.second}';
+    }
     return '$year-$month-${day}T$hour:$minute:${second}Z';
   }
 
@@ -39,6 +57,17 @@ class Utils {
     "version": "1"
 }
     ''';
+    return jsonData;
+  }
+
+  /// 用于点击文件的时候, 记录该内容到 _myNote.json
+  static String newLocalFileJson(String id, String fileName) {
+    String time = Utils.getFormattedDateTimeForJson(dateTime: DateTime.now());
+    String jsonData = '''{
+    "id":"$id",
+    "name":"$fileName",
+    "modified_time":"$time"
+}''';
     return jsonData;
   }
 
@@ -119,6 +148,81 @@ class Utils {
     final isExists = await file.exists();
     if (isExists) {
       await file.delete(recursive: true);
+    }
+  }
+
+  /// 获取 _myNote.json 文件
+  static Future<File> loadPersonalNoteConfig() async {
+    var appDocDir = await getApplicationDocumentsDirectory();
+    //或者file对象（操作文件记得导入import 'dart:io'）
+    return new File('${appDocDir.path}/_myNote.json');
+  }
+
+  /// 将 _myNote.json 数据, 转成 model
+  static getPersonalNoteModel() async {
+    try {
+      // 打开文件
+      print("打开文件");
+      final file = await loadPersonalNoteConfig();
+      // 读成 String
+      //print("读成 String");
+      String jsonDataStr;
+      try {
+        jsonDataStr = await file.readAsString();
+      } catch (e) {
+        print("有异常, 说明文件没有内容, 先写内容");
+        var t = '{"files":[]}';
+        file.writeAsString(t);
+      }
+
+      if (jsonDataStr == "" || jsonDataStr == null) {
+        print("_myNote.json 文件里内容为空");
+        jsonDataStr = '{"files":[]}';
+        file.writeAsString(jsonDataStr);
+      }
+      // 转成 json
+      print(jsonDataStr);
+      //print("转成 json");
+      Map<String, dynamic> json = jsonDecode(jsonDataStr);
+      // json 转成实体类
+      //print("转成 model");
+      PersonalNoteModel personalNoteModel = PersonalNoteModel.fromJson(json);
+      return personalNoteModel;
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  /// 将 PersonalNoteModel 转换成 List<Document>
+  static model2ListDocument() async {
+    List<Document> result = new List<Document>();
+    PersonalNoteModel personalNoteModel = await getPersonalNoteModel();
+    if (personalNoteModel.files == null) {
+      print("本地没有笔记缓存");
+      return null;
+    }
+    print("本地有笔记缓存");
+    for (Files file in personalNoteModel.files) {
+      //print("这个时间是: " + file.modifiedTime.toString());
+      Document temp = new Document(
+          id: file.id,
+          name: file.name,
+          isFile: true,
+          dateModified: DateTime.parse(file.modifiedTime));
+      result.add(temp);
+    }
+    return result;
+  }
+
+  // 将 model 转换成 json 写入 _myNote.json
+  static writeModelToFile(PersonalNoteModel personalNoteModel) async {
+    try {
+      final file = await loadPersonalNoteConfig();
+      print("写进 _myNote.json 的内容是: ");
+      print(json.encode(personalNoteModel));
+      return file.writeAsString(json.encode(personalNoteModel)); // 这是覆盖, 还是附加?
+    } catch (err) {
+      print(err);
     }
   }
 }

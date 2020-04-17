@@ -7,6 +7,7 @@ import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
+import 'package:vnote/provider/local_document_provider.dart';
 import 'package:vnote/provider/new_images_model.dart';
 import 'package:vnote/provider/parent_id_model.dart';
 import 'package:vnote/provider/preview_model.dart';
@@ -64,7 +65,10 @@ void main() async {
             create: (context) => DirAndFileCacheModel(),
           ),
           ChangeNotifierProvider<ThemeProvider>(
-            create: (context)=>ThemeProvider(),
+            create: (context) => ThemeProvider(),
+          ),
+          ChangeNotifierProvider<LocalDocumentProvider>(
+            create: (context) => LocalDocumentProvider(),
           )
         ],
         child: MyApp(),
@@ -78,35 +82,33 @@ class MyApp extends StatelessWidget {
     var localizationDelegate = LocalizedApp.of(context).delegate;
 
     return LocalizationProvider(
-      state: LocalizationProvider.of(context).state,
-      child: Consumer<ThemeProvider>(
-        builder: (context,ThemeProvider provider,child){
-          return MaterialApp(
-            title: 'VNote',
-            localizationsDelegates: [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-              localizationDelegate,
-              const FallbackCupertinoLocalisationsDelegate(),
-            ],
-            supportedLocales: localizationDelegate.supportedLocales,
-            locale: localizationDelegate.currentLocale,
-            debugShowCheckedModeBanner: false, // 去除调试
-            navigatorKey: Application.getIt<NavigateService>().key,
-            theme: provider.getTheme(),
-            darkTheme: provider.getTheme(isDarkMode: true),
-            themeMode: provider.getThemeMode(),
-            home: SplashScreenPage(),
-            // 初始化路由
-            onGenerateRoute: Application.router.generator,
-          );
-        },
-      )
-    );
+        state: LocalizationProvider.of(context).state,
+        child: Consumer<ThemeProvider>(
+          builder: (context, ThemeProvider provider, child) {
+            return MaterialApp(
+              title: 'VNote',
+              localizationsDelegates: [
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                localizationDelegate,
+                const FallbackCupertinoLocalisationsDelegate(),
+              ],
+              supportedLocales: localizationDelegate.supportedLocales,
+              locale: localizationDelegate.currentLocale,
+              debugShowCheckedModeBanner: false, // 去除调试
+              navigatorKey: Application.getIt<NavigateService>().key,
+              theme: provider.getTheme(),
+              darkTheme: provider.getTheme(isDarkMode: true),
+              themeMode: provider.getThemeMode(),
+              home: SplashScreenPage(),
+              // 初始化路由
+              onGenerateRoute: Application.router.generator,
+            );
+          },
+        ));
   }
 }
-
 
 class FallbackCupertinoLocalisationsDelegate
     extends LocalizationsDelegate<CupertinoLocalizations> {
