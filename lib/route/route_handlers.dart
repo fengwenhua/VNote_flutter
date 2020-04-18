@@ -6,6 +6,7 @@ import 'package:vnote/pages/create_page.dart';
 import 'package:vnote/pages/language_page.dart';
 import 'package:vnote/pages/login_page.dart';
 import 'package:vnote/pages/logout_page.dart';
+import 'package:vnote/pages/markdown_webview_page.dart';
 import 'package:vnote/pages/node_edit.page.dart';
 import 'package:vnote/pages/note_preview_page.dart';
 import 'package:vnote/pages/setting_page.dart';
@@ -115,5 +116,14 @@ var webViewHandler = new Handler(
 var themeHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String,List<Object>> params){
       return new ThemePage();
+    }
+);
+
+// markdownWebView
+var markdownWebViewHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String,List<Object>> params){
+      String content = params['content']?.first;
+      String title = params['title']?.first;
+      return MarkdownWebViewPage(title: title, content: content);
     }
 );

@@ -1,29 +1,32 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:vnote/utils/global.dart';
+import 'package:vnote/utils/utils.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class WebViewPage extends StatefulWidget {
-  const WebViewPage({
+class MarkdownWebViewPage extends StatefulWidget {
+  const MarkdownWebViewPage({
     Key key,
     @required this.title,
-    @required this.url,
+    @required this.content,
   }) : super(key: key);
 
   final String title;
-  final String url;
+  final String content;
 
   @override
-  _WebViewPageState createState() => _WebViewPageState();
+  _MarkdownWebViewPageState createState() => _MarkdownWebViewPageState();
 }
 
-class _WebViewPageState extends State<WebViewPage> {
+class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
   final Completer<WebViewController> _controller =
       Completer<WebViewController>();
 
   @override
   Widget build(BuildContext context) {
+    print("markdown_webview 重新 build 了");
     return FutureBuilder<WebViewController>(
         future: _controller.future,
         builder: (context, snapshot) {
@@ -52,7 +55,8 @@ class _WebViewPageState extends State<WebViewPage> {
                       },
                     )),
                 body: WebView(
-                  initialUrl: widget.url,
+                  initialUrl:
+                      'data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(widget.content))}',
                   javascriptMode: JavascriptMode.unrestricted,
                   onWebViewCreated: (WebViewController webViewController) {
                     _controller.complete(webViewController);

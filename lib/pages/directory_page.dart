@@ -92,7 +92,15 @@ class _DirectoryPageState extends State<DirectoryPage>
       // 本地有文档缓存
       print("使用本地文章缓存");
       await Future.delayed(Duration(milliseconds: 100), () {
-        prt.hide().whenComplete(() {
+        prt.hide().whenComplete(() async {
+          // 下面使用 markdown_webview
+//          await Utils.getMarkdownHtml(document.name, Application.sp.getString(document.id)).then((data){
+//            String route =
+//                '/markdownWebView?content=${Uri.encodeComponent(data)}&title=${Uri.encodeComponent(document.name)}';
+//            Application.router.navigateTo(context, route,
+//                transition: TransitionType.fadeIn);
+//          });
+          // 下面使用 flutter_markdown
           String route =
               '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
           Application.router
@@ -144,6 +152,12 @@ class _DirectoryPageState extends State<DirectoryPage>
           });
 
           prt.hide().whenComplete(() {
+            // 下面是用 markdown_webveiw
+//            String route =
+//                '/markdownWebView?title=${Uri.encodeComponent(document.name)}&content=${Uri.encodeComponent(data.toString())}';
+//            Application.router.navigateTo(context, route,
+//                transition: TransitionType.fadeIn);
+            // 下面是用 flutter_markdown
             String route =
                 '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
             Application.router
