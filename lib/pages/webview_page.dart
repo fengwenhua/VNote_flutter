@@ -31,6 +31,7 @@ class _WebViewPageState extends State<WebViewPage> {
             onWillPop: () async {
               if (snapshot.hasData) {
                 bool canGoBack = await snapshot.data.canGoBack();
+                print("网页可以返回吗? " + canGoBack.toString());
                 if (canGoBack) {
                   // 网页可以返回时，优先返回上一页
                   snapshot.data.goBack();

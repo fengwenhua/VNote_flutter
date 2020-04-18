@@ -94,17 +94,17 @@ class _DirectoryPageState extends State<DirectoryPage>
       await Future.delayed(Duration(milliseconds: 100), () {
         prt.hide().whenComplete(() async {
           // 下面使用 markdown_webview
-//          await Utils.getMarkdownHtml(document.name, Application.sp.getString(document.id)).then((data){
-//            String route =
-//                '/markdownWebView?content=${Uri.encodeComponent(data)}&title=${Uri.encodeComponent(document.name)}';
-//            Application.router.navigateTo(context, route,
-//                transition: TransitionType.fadeIn);
-//          });
+          await Utils.getMarkdownHtml(document.name, Application.sp.getString(document.id)).then((data){
+            String route =
+                '/markdownWebView?content=${Uri.encodeComponent(data)}&title=${Uri.encodeComponent(document.name)}';
+            Application.router.navigateTo(context, route,
+                transition: TransitionType.fadeIn);
+          });
           // 下面使用 flutter_markdown
-          String route =
-              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
-          Application.router
-              .navigateTo(context, route, transition: TransitionType.fadeIn);
+//          String route =
+//              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
+//          Application.router
+//              .navigateTo(context, route, transition: TransitionType.fadeIn);
         });
       });
     } else {

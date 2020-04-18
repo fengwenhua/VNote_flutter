@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -24,25 +23,25 @@ class Utils {
 
   static String getFormattedDateTimeForJson({@required DateTime dateTime}) {
     String day = '${dateTime.day}';
-    if(int.parse(day)<10){
+    if (int.parse(day) < 10) {
       day = '0${dateTime.day}';
     }
     String month = '${dateTime.month}';
-    if(int.parse(month)<10){
+    if (int.parse(month) < 10) {
       month = '0${dateTime.month}';
     }
     String year = '${dateTime.year}';
 
     String hour = '${dateTime.hour}';
-    if(int.parse(hour)<10){
+    if (int.parse(hour) < 10) {
       hour = '0${dateTime.hour}';
     }
     String minute = '${dateTime.minute}';
-    if(int.parse(minute)<10){
+    if (int.parse(minute) < 10) {
       minute = '0${dateTime.minute}';
     }
     String second = '${dateTime.second}';
-    if(int.parse(second)<10){
+    if (int.parse(second) < 10) {
       second = '0${dateTime.second}';
     }
     return '$year-$month-${day}T$hour:$minute:${second}Z';
@@ -115,6 +114,47 @@ class Utils {
       }
     }
     return imageUrls;
+  }
+
+  // 获取文章中所有的本地图片
+  // 替换成 base64
+  // <img src="data:image/jpg;base64,  "/>
+  static Future<String> getBase64Content(String content) async {
+    RegExp reg = new RegExp(r"!\[.*?\]\((.*?)\)");
+
+    Iterable<Match> matches = reg.allMatches(content);
+    // 存放所有图片的名字
+    List<String> imageUrls = [];
+    List<String> entireImageUrls = [];
+    //print("解析文章中的图片链接如下: ");
+    String matchString = "";
+    String entireMatchString = "";
+    for (Match m in matches) {
+      //groupCount返回正则表达式的分组数
+      //由于group(0)保存了匹配信息，因此字符串的总长度为：分组数+1
+      matchString = m.group(1);
+      entireMatchString = m.group(0);
+      //print("路径: " + matchString);
+      //print("完整: " + entireMatchString);
+      if (matchString.contains("Documents/image/")) {
+        //print("添加进来");
+        imageUrls.add(matchString);
+        entireImageUrls.add(entireMatchString);
+      } else {
+        continue;
+      }
+    }
+    for (int i = 0; i < imageUrls.length; i++) {
+      await image2Base64(imageUrls[i]).then((data) {
+        String newData="";
+        newData = '<img  src="data:image/jpg;base64,$data"/>';
+        //print("旧数据: " + imageUrls[i]);
+        //print("替换成新的数据: " + newData);
+        content = content.replaceAll(entireImageUrls[i], newData);
+      });
+    }
+
+    return content;
   }
 
   static Future<void> setImageFolder() async {
@@ -231,7 +271,7 @@ class Utils {
     }
   }
 
-  static showMyToast(String text){
+  static showMyToast(String text) {
     Fluttertoast.showToast(
         msg: text,
         toastLength: Toast.LENGTH_LONG,
@@ -247,7 +287,7 @@ class Utils {
     return givenJS;
   }
 
-  static Future<String> loadCss(String name) async{
+  static Future<String> loadCss(String name) async {
     var cssFile = rootBundle.loadString('styles/$name');
     return cssFile;
   }
@@ -264,7 +304,7 @@ class Utils {
       markdown_it_js = data;
       print("markdown_it_js 赋值了");
     });
-    await loadCss("monokai.css").then((data){
+    await loadCss("monokai.css").then((data) {
       cssString = data;
     });
 
@@ -275,11 +315,12 @@ class Utils {
 <head>
     <meta charset="UTF-8">
     <title>$title</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/10.0.0/markdown-it.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
      <style type="text/css">$cssString</style>
+     <style type="text/css">img{max-width:100%;} </style>
     <script type="text/javascript">
-
 // 初始化 markdownit
 var md = window.markdownit({
     html:true,
@@ -511,18 +552,23 @@ var md = window.markdownit({
     </script>
 
     <textarea name="" id="md-area"  style="display:none;">$content</textarea>
-    <div id="show-area" class="clearfix" ></div>
-
+    <div id="show-area" class="clearfix"></div>
 </body>
 
 </html>
   ''';
 
-    print("######################################");
-    print("经过操作, html 字符串如下: ");
-    print(htmlString);
-    print("######################################");
-
+    await getBase64Content(htmlString).then((data) {
+      htmlString = data;
+      print("替换成功!!!!");
+    });
+    //print(htmlString);
     return htmlString;
+  }
+
+  static Future image2Base64(String path) async {
+    File file = new File(path);
+    List<int> imageBytes = await file.readAsBytes();
+    return base64Encode(imageBytes);
   }
 }
