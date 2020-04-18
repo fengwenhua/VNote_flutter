@@ -61,10 +61,11 @@ class Utils {
   }
 
   /// 用于点击文件的时候, 记录该内容到 _myNote.json
-  static String newLocalFileJson(String id, String fileName) {
+  static String newLocalFileJson(String id, String configId, String fileName) {
     String time = Utils.getFormattedDateTimeForJson(dateTime: DateTime.now());
     String jsonData = '''{
     "id":"$id",
+    "config_id":"$configId",
     "name":"$fileName",
     "modified_time":"$time"
 }''';
@@ -206,6 +207,7 @@ class Utils {
       //print("这个时间是: " + file.modifiedTime.toString());
       Document temp = new Document(
           id: file.id,
+          configId: file.configId,
           name: file.name,
           isFile: true,
           dateModified: DateTime.parse(file.modifiedTime));

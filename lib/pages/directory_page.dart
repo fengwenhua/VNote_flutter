@@ -129,8 +129,10 @@ class _DirectoryPageState extends State<DirectoryPage>
           // 然后再更新provider
           PersonalNoteModel personalNoteModel =
               await Utils.getPersonalNoteModel();
+          ConfigIdModel configIdModel =
+          Provider.of<ConfigIdModel>(context, listen: false);
           Map<String, dynamic> newFileMap =
-              jsonDecode(Utils.newLocalFileJson(document.id, document.name));
+              jsonDecode(Utils.newLocalFileJson(document.id,configIdModel.configId, document.name));
           personalNoteModel.addNewFile(newFileMap);
           LocalDocumentProvider localDocumentProvider =
               Provider.of<LocalDocumentProvider>(context, listen: false);
@@ -854,11 +856,13 @@ class _DirectoryPageState extends State<DirectoryPage>
                     Map<String, dynamic> jsonData =
                         jsonDecode(value.toString());
                     String id = jsonData["id"];
+                    String configId = configIdModel.configId;
                     String newFolderName = jsonData["name"];
                     String dateString = jsonData['lastModifiedDateTime'];
                     DateTime date = DateTime.parse(dateString);
                     Document doc = new Document(
                         id: id,
+                        configId: configId,
                         name: jsonData["name"],
                         isFile: false,
                         dateModified: date);
@@ -866,7 +870,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                     dirCacheModel.addDirOrFileEle(parentIdModel.parentId, doc);
 
                     // 下面是更新当前目录的 _vnote.json 文件
-                    String configId = configIdModel.configId;
+
                     if (configId == "approot") {
                       print("根目录, 不需要更新 _vnote.json 文件");
                     } else {

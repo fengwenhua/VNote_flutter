@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
+import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
@@ -155,8 +156,11 @@ class _NoteEditPageState extends State<NoteEditPage> {
                       String newFolderName = jsonData["name"];
                       String dateString = jsonData['lastModifiedDateTime'];
                       DateTime date = DateTime.parse(dateString);
+                      ConfigIdModel configIdModel =
+                      Provider.of<ConfigIdModel>(context, listen: false);
                       Document doc = new Document(
                           id: id,
+                          configId: configIdModel.configId,
                           name: newFolderName,
                           isFile: false,
                           dateModified: date);

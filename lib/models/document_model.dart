@@ -7,10 +7,12 @@ class Document {
   final DateTime dateModified;
   List<Document> childData;
   Document parent;
+  String configId;
   //final List<Document> childFiles;
 
   Document({
     this.id,
+    this.configId,
     @required this.name,
     this.dateModified,
     this.isFile = false,

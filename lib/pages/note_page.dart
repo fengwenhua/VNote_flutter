@@ -41,8 +41,8 @@ class _NotePageState extends State<NotePage> {
   ProgressDialog pr;
   @override
   Widget build(BuildContext context) {
-    pr = new ProgressDialog(context, isDismissible: true);
-    pr.style(message: translate("waitTips"));
+    pr = new ProgressDialog(this.context, type: ProgressDialogType.Download, isDismissible: true);
+    pr.style(message: translate("waitTips"),progress: 0.0,maxProgress: 100.0,);
 
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
@@ -181,9 +181,10 @@ class _NotePageState extends State<NotePage> {
           child: Text(translate("delDialog.ok")),
           onPressed: () async {
             Navigator.of(context).pop(true);
-            await pr.show().then((_) async {
-              print("点击了删除");
 
+            await pr.show();
+              print("点击了删除");
+              pr.update(message: "0. 开始删除",progress: 30);
               // 网络请求删除在线的文件夹
               await OneDriveDataDao.deleteFile(
                   context, tokenModel.token.accessToken, document.id);
@@ -193,49 +194,46 @@ class _NotePageState extends State<NotePage> {
               // 同时要修改配置文件
               // 如果是顶层 approot 则不用管
               // 否则
-              String configId = configIdModel.configId;
-              if (configId == "approot" ||
-                  parentIdModel.parentId == parentIdModel.genId) {
-                print("根目录, 不需要更新 _vnote.json 文件");
-              } else {
-                print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
-                await OneDriveDataDao.getFileContent(
-                        context, tokenModel.token.accessToken, configId)
-                    .then((value) async {
-                  print("拿到的 _vnote.json 文件数据为: " + value.toString());
-                  print("要干掉的文件/文件夹名字: " + document.name);
-                  DesktopConfigModel desktopConfigModel =
-                      DesktopConfigModel.fromJson(
-                          json.decode(value.toString()));
-                  //print("干掉之前: ");
-                  //print(json.encode(desktopConfigModel));
 
-                  desktopConfigModel.delFile(document.name);
+              pr.update(message: "1. 下载 _vnote.json", progress: 60);
+              print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
+              await OneDriveDataDao.getFileContent(
+                      context, tokenModel.token.accessToken, document.configId)
+                  .then((value) async {
+                //pr.update(message: "2. 更新 _vnote.json", progress: 80);
+                print("拿到的 _vnote.json 文件数据为: " + value.toString());
+                print("要干掉的文件/文件夹名字: " + document.name);
+                DesktopConfigModel desktopConfigModel =
+                    DesktopConfigModel.fromJson(json.decode(value.toString()));
+                //print("干掉之前: ");
+                //print(json.encode(desktopConfigModel));
 
-                  PersonalNoteModel personalNoteModel =
-                      await Utils.getPersonalNoteModel();
-                  personalNoteModel.delFile(document.id);
-                  LocalDocumentProvider localDocumentProvider =
-                      Provider.of<LocalDocumentProvider>(this.context,
-                          listen: false);
+                desktopConfigModel.delFile(document.name);
 
-                  Utils.writeModelToFile(personalNoteModel);
-                  await Utils.model2ListDocument().then((data) {
-                    print("directory_page del 这里拿到 _myNote.json 的数据");
-                    localDocumentProvider.updateList(data);
-                  });
+                PersonalNoteModel personalNoteModel =
+                    await Utils.getPersonalNoteModel();
+                personalNoteModel.delFile(document.id);
+                LocalDocumentProvider localDocumentProvider =
+                    Provider.of<LocalDocumentProvider>(this.context,
+                        listen: false);
 
-                  //print("干掉之后: ");
-                  //print(json.encode(desktopConfigModel));
-                  // 修改成功_vnote.json 之后, 就是更新这个文件
-                  await OneDriveDataDao.updateContent(
-                      context,
-                      tokenModel.token.accessToken,
-                      configId,
-                      json.encode(desktopConfigModel));
+                Utils.writeModelToFile(personalNoteModel);
+                await Utils.model2ListDocument().then((data) {
+                  print("directory_page del 这里拿到 _myNote.json 的数据");
+                  localDocumentProvider.updateList(data);
                 });
-              }
-            });
+
+                //print("干掉之后: ");
+                //print(json.encode(desktopConfigModel));
+                // 修改成功_vnote.json 之后, 就是更新这个文件
+
+                await OneDriveDataDao.updateContent(
+                    context,
+                    tokenModel.token.accessToken,
+                    document.configId,
+                    json.encode(desktopConfigModel));
+              });
+
             await pr.hide();
           },
         ),
@@ -297,6 +295,7 @@ class _NotePageState extends State<NotePage> {
               fileOrFolderName += ".md";
             }
             if (fileOrFolderName != "") {
+              pr.update(message: "开始重命名");
               await pr.show().then((_) async {
                 await OneDriveDataDao.rename(
                         context,
@@ -312,47 +311,40 @@ class _NotePageState extends State<NotePage> {
                   // 更新 _vnote.json
                   // 重命名文件和文件夹是不一样的
                   // 根目录则不用修改 _vnote.json
-                  if (configIdModel.configId == "approot" ||
-                      parentIdModel.parentId == parentIdModel.genId) {
-                    print("根目录, 不需要更新 _vnote.json 文件");
-                  } else {
-                    print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
-                    await OneDriveDataDao.getFileContent(
-                            context,
-                            tokenModel.token.accessToken,
-                            configIdModel.configId)
-                        .then((value) async {
-                      print("拿到的 _vnote.json 文件数据为: " + value.toString());
-                      print("要修改的文件/文件夹名字: " + oldFileOrFolderName);
-                      DesktopConfigModel desktopConfigModel =
-                          DesktopConfigModel.fromJson(
-                              json.decode(value.toString()));
 
-                      desktopConfigModel.renameFile(
-                          oldFileOrFolderName, fileOrFolderName);
+                  print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
+                  await OneDriveDataDao.getFileContent(context,
+                          tokenModel.token.accessToken, document.configId)
+                      .then((value) async {
+                    print("拿到的 _vnote.json 文件数据为: " + value.toString());
+                    print("要修改的文件/文件夹名字: " + oldFileOrFolderName);
+                    DesktopConfigModel desktopConfigModel =
+                        DesktopConfigModel.fromJson(
+                            json.decode(value.toString()));
 
-                      PersonalNoteModel personalNoteModel =
-                          await Utils.getPersonalNoteModel();
+                    desktopConfigModel.renameFile(
+                        oldFileOrFolderName, fileOrFolderName);
 
-                      personalNoteModel.renameFile(
-                          oldFileOrFolderName, fileOrFolderName);
-                      LocalDocumentProvider localDocumentProvider =
-                          Provider.of<LocalDocumentProvider>(this.context,
-                              listen: false);
+                    PersonalNoteModel personalNoteModel =
+                        await Utils.getPersonalNoteModel();
 
-                      Utils.writeModelToFile(personalNoteModel);
-                      await Utils.model2ListDocument().then((data) {
-                        print("directory_page rename 这里拿到 _myNote.json 的数据");
-                        localDocumentProvider.updateList(data);
-                      });
+                    personalNoteModel.renameFile(
+                        oldFileOrFolderName, fileOrFolderName);
+                    LocalDocumentProvider localDocumentProvider =
+                        Provider.of<LocalDocumentProvider>(this.context,
+                            listen: false);
 
-                      await OneDriveDataDao.updateContent(
-                          context,
-                          tokenModel.token.accessToken,
-                          configIdModel.configId,
-                          json.encode(desktopConfigModel));
+                    Utils.writeModelToFile(personalNoteModel);
+                    await Utils.model2ListDocument().then((data) {
+                      print("directory_page rename 这里拿到 _myNote.json 的数据");
+                      localDocumentProvider.updateList(data);
                     });
-                  }
+                    await OneDriveDataDao.updateContent(
+                        context,
+                        tokenModel.token.accessToken,
+                        document.configId,
+                        json.encode(desktopConfigModel));
+                  });
                 });
               }).then((_) async {
                 await pr.hide();

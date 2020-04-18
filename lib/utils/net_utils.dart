@@ -52,6 +52,11 @@ class NetUtils {
       } catch (exception) {
         chucuo = true;
         _handError(errorCallBack, exception.toString());
+        print("这个扑街异常是什么? " + exception.toString());
+        if(exception.toString().contains("404")){
+          print("说明服务器没有这个资源");
+          chucuo = false;
+        }
       }
 
       if (!chucuo) {

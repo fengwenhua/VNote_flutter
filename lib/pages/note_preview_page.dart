@@ -1,6 +1,5 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +10,6 @@ import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
-import 'package:vnote/widgets/webview.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
 class NotePreviewPage extends StatefulWidget {

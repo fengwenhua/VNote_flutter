@@ -116,8 +116,11 @@ class DocumentListUtil {
           isFile = true;
         }
       }
+      ConfigIdModel configIdModel =
+      Provider.of<ConfigIdModel>(context, listen: false);
       Document temp = new Document(
           id: value.id,
+          configId: configIdModel.configId,
           name: value.name,
           isFile: isFile,
           dateModified: DateTime.parse(value.lastModifiedDateTime));
@@ -244,160 +247,6 @@ class DocumentListUtil {
     }
 
     return result;
-  }
-
-  /// 废除这种递归的方法
-  Future<List<Document>> getDirectoryList(
-      BuildContext context, String token, Function callBack,
-      {bool fromNetwork = false}) async {
-    List<Document> result = new List<Document>();
-
-    OneDriveDataModel oneDriveDataModel;
-    // 先拿到json, 应该先从本地拿, 再从网络拿, 看情况
-    oneDriveDataModel = await _getDataFromNetwork(context, token);
-//    if (fromNetwork || !_hasRawData()) {
-//      oneDriveDataModel = await _getDataFromNetwork(context, token);
-//    } else {
-//      if (!_hasRawData()) {
-//        // 本地没有数据
-//        oneDriveDataModel = await _getDataFromNetwork(context, token);
-//      } else {
-//        oneDriveDataModel = await _getDataFromLocal();
-//      }
-//    }
-
-    // 解析json,  获取所有的路径
-
-    var pathsList = <Item>[];
-    var pathsListSet = <Item>[];
-    //List pathsList = [];
-    //List pathsListSet = [];
-
-    var pathsSet = new Set<Item>();
-
-    print("开始打印每一项, 检查是否缺少");
-    // 路径
-    for (Value value in oneDriveDataModel.value) {
-      print(value.name + "  " + value.id);
-      //print(value.parentReference.path);
-      String id = value.parentReference.id;
-      String path = value.parentReference.path;
-      String name = value.parentReference.name;
-      if (path == "/drive/root:/应用") {
-        continue;
-      } else if (path == "/drive/root:/应用/VNote") {
-        continue;
-      } else if (path.contains("_v_recycle_bin") ||
-          path.contains("_v_images") ||
-          path.contains("_v_attachments")) {
-        continue;
-      }
-      path = path.replaceAll("/drive/root:/应用/VNote/", "");
-
-      pathsList.add(Item(id: id, path: path, name: name));
-    }
-    // pathsList.forEach((i) => print(i));
-
-    // 去重
-    for (var p in pathsList) {
-      pathsSet.add(p);
-    }
-    //print(pathsSet.toList());
-    pathsListSet = pathsSet.toList();
-    //print("排序后:");
-    // List 按照 path 排序
-    pathsListSet.sort((a, b) => b.path.compareTo(a.path));
-    //pathsListSet.forEach((i) => print(i));
-
-    // 遍历生成result
-    //print("\n");
-    for (var p in pathsListSet) {
-      //print("开始处理: " + p);
-      go(p, result, null);
-      //print("\n");
-    }
-
-    // 写到本地
-
-    if (callBack != null) {
-      callBack(result);
-    }
-
-//    // 测试List是否构建成功
-//    print("测试List是否构建成功");
-//    print(result[0].name);
-//    print(result[0].childData[0].name);
-    // 遍历插入文件
-//    result.forEach((i){
-//      for (Value value in oneDriveDataModel.value){
-//        if(value.parentReference.id == i.id){
-//          print("处理id: " + i.id);
-//          print("给 "+i.name + "增加文件: " + value.name);
-//          Document document = new Document(
-//              id: value.id,
-//              name: value.name,
-//              dateModified: DateTime.parse(value.lastModifiedDateTime),
-//          isFile: true);
-//          i.childData.add(document);
-//        }
-//      }
-//    });
-    return result;
-  }
-
-  /// 废除这种递归的方法
-  void go(Item item, List<Document> result, Document parent) {
-    if (item.path.isEmpty) {
-      return;
-    }
-    // 临时字符串
-    //print("传入路径: "+item.path);
-    String tempStr = item.path.split("/")[0];
-    String newStr;
-    bool skip = false;
-    int count = 0;
-
-    //print("要处理的节点: " + tempStr);
-    // 应该先查一下该节点是否存在
-
-    for (Document d in result) {
-      if (d.name == tempStr) {
-        //print("跳过该节点: " + tempStr);
-        skip = true;
-        break;
-      }
-      count++;
-    }
-
-    // 删除提取出来的字符串, 包括/
-    if (item.path.split("/").length > 1) {
-      newStr = item.path.substring(tempStr.length + 1);
-      item.fullPath = item.fullPath + tempStr + "/";
-      //print("剩下的数据: " + newStr);
-    } else {
-      newStr = "";
-    }
-
-    if (!skip) {
-      List<Document> l = new List<Document>();
-      Document document = new Document(
-          name: tempStr,
-          dateModified: DateTime.now(),
-          parent: parent,
-          childData: l);
-      if (result == null) {
-        result = List<Document>();
-      }
-      print("添加一个节点: " + tempStr);
-      //print("路径: " + item.path);
-      result.add(document);
-    }
-
-    if (newStr != "") {
-      //print("Count: " + count.toString());
-      item.path = newStr;
-      go(item, result[count].childData, result[count]);
-    }
   }
 
   List<Document> getAllList() {

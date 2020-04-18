@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,6 +13,7 @@ import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/dir_and_file_cache_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
+import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/navigator_util.dart';
 
 class WebView extends StatefulWidget {
@@ -81,7 +83,22 @@ class _WebViewState extends State<WebView> {
     _onHttpError =
         webviewReference.onHttpError.listen((WebViewHttpError error) {
       print("出现错误?");
-      Fluttertoast.showToast(msg: "没联网! 请重启 app 试试!");
+      showAboutDialog(
+        context: context,
+        applicationName:'连接异常',
+        children: <Widget>[
+          Text('错误信息如下:'),
+          Text(error.toString()),
+        ],
+      );
+//      Fluttertoast.showToast(
+//          msg: "连接异常: " + error.toString() ,
+//          toastLength: Toast.LENGTH_LONG,
+//          gravity: ToastGravity.BOTTOM,
+//          timeInSecForIosWeb: 3,
+//          backgroundColor: Colors.red,
+//          textColor: Colors.white,
+//          fontSize: 16.0);
       print(error);
     });
   }
@@ -132,6 +149,8 @@ class _WebViewState extends State<WebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+            title: Text('OneDrive登录', style: TextStyle(fontSize: fontSize40)),),
         body: WebviewScaffold(
       url: widget.url,
       withZoom: false,

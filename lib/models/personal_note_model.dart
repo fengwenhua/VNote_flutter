@@ -41,6 +41,7 @@ class PersonalNoteModel {
 
 class Files {
   String id;
+  String configId;
   String modifiedTime;
   String name;
 
@@ -48,6 +49,7 @@ class Files {
 
   Files.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    configId = json['config_id'];
     modifiedTime = json['modified_time'];
     name = json['name'];
   }
@@ -55,6 +57,7 @@ class Files {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['config_id'] = this.configId;
     data['modified_time'] = this.modifiedTime;
     data['name'] = this.name;
     return data;

@@ -122,11 +122,13 @@ class _CreatePageState extends State<CreatePage> {
                               jsonDecode(value.toString());
                           String id = jsonData["id"];
                           fileId = id;
+                          String configId = configIdModel.configId;
                           String newFileName = jsonData["name"];
                           String dateString = jsonData['lastModifiedDateTime'];
                           DateTime date = DateTime.parse(dateString);
                           Document doc = new Document(
                               id: id,
+                              configId: configId,
                               name: newFileName,
                               isFile: true,
                               dateModified: date);
@@ -135,7 +137,7 @@ class _CreatePageState extends State<CreatePage> {
                           dirAndFileCacheModel.addDirOrFileEle(
                               parentIdModel.parentId, doc);
                           // 下面是更新当前目录的 _vnote.json 文件
-                          String configId = configIdModel.configId;
+
                           print(
                               "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 files 字段");
                           await OneDriveDataDao.getFileContent(context,
@@ -174,8 +176,11 @@ class _CreatePageState extends State<CreatePage> {
 
                         PersonalNoteModel personalNoteModel =
                         await Utils.getPersonalNoteModel();
+
+                        ConfigIdModel configIdModel =
+                        Provider.of<ConfigIdModel>(context, listen: false);
                         Map<String, dynamic> newFileMap =
-                        jsonDecode(Utils.newLocalFileJson(fileId, fileName));
+                        jsonDecode(Utils.newLocalFileJson(fileId,configIdModel.configId, fileName));
                         personalNoteModel.addNewFile(newFileMap);
                         LocalDocumentProvider localDocumentProvider =
                         Provider.of<LocalDocumentProvider>(context, listen: false);

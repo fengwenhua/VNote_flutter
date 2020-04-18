@@ -18,7 +18,7 @@ final String CLIENT_ID = "fd49989c-b57c-49a4-9832-8172ae6a4162";
 final String REDIRECT_URL = "https://login.microsoftonline.com/common/oauth2/nativeclient";
 final String CLIENT_SECRET = "pHT_.O-ocr0@e2p0QqtOQfB33BQGvr.L";
 final List<String> WHILE_NAME = [".md", ".json", ".jpg", ".png",".gif"];
-final List<String> BLACK_NAME = ["_vnote.json","_v_recycle_bin","_v_images","_v_attachments"];
+final List<String> BLACK_NAME = ["_vnote.json","_v_recycle_bin","_v_images","_v_attachments",".vswp"];
 final String tutorialText = '''# 0x00 初始化
 找到 onedrive 根目录下的`应用`->`VNote`, 将你原来的 vnote 笔记本全部放在这个目录下:
 
