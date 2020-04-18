@@ -107,7 +107,8 @@ class _CreatePageState extends State<CreatePage> {
                       // 去掉前后空格
                       fileName = fileName.trim();
                       content = content.trim();
-
+                      //pr.update(message: "开始创建...");
+                      Utils.showMyToast("上传内容到 onedrive 中...");
                       await pr.show().then((_) async {
                         await OneDriveDataDao.uploadFile(
                                 context,
@@ -137,7 +138,8 @@ class _CreatePageState extends State<CreatePage> {
                           dirAndFileCacheModel.addDirOrFileEle(
                               parentIdModel.parentId, doc);
                           // 下面是更新当前目录的 _vnote.json 文件
-
+                          Utils.showMyToast("开始下载 _vnote.json");
+                          //pr.update(message: "开始下载_vnote.json");
                           print(
                               "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 files 字段");
                           await OneDriveDataDao.getFileContent(context,
@@ -155,8 +157,9 @@ class _CreatePageState extends State<CreatePage> {
 
                             print("添加之后: ");
                             print(json.encode(desktopConfigModel));
-
+                            //pr.style(message: "开始更新 _vnote.json");
                             print("添加成功_vnote.json 之后, 就是更新这个文件");
+                            Utils.showMyToast("更新 _vnote.json");
                             await OneDriveDataDao.updateContent(
                                     context,
                                     tokenModel.token.accessToken,
