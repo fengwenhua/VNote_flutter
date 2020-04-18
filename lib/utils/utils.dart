@@ -5,9 +5,11 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/personal_note_model.dart';
+import 'package:vnote/provider/image_folder_id_model.dart';
 
 class Utils {
   static String getFormattedDateTime({@required DateTime dateTime}) {
@@ -241,6 +243,7 @@ class Utils {
   static model2ListDocument() async {
     List<Document> result = new List<Document>();
     PersonalNoteModel personalNoteModel = await getPersonalNoteModel();
+
     if (personalNoteModel.files == null) {
       print("本地没有笔记缓存");
       return null;
@@ -250,6 +253,7 @@ class Utils {
       //print("这个时间是: " + file.modifiedTime.toString());
       Document temp = new Document(
           id: file.id,
+          imageFolderId: file.imageFolderId,
           configId: file.configId,
           name: file.name,
           isFile: true,

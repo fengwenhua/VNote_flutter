@@ -118,9 +118,12 @@ class DocumentListUtil {
       }
       ConfigIdModel configIdModel =
       Provider.of<ConfigIdModel>(context, listen: false);
+      ImageFolderIdModel _imageFolderId =
+      Provider.of<ImageFolderIdModel>(context, listen: false);
       Document temp = new Document(
           id: value.id,
           configId: configIdModel.configId,
+          imageFolderId: _imageFolderId.imageFolderId,
           name: value.name,
           isFile: isFile,
           dateModified: DateTime.parse(value.lastModifiedDateTime));
@@ -144,6 +147,8 @@ class DocumentListUtil {
     final _imageFolderId =
         Provider.of<ImageFolderIdModel>(context, listen: false);
     String imageFolderId = _imageFolderId.imageFolderId;
+    ConfigIdModel configIdModel =
+    Provider.of<ConfigIdModel>(context, listen: false);
 
     if (imageFolderId == "noimagefolder") {
       print("md, 你特么的本地没有 imageFolder 文件夹, 你下个鸡儿的图片!");
@@ -162,6 +167,8 @@ class DocumentListUtil {
               //print("临时: 增加: " + value.name);
               Document temp = new Document(
                   id: value.id,
+                  configId: configIdModel.configId,
+                  imageFolderId: imageFolderId,
                   name: value.name,
                   isFile: true,
                   dateModified: DateTime.parse(value.lastModifiedDateTime));
@@ -354,8 +361,6 @@ class DocumentListUtil {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
     String appImagePath = appDocPath + '/image';
-
-    final previewContent = Provider.of<PreviewModel>(context, listen: false);
 
     return await OneDriveDataDao.getFileContent(context, token, id)
         .then((value) {

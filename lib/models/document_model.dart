@@ -8,6 +8,7 @@ class Document {
   List<Document> childData;
   Document parent;
   String configId;
+  String imageFolderId;
   //final List<Document> childFiles;
 
   Document({
@@ -18,6 +19,7 @@ class Document {
     this.isFile = false,
     this.parent,
     this.childData,
+    this.imageFolderId
   //  this.childFiles
   });
 

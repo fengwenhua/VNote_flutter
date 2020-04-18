@@ -821,6 +821,8 @@ class _DirectoryPageState extends State<DirectoryPage>
         Provider.of<ConfigIdModel>(context, listen: false);
     DirAndFileCacheModel dirCacheModel =
         Provider.of<DirAndFileCacheModel>(context, listen: false);
+    ImageFolderIdModel _imageFolderId =
+    Provider.of<ImageFolderIdModel>(context, listen: false);
     String folderName = "";
     return CupertinoAlertDialog(
       title: Text(translate("createDialog.title")),
@@ -877,6 +879,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                     Document doc = new Document(
                         id: id,
                         configId: configId,
+                        imageFolderId: _imageFolderId.imageFolderId,
                         name: jsonData["name"],
                         isFile: false,
                         dateModified: date);
