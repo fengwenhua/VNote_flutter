@@ -205,6 +205,14 @@ class _NotePageState extends State<NotePage> {
             await OneDriveDataDao.getFileContent(
                     context, tokenModel.token.accessToken, document.configId)
                 .then((value) async {
+                  await pr.hide();
+                  pr = new ProgressDialog(this.context,
+                      type: ProgressDialogType.Download, isDismissible: true);
+                  pr.style(
+                    message: "2. 更新 _vnote.json",
+                    progress: 80,
+                  );
+                  await pr.show();
               //pr.update(message: "2. 更新 _vnote.json", progress: 80);
               print("拿到的 _vnote.json 文件数据为: " + value.toString());
               print("要干掉的文件/文件夹名字: " + document.name);
