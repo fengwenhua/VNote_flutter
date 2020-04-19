@@ -637,6 +637,14 @@ class _DirectoryPageState extends State<DirectoryPage>
             await pr.show().then((_) async {
               print("点击了删除");
 
+              await pr.hide();
+              pr = new ProgressDialog(this.context,
+                  type: ProgressDialogType.Download, isDismissible: true);
+              pr.style(
+                message: "0. 开始删除",
+                progress: 0,
+              );
+              await pr.show();
               // 网络请求删除在线的文件夹
               await OneDriveDataDao.deleteFile(
                   context, tokenModel.token.accessToken, document.id);
@@ -651,12 +659,30 @@ class _DirectoryPageState extends State<DirectoryPage>
                   parentIdModel.parentId == parentIdModel.genId) {
                 print("根目录, 不需要更新 _vnote.json 文件");
               } else {
+                await pr.hide();
+                pr = new ProgressDialog(this.context,
+                    type: ProgressDialogType.Download, isDismissible: true);
+                pr.style(
+                  message: "1. 下载 _vnote.json",
+                  progress: 40,
+                );
+                await pr.show();
                 print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
                 await OneDriveDataDao.getFileContent(
                         context, tokenModel.token.accessToken, configId)
                     .then((value) async {
                   print("拿到的 _vnote.json 文件数据为: " + value.toString());
                   print("要干掉的文件/文件夹名字: " + document.name);
+
+                  await pr.hide();
+                  pr = new ProgressDialog(this.context,
+                      type: ProgressDialogType.Download, isDismissible: true);
+                  pr.style(
+                    message: "2. 更新 _vnote.json",
+                    progress: 80,
+                  );
+                  await pr.show();
+
                   DesktopConfigModel desktopConfigModel =
                       DesktopConfigModel.fromJson(
                           json.decode(value.toString()));
