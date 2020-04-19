@@ -98,8 +98,15 @@ class _NoteEditPageState extends State<NoteEditPage> {
         ),
         actions: <Widget>[
           IconButton(
+            icon: Icon(Icons.undo),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: Icon(Icons.redo),
+            onPressed: () {},
+          ),
+          IconButton(
             icon: Icon(Icons.remove_red_eye),
-            color: Colors.white,
             onPressed: () async {
               if (widget.markdownSource == content) {
                 print("没有修改内容, 直接跳");
@@ -157,7 +164,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                       String dateString = jsonData['lastModifiedDateTime'];
                       DateTime date = DateTime.parse(dateString);
                       ConfigIdModel configIdModel =
-                      Provider.of<ConfigIdModel>(context, listen: false);
+                          Provider.of<ConfigIdModel>(context, listen: false);
                       Document doc = new Document(
                           id: id,
                           configId: configIdModel.configId,
