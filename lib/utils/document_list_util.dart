@@ -150,7 +150,7 @@ class DocumentListUtil {
     ConfigIdModel configIdModel =
     Provider.of<ConfigIdModel>(context, listen: false);
 
-    if (imageFolderId == "noimagefolder") {
+    if (imageFolderId == "noimagefolder" || imageFolderId==null) {
       print("md, 你特么的本地没有 imageFolder 文件夹, 你下个鸡儿的图片!");
       return result;
     }

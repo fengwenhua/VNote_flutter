@@ -287,8 +287,11 @@ class _CreatePageState extends State<CreatePage> {
                             });
                           }
                         }
-                        // 上传完关闭进度框
-                        uploadPR.hide();
+
+                        if(uploadPR!=null && uploadPR.isShowing()){
+                          // 上传完关闭进度框
+                          uploadPR.hide();
+                        }
                         // 记得要清空
                         _newImageList.clearList();
                         print("新建一个进度对话框!");
@@ -318,6 +321,10 @@ class _CreatePageState extends State<CreatePage> {
                           DateTime date = DateTime.parse(dateString);
                           print("要添加进去的 Document 的 imageFolderId: ");
                           print(_imageFolderId.imageFolderId);
+                          if(_imageFolderId.imageFolderId == null){
+                            print("这个笔记没有图片, 所以将 imageFolderId 的值赋值为 noimagefolder");
+                            _imageFolderId.updateImageFolderId("noimagefolder");
+                          }
                           Document doc = new Document(
                               id: id,
                               configId: configId,
