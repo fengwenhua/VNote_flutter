@@ -288,7 +288,7 @@ class _CreatePageState extends State<CreatePage> {
                           }
                         }
 
-                        if(uploadPR!=null && uploadPR.isShowing()){
+                        if (uploadPR != null && uploadPR.isShowing()) {
                           // 上传完关闭进度框
                           uploadPR.hide();
                         }
@@ -321,8 +321,9 @@ class _CreatePageState extends State<CreatePage> {
                           DateTime date = DateTime.parse(dateString);
                           print("要添加进去的 Document 的 imageFolderId: ");
                           print(_imageFolderId.imageFolderId);
-                          if(_imageFolderId.imageFolderId == null){
-                            print("这个笔记没有图片, 所以将 imageFolderId 的值赋值为 noimagefolder");
+                          if (_imageFolderId.imageFolderId == null) {
+                            print(
+                                "这个笔记没有图片, 所以将 imageFolderId 的值赋值为 noimagefolder");
                             _imageFolderId.updateImageFolderId("noimagefolder");
                           }
                           Document doc = new Document(
@@ -418,14 +419,28 @@ class _CreatePageState extends State<CreatePage> {
                         });
 
                         // 搞完进入预览页面, 销毁本页面
-                        String route =
-                            '/preview?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(fileId)}&name=${Uri.encodeComponent(fileName)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
-                        Application.router
-                            .navigateTo(context, route,
-                                transition: TransitionType.fadeIn)
-                            .then((result) {
-                          print("搞定直接滚");
-                          Navigator.of(context).pop();
+//                        String route =
+//                            '/preview?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(fileId)}&name=${Uri.encodeComponent(fileName)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
+//                        Application.router
+//                            .navigateTo(context, route,
+//                                transition: TransitionType.fadeIn)
+//                            .then((result) {
+//                          print("搞定直接滚");
+//                          Navigator.of(context).pop();
+//                        });
+
+                        await Utils.getMarkdownHtml(
+                                fileName, Application.sp.getString(content))
+                            .then((data) {
+                          String route =
+                              '/markdownWebView?content=${Uri.encodeComponent(data.toString())}&title=${Uri.encodeComponent(fileName)}&id=${Uri.encodeComponent(fileId)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
+                          Application.router
+                              .navigateTo(context, route,
+                                  transition: TransitionType.fadeIn)
+                              .then((result) {
+                            print("搞定直接滚");
+                            Navigator.of(context).pop();
+                          });
                         });
                       });
                     } else {

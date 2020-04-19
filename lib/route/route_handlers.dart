@@ -118,5 +118,8 @@ var markdownWebViewHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
   String content = params['content']?.first;
   String title = params['title']?.first;
-  return MarkdownWebViewPage(title: title, content: content);
+  String id = params["id"].first;
+  String configId = params["configId"].first;
+  String imageFolderId = params["imageFolderId"].first;
+  return MarkdownWebViewPage(title: title, content: content, id: id, configId: configId,imageFolderId: imageFolderId);
 });

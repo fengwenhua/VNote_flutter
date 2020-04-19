@@ -69,7 +69,8 @@ class _DirectoryPageState extends State<DirectoryPage>
     // 这里
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
-
+    ConfigIdModel configIdModel =
+    Provider.of<ConfigIdModel>(context, listen: false);
     bool hasImageFolder = false;
     final _imageFolderIdModel =
         Provider.of<ImageFolderIdModel>(context, listen: false);
@@ -97,8 +98,12 @@ class _DirectoryPageState extends State<DirectoryPage>
           await Utils.getMarkdownHtml(
                   document.name, Application.sp.getString(document.id))
               .then((data) {
+                // 因为是在目录, 所以不管了, 直接用
+            String configId = configIdModel.configId;
+            String imageFolderId = _imageFolderIdModel.imageFolderId;
+
             String route =
-                '/markdownWebView?content=${Uri.encodeComponent(data)}&title=${Uri.encodeComponent(document.name)}';
+                '/markdownWebView?content=${Uri.encodeComponent(data)}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
             Application.router
                 .navigateTo(context, route, transition: TransitionType.fadeIn);
           });
@@ -156,17 +161,22 @@ class _DirectoryPageState extends State<DirectoryPage>
             localDocumentProvider.updateList(data);
           });
 
-          prt.hide().whenComplete(() {
+          prt.hide().whenComplete(() async {
             // 下面是用 markdown_webveiw
-//            String route =
-//                '/markdownWebView?title=${Uri.encodeComponent(document.name)}&content=${Uri.encodeComponent(data.toString())}';
-//            Application.router.navigateTo(context, route,
-//                transition: TransitionType.fadeIn);
+            await Utils.getMarkdownHtml(
+                document.name, data.toString()).then((res){
+              String route =
+                  '/markdownWebView?content=${Uri.encodeComponent(res.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
+              Application.router
+                  .navigateTo(context, route, transition: TransitionType.fadeIn);
+            });
+
+
             // 下面是用 flutter_markdown
-            String route =
-                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
-            Application.router
-                .navigateTo(context, route, transition: TransitionType.fadeIn);
+//            String route =
+//                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
+//            Application.router
+//                .navigateTo(context, route, transition: TransitionType.fadeIn);
           });
         }
       });
