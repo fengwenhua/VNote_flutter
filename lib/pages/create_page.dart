@@ -430,7 +430,7 @@ class _CreatePageState extends State<CreatePage> {
 //                        });
 
                         await Utils.getMarkdownHtml(
-                                fileName, Application.sp.getString(content))
+                                fileName, Application.sp.getString(fileId))
                             .then((data) {
                           String route =
                               '/markdownWebView?content=${Uri.encodeComponent(data.toString())}&title=${Uri.encodeComponent(fileName)}&id=${Uri.encodeComponent(fileId)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
