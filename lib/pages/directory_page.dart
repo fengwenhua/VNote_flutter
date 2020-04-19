@@ -899,6 +899,15 @@ class _DirectoryPageState extends State<DirectoryPage>
               // 应该先关闭询问对话框
               Navigator.pop(context);
               await pr.show().then((_) async {
+                await pr.hide();
+                pr = new ProgressDialog(this.context,
+                    type: ProgressDialogType.Download, isDismissible: true);
+                pr.style(
+                  message: "0. 开始新建文件夹",
+                  progress: 0,
+                );
+                await pr.show();
+
                 await OneDriveDataDao.createFolder(
                         context,
                         tokenModel.token.accessToken,
@@ -936,6 +945,14 @@ class _DirectoryPageState extends State<DirectoryPage>
                       print(
                           "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 sub_directories 字段");
 
+                      await pr.hide();
+                      pr = new ProgressDialog(this.context,
+                          type: ProgressDialogType.Download, isDismissible: true);
+                      pr.style(
+                        message: "1. 下载 _vnote.json",
+                        progress: 40,
+                      );
+                      await pr.show();
                       // 如果找到当前目录下的 _vnote.json 的 id???
 
                       await OneDriveDataDao.getFileContent(
@@ -956,6 +973,14 @@ class _DirectoryPageState extends State<DirectoryPage>
                           print("添加之后: ");
                           print(json.encode(desktopConfigModel));
 
+                          await pr.hide();
+                          pr = new ProgressDialog(this.context,
+                              type: ProgressDialogType.Download, isDismissible: true);
+                          pr.style(
+                            message: "2. 更新 _vnote.json",
+                            progress: 80,
+                          );
+                          await pr.show();
                           // 添加成功_vnote.json 之后, 就是更新这个文件
                           await OneDriveDataDao.updateContent(
                                   context,
@@ -971,6 +996,14 @@ class _DirectoryPageState extends State<DirectoryPage>
                       });
                     }
 
+                    await pr.hide();
+                    pr = new ProgressDialog(this.context,
+                        type: ProgressDialogType.Download, isDismissible: true);
+                    pr.style(
+                      message: "3. 给新建的目录添加 _vnote.json",
+                      progress: 90,
+                    );
+                    await pr.show();
                     // 下面是给新创建的目录新增一个 _vnote.json 文件
                     await OneDriveDataDao.uploadFile(
                             context,
