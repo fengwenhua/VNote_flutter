@@ -8,6 +8,7 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
+import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
@@ -201,10 +202,16 @@ class SearchBarDelegate extends SearchDelegate<String> {
 //              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
 //          Application.router
 //              .navigateTo(context, route, transition: TransitionType.fadeIn);
+          ConfigIdModel configIdModel =
+          Provider.of<ConfigIdModel>(context, listen: false);
+          ImageFolderIdModel _imageFolderIdModel =
+          Provider.of<ImageFolderIdModel>(context, listen: false);
+          String configId = configIdModel.configId;
+          String imageFolderId = _imageFolderIdModel.imageFolderId;
           await Utils.getMarkdownHtml(
               document.name, Application.sp.getString(document.id)).then((data){
             String route =
-                '/markdownWebView?content=${Uri.encodeComponent(data.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
+                '/markdownWebView?content=${Uri.encodeComponent(data.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
             Application.router
                 .navigateTo(context, route, transition: TransitionType.fadeIn);
           });
