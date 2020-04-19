@@ -5,6 +5,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/models/document_model.dart';
+import 'package:vnote/provider/config_id_model.dart';
 import 'package:vnote/provider/data_list_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
@@ -15,19 +16,22 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 class NotePreviewPage extends StatefulWidget {
   final String markdownSource;
   final String id;
+  final String configId;
+  final String imageFolderId;
   final String name;
-  final String type;
 
   NotePreviewPage(
       {Key key,
       @required String markdownSource,
       @required String id,
-      @required String name,
-      @required String type})
+      String configId,
+      String imageFolderId,
+      @required String name})
       : this.markdownSource = markdownSource,
         this.id = id,
+        this.configId = configId,
+        this.imageFolderId = imageFolderId,
         this.name = name,
-        this.type = type,
         super(key: key);
   @override
   _NotePreviewPageState createState() => _NotePreviewPageState();
@@ -45,28 +49,34 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
   }
 
   /// 点击更新按钮, 更新 md 文件
-  _updateMDFile(String id) async {
+  _updateMDFile(String id, String name, String configId, String imageFolderId) async {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
     final _imageFolderIdModel =
         Provider.of<ImageFolderIdModel>(context, listen: false);
+    ConfigIdModel configIdModel =
+    Provider.of<ConfigIdModel>(context, listen: false);
+    // 点进来, 可能是文件夹那里点, 也可能是笔记那里点
+    print("直接赋值 configId 和 imageFolderId");
+    configIdModel.updateConfigId(configId);
+    _imageFolderIdModel.updateImageFolderId(imageFolderId);
 
     print("开始找图片");
-    for (Document d in dataListModel.dataList) {
-      if (d.name == "_v_images") {
-        // 在这里更新 imageFolderid , 也就是 _v_images 文件夹的 id
-        // 这里再次更新是为了预防某个叼毛, 将_v_images 干掉...
-
-        _imageFolderIdModel.updateImageFolderId(d.id);
-        break;
-      }
-    }
+//    for (Document d in dataListModel.dataList) {
+//      if (d.name == "_v_images") {
+//        // 在这里更新 imageFolderid , 也就是 _v_images 文件夹的 id
+//        // 这里再次更新是为了预防某个叼毛, 将_v_images 干掉...
+//
+//        _imageFolderIdModel.updateImageFolderId(d.id);
+//        break;
+//      }
+//    }
 
     print("准备从网络获取 md 内容");
     await DocumentListUtil.instance
         .getMDFileContentFromNetwork(
-        context, tokenModel.token.accessToken, id, pr1)
+            context, tokenModel.token.accessToken, id, pr1)
         .then((value) {
       if (value == null) {
         print("gg, 拿不到更新的数据");
@@ -125,7 +135,7 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
               onPressed: () async {
                 print("点击刷新了");
                 await pr1.show().then((_) {
-                  _updateMDFile(widget.id);
+                  _updateMDFile(widget.id, widget.name,widget.configId, widget.imageFolderId);
                 });
               },
             ),
@@ -137,8 +147,8 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
                 // 1 代表新建
                 String route = "";
 
-                  route =
-                      '/edit?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(widget.id)}&name=${Uri.encodeComponent(widget.name)}';
+                route =
+                    '/edit?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(widget.id)}&name=${Uri.encodeComponent(widget.name)}';
                 Application.router
                     .navigateTo(context, route,
                         transition: TransitionType.fadeIn)

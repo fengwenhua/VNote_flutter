@@ -117,17 +117,18 @@ class _CreatePageState extends State<CreatePage> {
                         List<String> newImagesList = _newImageList.newImageList;
                         ProgressDialog uploadPR;
                         String t_content = content;
-                        String image_path = Application.sp.getString("appImagePath");
+                        String image_path =
+                            Application.sp.getString("appImagePath");
                         // 本地新增了图片才上传, 不然上传个鸡儿
                         // 如果没有_v_image , 记得新建这个目录
                         bool needToUpdateImageFolderId = true;
-                        if (newImagesList.length > 0){
+                        if (newImagesList.length > 0) {
                           print("create_page 本地新增加了图片!");
                           String imageFolderId;
 
                           // 对于新建文件来说, 需要在这里遍历 dataList, 更新 imageFolderId
-                          for(Document d in dataListModel.dataList){
-                            if(d.name=="_v_images"){
+                          for (Document d in dataListModel.dataList) {
+                            if (d.name == "_v_images") {
                               print("这是当前目录的 imageFolderId");
                               print(d.id);
                               _imageFolderId.updateImageFolderId(d.id);
@@ -137,25 +138,28 @@ class _CreatePageState extends State<CreatePage> {
 
                           print("create_page 当前的 imageFolderId: ");
                           print(imageFolderId);
-                          if(imageFolderId == "noimagefolder" || imageFolderId==null){
+                          if (imageFolderId == "noimagefolder" ||
+                              imageFolderId == null) {
                             print("没有 imagefolder 文件夹, 需要先创建 imageFolder 文件夹");
 
                             // 接下来是新建 _v_images 文件夹的过程???
                             await OneDriveDataDao.createFolder(
-                                context,
-                                tokenModel.token.accessToken,
-                                "_v_images",
-                                parentIdModel.parentId)
+                                    context,
+                                    tokenModel.token.accessToken,
+                                    "_v_images",
+                                    parentIdModel.parentId)
                                 .then((data) {
                               print("更新本地 dataList");
                               Map<String, dynamic> jsonData =
-                              jsonDecode(data.toString());
+                                  jsonDecode(data.toString());
                               String id = jsonData["id"];
                               String newFolderName = jsonData["name"];
-                              String dateString = jsonData['lastModifiedDateTime'];
+                              String dateString =
+                                  jsonData['lastModifiedDateTime'];
                               DateTime date = DateTime.parse(dateString);
                               ConfigIdModel configIdModel =
-                              Provider.of<ConfigIdModel>(context, listen: false);
+                                  Provider.of<ConfigIdModel>(context,
+                                      listen: false);
                               Document doc = new Document(
                                   id: id,
                                   configId: configIdModel.configId,
@@ -172,13 +176,11 @@ class _CreatePageState extends State<CreatePage> {
                             });
                           }
 
-
-
-
                           int repeatCount = 3; // 重复上传 3 次
 
                           uploadPR = new ProgressDialog(context,
-                              type: ProgressDialogType.Download, isDismissible: true);
+                              type: ProgressDialogType.Download,
+                              isDismissible: true);
                           uploadPR.style(
                               message: translate("uploadTips"),
                               borderRadius: 10.0,
@@ -205,20 +207,21 @@ class _CreatePageState extends State<CreatePage> {
                           for (int i = 0; i < newImagesList.length; i++) {
                             print(newImagesList[i]);
                             var fileData =
-                            await MultipartFile.fromFile(newImagesList[i]);
+                                await MultipartFile.fromFile(newImagesList[i]);
 
                             print("文件名: " + fileData.filename);
                             print("文件长度: " + fileData.length.toString());
                             print("_v_images的 id: " + imageFolderId);
 
-                            FormData formData = FormData.fromMap({"file": fileData});
+                            FormData formData =
+                                FormData.fromMap({"file": fileData});
 
                             await OneDriveDataDao.uploadFile(
-                                context,
-                                tokenModel.token.accessToken,
-                                imageFolderId,
-                                formData,
-                                fileData.filename)
+                                    context,
+                                    tokenModel.token.accessToken,
+                                    imageFolderId,
+                                    formData,
+                                    fileData.filename)
                                 .then((value) {
                               if (value == null) {
                                 print("没有数据, 应该上传失败了");
@@ -234,7 +237,8 @@ class _CreatePageState extends State<CreatePage> {
                                       backgroundColor: Colors.red,
                                       textColor: Colors.white,
                                       fontSize: 16.0);
-                                  print("重试还剩: " + repeatCount.toString() + " 次");
+                                  print(
+                                      "重试还剩: " + repeatCount.toString() + " 次");
                                   i--; // 减少 1, 让它重新操作
                                   repeatCount--;
                                 } else {
@@ -253,7 +257,8 @@ class _CreatePageState extends State<CreatePage> {
                                 }
                               } else {
                                 t_content = t_content.replaceAll(
-                                    newImagesList[i], "_v_images/" + fileData.filename);
+                                    newImagesList[i],
+                                    "_v_images/" + fileData.filename);
 
                                 print("处理完: " + fileData.filename);
                                 repeatCount = 3; // 重置
@@ -288,10 +293,12 @@ class _CreatePageState extends State<CreatePage> {
                         _newImageList.clearList();
                         print("新建一个进度对话框!");
                         uploadPR = new ProgressDialog(context,
-                            type: ProgressDialogType.Normal, isDismissible: true);
+                            type: ProgressDialogType.Normal,
+                            isDismissible: true);
                         uploadPR.style(message: translate("uploadTips"));
                         await uploadPR.show();
-                        t_content = t_content.replaceAll(image_path, "_v_images");
+                        t_content =
+                            t_content.replaceAll(image_path, "_v_images");
                         await OneDriveDataDao.uploadFile(
                                 context,
                                 tokenModel.token.accessToken,
@@ -327,7 +334,8 @@ class _CreatePageState extends State<CreatePage> {
                           //pr.update(message: "开始下载_vnote.json");
                           await uploadPR.hide();
                           uploadPR = new ProgressDialog(context,
-                              type: ProgressDialogType.Normal, isDismissible: true);
+                              type: ProgressDialogType.Normal,
+                              isDismissible: true);
                           uploadPR.style(message: "开始下载 _vnote.json");
                           await uploadPR.show();
                           print(
@@ -352,7 +360,8 @@ class _CreatePageState extends State<CreatePage> {
                             await uploadPR.hide();
 
                             uploadPR = new ProgressDialog(context,
-                                type: ProgressDialogType.Normal, isDismissible: true);
+                                type: ProgressDialogType.Normal,
+                                isDismissible: true);
                             uploadPR.style(message: "更新 _vnote.json");
                             await uploadPR.show();
 
@@ -376,19 +385,24 @@ class _CreatePageState extends State<CreatePage> {
                         Application.sp.setString(fileId, content);
 
                         PersonalNoteModel personalNoteModel =
-                        await Utils.getPersonalNoteModel();
+                            await Utils.getPersonalNoteModel();
 
                         ConfigIdModel configIdModel =
-                        Provider.of<ConfigIdModel>(context, listen: false);
+                            Provider.of<ConfigIdModel>(context, listen: false);
                         print("要写进_myNote.json 的 imageFolderId是: ");
                         print(_imageFolderId.imageFolderId);
-                        Map<String, dynamic> newFileMap =
-                        jsonDecode(Utils.newLocalFileJson(fileId,configIdModel.configId, _imageFolderId.imageFolderId,fileName));
+                        Map<String, dynamic> newFileMap = jsonDecode(
+                            Utils.newLocalFileJson(
+                                fileId,
+                                configIdModel.configId,
+                                _imageFolderId.imageFolderId,
+                                fileName));
                         print("这个 Map 的 imageFolderId 是:");
                         print(newFileMap['image_folder_id']);
                         personalNoteModel.addNewFile(newFileMap);
                         LocalDocumentProvider localDocumentProvider =
-                        Provider.of<LocalDocumentProvider>(context, listen: false);
+                            Provider.of<LocalDocumentProvider>(context,
+                                listen: false);
 
                         Utils.writeModelToFile(personalNoteModel);
                         await Utils.model2ListDocument().then((data) {
@@ -398,7 +412,7 @@ class _CreatePageState extends State<CreatePage> {
 
                         // 搞完进入预览页面, 销毁本页面
                         String route =
-                            '/preview?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(fileId)}&name=${Uri.encodeComponent(fileName)}&type=${Uri.encodeComponent("1")}';
+                            '/preview?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(fileId)}&name=${Uri.encodeComponent(fileName)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
                         Application.router
                             .navigateTo(context, route,
                                 transition: TransitionType.fadeIn)

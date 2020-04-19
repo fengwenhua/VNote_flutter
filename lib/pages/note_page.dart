@@ -414,7 +414,7 @@ _getMDFile(BuildContext context, Document document, ProgressDialog prt) async {
     await Future.delayed(Duration(milliseconds: 100), () {
       prt.hide().whenComplete(() {
         String route =
-            '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
+            '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
         Application.router
             .navigateTo(context, route, transition: TransitionType.fadeIn);
       });
@@ -446,7 +446,7 @@ _getMDFile(BuildContext context, Document document, ProgressDialog prt) async {
         print("跳转到预览页面");
         prt.hide().whenComplete(() {
           String route =
-              '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
+              '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
           Application.router
               .navigateTo(context, route, transition: TransitionType.fadeIn);
         });

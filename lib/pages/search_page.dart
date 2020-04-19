@@ -116,7 +116,8 @@ class SearchBarDelegate extends SearchDelegate<String> {
               }
               if (snapshot.data.length <= 0) {
                 return new Center(
-                  child: Text(translate("search.changeOther",args: {'key':'$key'})),
+                  child: Text(
+                      translate("search.changeOther", args: {'key': '$key'})),
                 );
               }
               return new ListView.builder(
@@ -228,7 +229,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
           print("跳转到预览页面");
           prt.hide().whenComplete(() {
             String route =
-                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
+                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
             Application.router
                 .navigateTo(context, route, transition: TransitionType.fadeIn);
           });

@@ -94,11 +94,13 @@ class _DirectoryPageState extends State<DirectoryPage>
       await Future.delayed(Duration(milliseconds: 100), () {
         prt.hide().whenComplete(() async {
           // 下面使用 markdown_webview
-          await Utils.getMarkdownHtml(document.name, Application.sp.getString(document.id)).then((data){
+          await Utils.getMarkdownHtml(
+                  document.name, Application.sp.getString(document.id))
+              .then((data) {
             String route =
                 '/markdownWebView?content=${Uri.encodeComponent(data)}&title=${Uri.encodeComponent(document.name)}';
-            Application.router.navigateTo(context, route,
-                transition: TransitionType.fadeIn);
+            Application.router
+                .navigateTo(context, route, transition: TransitionType.fadeIn);
           });
           // 下面使用 flutter_markdown
 //          String route =
@@ -138,9 +140,12 @@ class _DirectoryPageState extends State<DirectoryPage>
           PersonalNoteModel personalNoteModel =
               await Utils.getPersonalNoteModel();
           ConfigIdModel configIdModel =
-          Provider.of<ConfigIdModel>(context, listen: false);
-          Map<String, dynamic> newFileMap =
-              jsonDecode(Utils.newLocalFileJson(document.id,configIdModel.configId, _imageFolderIdModel.imageFolderId,document.name));
+              Provider.of<ConfigIdModel>(context, listen: false);
+          Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
+              document.id,
+              configIdModel.configId,
+              _imageFolderIdModel.imageFolderId,
+              document.name));
           personalNoteModel.addNewFile(newFileMap);
           LocalDocumentProvider localDocumentProvider =
               Provider.of<LocalDocumentProvider>(context, listen: false);
@@ -159,7 +164,7 @@ class _DirectoryPageState extends State<DirectoryPage>
 //                transition: TransitionType.fadeIn);
             // 下面是用 flutter_markdown
             String route =
-                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
+                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
             Application.router
                 .navigateTo(context, route, transition: TransitionType.fadeIn);
           });
@@ -774,18 +779,19 @@ class _DirectoryPageState extends State<DirectoryPage>
                             oldFileOrFolderName, fileOrFolderName);
 
                         PersonalNoteModel personalNoteModel =
-                        await Utils.getPersonalNoteModel();
+                            await Utils.getPersonalNoteModel();
 
-                        personalNoteModel.renameFile(oldFileOrFolderName, fileOrFolderName);
+                        personalNoteModel.renameFile(
+                            oldFileOrFolderName, fileOrFolderName);
                         LocalDocumentProvider localDocumentProvider =
-                        Provider.of<LocalDocumentProvider>(this.context, listen: false);
+                            Provider.of<LocalDocumentProvider>(this.context,
+                                listen: false);
 
                         Utils.writeModelToFile(personalNoteModel);
                         await Utils.model2ListDocument().then((data) {
                           print("directory_page rename 这里拿到 _myNote.json 的数据");
                           localDocumentProvider.updateList(data);
                         });
-
                       } else {
                         desktopConfigModel.renameFolder(
                             oldFileOrFolderName, fileOrFolderName);
@@ -822,7 +828,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     DirAndFileCacheModel dirCacheModel =
         Provider.of<DirAndFileCacheModel>(context, listen: false);
     ImageFolderIdModel _imageFolderId =
-    Provider.of<ImageFolderIdModel>(context, listen: false);
+        Provider.of<ImageFolderIdModel>(context, listen: false);
     String folderName = "";
     return CupertinoAlertDialog(
       title: Text(translate("createDialog.title")),

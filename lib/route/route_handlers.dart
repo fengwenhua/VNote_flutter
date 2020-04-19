@@ -31,8 +31,8 @@ var loginHandler = new Handler(
 // logout 页面
 var logoutHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
-      return LogoutPage();
-    });
+  return LogoutPage();
+});
 
 // home 页面
 var homeHandler = new Handler(
@@ -45,14 +45,15 @@ var mdPreviewHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
   String content = params["content"].first;
   String id = params["id"].first;
-  String name = params["name"].first;
-  String type = params["type"].first; //0代表编辑, 1 代表新建
+  String configId = params["configId"].first;
+  String imageFolderId = params["imageFolderId"].first;
+  String name = params["name"].first; //0代表编辑, 1 代表新建
   return new NotePreviewPage(
-    markdownSource: content,
-    id: id,
-    name: name,
-    type: type
-  );
+      markdownSource: content,
+      id: id,
+      configId: configId,
+      imageFolderId: imageFolderId,
+      name: name);
 });
 
 // 编辑页面
@@ -71,59 +72,51 @@ var mdEditHandler = new Handler(
 // 新建文件页面
 var newFileHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
-  return new CreatePage(
-  );
+  return new CreatePage();
 });
 
 // 关于页面
 var aboutHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
-      return new AboutPage(
-      );
-    });
+  return new AboutPage();
+});
 
 // 教程页面
 var tutorialHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
-      return new TutorialPage(
-      );
-    });
+  return new TutorialPage();
+});
 
 // 语言设置页面
 var languageHandler = new Handler(
-  handlerFunc: (BuildContext context, Map<String,List<Object>> params){
-    return new LanguagePage();
-  }
-);
+    handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
+  return new LanguagePage();
+});
 
 // 语言设置页面
 var settingsHandler = new Handler(
-    handlerFunc: (BuildContext context, Map<String,List<Object>> params){
-      return new SettingPage();
-    }
-);
+    handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
+  return new SettingPage();
+});
 
 // webview
 var webViewHandler = new Handler(
-    handlerFunc: (BuildContext context, Map<String,List<Object>> params){
-      String title = params['title']?.first;
-      String url = params['url']?.first;
-      return WebViewPage(title: title, url: url);
-    }
-);
+    handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
+  String title = params['title']?.first;
+  String url = params['url']?.first;
+  return WebViewPage(title: title, url: url);
+});
 
 // 主题页面
 var themeHandler = new Handler(
-    handlerFunc: (BuildContext context, Map<String,List<Object>> params){
-      return new ThemePage();
-    }
-);
+    handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
+  return new ThemePage();
+});
 
 // markdownWebView
 var markdownWebViewHandler = new Handler(
-    handlerFunc: (BuildContext context, Map<String,List<Object>> params){
-      String content = params['content']?.first;
-      String title = params['title']?.first;
-      return MarkdownWebViewPage(title: title, content: content);
-    }
-);
+    handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
+  String content = params['content']?.first;
+  String title = params['title']?.first;
+  return MarkdownWebViewPage(title: title, content: content);
+});

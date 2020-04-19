@@ -11,6 +11,8 @@ import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/personal_note_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 
+import 'global.dart';
+
 class Utils {
   static String getFormattedDateTime({@required DateTime dateTime}) {
     String day = '${dateTime.day}';
@@ -151,7 +153,13 @@ class Utils {
     for (int i = 0; i < imageUrls.length; i++) {
       await image2Base64(imageUrls[i]).then((data) {
         String newData = "";
-        newData = '<img  src="data:image/jpg;base64,$data"/>';
+        if(data==""){
+          print("返回来的图片打不开, 用占位图片替代!");
+          newData = '<img  src="data:image/jpg;base64,$BROKEN_IMAGE"/>';
+        }else{
+          newData = '<img  src="data:image/jpg;base64,$data"/>';
+        }
+
         //print("旧数据: " + imageUrls[i]);
         //print("替换成新的数据: " + newData);
         content = content.replaceAll(entireImageUrls[i], newData);
@@ -576,8 +584,13 @@ var md = window.markdownit({
   }
 
   static Future image2Base64(String path) async {
-    File file = new File(path);
-    List<int> imageBytes = await file.readAsBytes();
-    return base64Encode(imageBytes);
+    try{
+      File file = new File(path);
+      List<int> imageBytes = await file.readAsBytes();
+      return base64Encode(imageBytes);
+    }catch(e){
+     print("图片转换 base64 异常: " + e.toString());
+     return "";
+    }
   }
 }
