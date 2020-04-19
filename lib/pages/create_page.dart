@@ -120,9 +120,21 @@ class _CreatePageState extends State<CreatePage> {
                         String image_path = Application.sp.getString("appImagePath");
                         // 本地新增了图片才上传, 不然上传个鸡儿
                         // 如果没有_v_image , 记得新建这个目录
+                        bool needToUpdateImageFolderId = true;
                         if (newImagesList.length > 0){
                           print("create_page 本地新增加了图片!");
-                          String imageFolderId = _imageFolderId.imageFolderId;
+                          String imageFolderId;
+
+                          // 对于新建文件来说, 需要在这里遍历 dataList, 更新 imageFolderId
+                          for(Document d in dataListModel.dataList){
+                            if(d.name=="_v_images"){
+                              print("这是当前目录的 imageFolderId");
+                              print(d.id);
+                              _imageFolderId.updateImageFolderId(d.id);
+                              imageFolderId = _imageFolderId.imageFolderId;
+                            }
+                          }
+
                           print("create_page 当前的 imageFolderId: ");
                           print(imageFolderId);
                           if(imageFolderId == "noimagefolder" || imageFolderId==null){
@@ -155,9 +167,13 @@ class _CreatePageState extends State<CreatePage> {
                                   parentIdModel.parentId, doc);
                               print("接下来是更新这个 imageFolderId");
                               _imageFolderId.updateImageFolderId(id);
+                              needToUpdateImageFolderId = false;
                               imageFolderId = _imageFolderId.imageFolderId;
                             });
                           }
+
+
+
 
                           int repeatCount = 3; // 重复上传 3 次
 
@@ -293,6 +309,8 @@ class _CreatePageState extends State<CreatePage> {
                           String newFileName = jsonData["name"];
                           String dateString = jsonData['lastModifiedDateTime'];
                           DateTime date = DateTime.parse(dateString);
+                          print("要添加进去的 Document 的 imageFolderId: ");
+                          print(_imageFolderId.imageFolderId);
                           Document doc = new Document(
                               id: id,
                               configId: configId,
@@ -362,15 +380,19 @@ class _CreatePageState extends State<CreatePage> {
 
                         ConfigIdModel configIdModel =
                         Provider.of<ConfigIdModel>(context, listen: false);
+                        print("要写进_myNote.json 的 imageFolderId是: ");
+                        print(_imageFolderId.imageFolderId);
                         Map<String, dynamic> newFileMap =
-                        jsonDecode(Utils.newLocalFileJson(fileId,configIdModel.configId, fileName));
+                        jsonDecode(Utils.newLocalFileJson(fileId,configIdModel.configId, _imageFolderId.imageFolderId,fileName));
+                        print("这个 Map 的 imageFolderId 是:");
+                        print(newFileMap['image_folder_id']);
                         personalNoteModel.addNewFile(newFileMap);
                         LocalDocumentProvider localDocumentProvider =
                         Provider.of<LocalDocumentProvider>(context, listen: false);
 
                         Utils.writeModelToFile(personalNoteModel);
                         await Utils.model2ListDocument().then((data) {
-                          print("directory_page 这里拿到 _myNote.json 的数据");
+                          print("create_page 这里拿到 _myNote.json 的数据");
                           localDocumentProvider.updateList(data);
                         });
 

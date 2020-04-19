@@ -374,8 +374,9 @@ FileWidget getFileWidget(BuildContext context, {@required Document document}) =>
         ProgressDialog pr;
         pr = new ProgressDialog(context, isDismissible: true);
         pr.style(message: translate("waitTips"));
-        print("点击了 ${document.name} 文件");
-
+        print("note_page 点击了 ${document.name} 文件");
+        print("其 configId: " + document.configId);
+        print("其 imageFolderId: " + document.imageFolderId);
         // 转圈圈和下载 md 文件
         await pr.show().then((_) {
           _getMDFile(context, document, pr);

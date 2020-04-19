@@ -65,11 +65,13 @@ class Utils {
   }
 
   /// 用于点击文件的时候, 记录该内容到 _myNote.json
-  static String newLocalFileJson(String id, String configId, String fileName) {
+  static String newLocalFileJson(
+      String id, String configId, String imageFolderId, String fileName) {
     String time = Utils.getFormattedDateTimeForJson(dateTime: DateTime.now());
     String jsonData = '''{
     "id":"$id",
     "config_id":"$configId",
+    "image_folder_id":"$imageFolderId",
     "name":"$fileName",
     "modified_time":"$time"
 }''';
@@ -148,7 +150,7 @@ class Utils {
     }
     for (int i = 0; i < imageUrls.length; i++) {
       await image2Base64(imageUrls[i]).then((data) {
-        String newData="";
+        String newData = "";
         newData = '<img  src="data:image/jpg;base64,$data"/>';
         //print("旧数据: " + imageUrls[i]);
         //print("替换成新的数据: " + newData);
@@ -248,9 +250,12 @@ class Utils {
       print("本地没有笔记缓存");
       return null;
     }
-    print("本地有笔记缓存");
+    print("model2ListDocument 本地有笔记缓存");
     for (Files file in personalNoteModel.files) {
       //print("这个时间是: " + file.modifiedTime.toString());
+      print("读进来的名字和 imageFolderId");
+      print(file.name);
+      print(file.imageFolderId);
       Document temp = new Document(
           id: file.id,
           imageFolderId: file.imageFolderId,

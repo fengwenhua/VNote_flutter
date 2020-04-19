@@ -71,12 +71,12 @@ class _DirectoryPageState extends State<DirectoryPage>
         Provider.of<DataListModel>(context, listen: false);
 
     bool hasImageFolder = false;
-    final _imageFolderIdAndConfigIdModel =
+    final _imageFolderIdModel =
         Provider.of<ImageFolderIdModel>(context, listen: false);
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
         // 在这里拿到了 imageFolder 的 id, 即是 _v_images的 id
-        _imageFolderIdAndConfigIdModel.updateImageFolderId(d.id);
+        _imageFolderIdModel.updateImageFolderId(d.id);
         hasImageFolder = true;
         break;
       }
@@ -84,7 +84,7 @@ class _DirectoryPageState extends State<DirectoryPage>
 
     if (!hasImageFolder) {
       print("没有_v_images");
-      _imageFolderIdAndConfigIdModel.updateImageFolderId("noimagefolder");
+      _imageFolderIdModel.updateImageFolderId("noimagefolder");
     }
 
     // 测试 Application.sp.containsKey(document.id)
@@ -140,7 +140,7 @@ class _DirectoryPageState extends State<DirectoryPage>
           ConfigIdModel configIdModel =
           Provider.of<ConfigIdModel>(context, listen: false);
           Map<String, dynamic> newFileMap =
-              jsonDecode(Utils.newLocalFileJson(document.id,configIdModel.configId, document.name));
+              jsonDecode(Utils.newLocalFileJson(document.id,configIdModel.configId, _imageFolderIdModel.imageFolderId,document.name));
           personalNoteModel.addNewFile(newFileMap);
           LocalDocumentProvider localDocumentProvider =
               Provider.of<LocalDocumentProvider>(context, listen: false);
