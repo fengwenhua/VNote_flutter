@@ -312,14 +312,25 @@ class Utils {
   static getMarkdownHtml(String title, String content) async {
     String markdown_it_js;
     String high_js;
+    String footnote_js;
+    String toc_js;
     String htmlString;
     String cssString;
     await loadJS("highlight.min.js").then((data) {
       high_js = data;
+      print("high_js 赋值了");
     });
     await loadJS("markdown-it.min.js").then((data) {
       markdown_it_js = data;
       print("markdown_it_js 赋值了");
+    });
+    await loadJS("markdown-it-footnote.min.js").then((data) {
+      footnote_js = data;
+      print("footnote_js 赋值了");
+    });
+    await loadJS("markdown-it-toc.min.js").then((data) {
+      toc_js = data;
+      print("toc_js 赋值了");
     });
     await loadCss("monokai.css").then((data) {
       cssString = data;
@@ -333,14 +344,17 @@ class Utils {
     <meta charset="UTF-8">
     <title>$title</title>
     <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/10.0.0/markdown-it.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
+    <script type="text/javascript">$markdown_it_js</script>
+    <script type="text/javascript">$high_js</script>
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({tex2jax: {inlineMath: [['\$','\$'], ['\\\\(','\\\\)']]}});
     </script>
     <script type="text/javascript"
-      src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
+
+    <script type="text/javascript">$footnote_js</script>
+    <script type="text/javascript">$toc_js</script>
      <style type="text/css">$cssString</style>
      <style type="text/css">img{max-width:100%;} </style>
     <script type="text/javascript">
@@ -361,9 +375,8 @@ var md = window.markdownit({
 
     return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
   }
-
-
-});
+}).use(window.markdownitFootnote)
+.use(window.markdownitTOC);
 
     </script>
 </head>
