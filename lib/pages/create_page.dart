@@ -37,6 +37,7 @@ class _CreatePageState extends State<CreatePage> {
   String fileName;
   String fileId;
   var _nameController = new TextEditingController();
+  var controller = TextEditingController();
 
   @override
   void initState() {
@@ -473,6 +474,7 @@ class _CreatePageState extends State<CreatePage> {
             ),
             Expanded(
               child: MarkdownTextInput(
+                controller,
                 (String value) => setState(() => content = value),
                 content,
                 label: translate("edit.contentTips"),

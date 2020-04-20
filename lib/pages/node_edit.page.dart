@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:undo/undo.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -35,46 +35,15 @@ class NoteEditPage extends StatefulWidget {
 
 class _NoteEditPageState extends State<NoteEditPage> {
   String content;
+  String oldContent;
   ProgressDialog pr;
+  var changes = ChangeStack();
+  var controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     content = widget.markdownSource;
-  }
-
-  Future<void> showAlertDialog(BuildContext context) async {
-    await showDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            content: Text(translate("giveUpDialog.content")),
-            title: Center(
-                child: Text(
-              translate("giveUpDialog.title"),
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold),
-            )),
-            actions: <Widget>[
-              FlatButton(
-                  onPressed: () {
-                    print("点击了放弃修改的确定");
-                    Navigator.of(context).pop();
-                    Navigator.pop(context, widget.markdownSource);
-                  },
-                  child: Text(translate("giveUpDialog.ok"))),
-              FlatButton(
-                  onPressed: () {
-                    print("点击了放弃修改的取消");
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(translate("giveUpDialog.cancel"))),
-            ],
-          );
-        });
   }
 
   @override
@@ -99,11 +68,33 @@ class _NoteEditPageState extends State<NoteEditPage> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.undo),
-            onPressed: () {},
+            onPressed: !changes.canUndo
+                ? null
+                : () {
+                    //print("点击了撤销按钮");
+                    if (mounted)
+                      setState(() {
+                        changes.undo();
+                        print("撤销之后的内容如下: ");
+                        print(content);
+                        this.controller.text = content;
+                      });
+                  },
           ),
           IconButton(
             icon: Icon(Icons.redo),
-            onPressed: () {},
+            onPressed: !changes.canRedo
+                ? null
+                : () {
+                    //print("点击的恢复按钮");
+                    if (mounted)
+                      setState(() {
+                        changes.redo();
+                        print("恢复之后的内容如下: ");
+                        print(content);
+                        this.controller.text = content;
+                      });
+                  },
           ),
           IconButton(
             icon: Icon(Icons.remove_red_eye),
@@ -311,10 +302,59 @@ class _NoteEditPageState extends State<NoteEditPage> {
         ],
       ),
       body: MarkdownTextInput(
-        (String value) => setState(() => content = value),
+        controller,
+        (String value) {
+          setState(() {
+            oldContent = content;
+            content = value;
+            if (mounted && oldContent != content) {
+              print("提交");
+              changes.add(Change.property(
+                oldContent,
+                () => content = value,
+                (oldContent) => content = oldContent,
+              ));
+              changes.commit();
+            }
+          });
+        },
         content,
         label: translate("edit.contentTips"),
       ),
     );
+  }
+
+  Future<void> showAlertDialog(BuildContext context) async {
+    await showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Text(translate("giveUpDialog.content")),
+            title: Center(
+                child: Text(
+              translate("giveUpDialog.title"),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold),
+            )),
+            actions: <Widget>[
+              FlatButton(
+                  onPressed: () {
+                    print("点击了放弃修改的确定");
+                    Navigator.of(context).pop();
+                    Navigator.pop(context, widget.markdownSource);
+                  },
+                  child: Text(translate("giveUpDialog.ok"))),
+              FlatButton(
+                  onPressed: () {
+                    print("点击了放弃修改的取消");
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(translate("giveUpDialog.cancel"))),
+            ],
+          );
+        });
   }
 }

@@ -4,6 +4,7 @@ import 'format_markdown.dart';
 
 /// Widget with markdown buttons
 class MarkdownTextInput extends StatefulWidget {
+  final controller;
   /// Callback called when text changed
   final Function onTextChanged;
 
@@ -18,6 +19,7 @@ class MarkdownTextInput extends StatefulWidget {
 
   /// Constructor for [MarkdownTextInput]
   MarkdownTextInput(
+      this.controller,
     this.onTextChanged,
     this.initialValue, {
     this.label,
@@ -29,15 +31,15 @@ class MarkdownTextInput extends StatefulWidget {
 }
 
 class _MarkdownTextInputState extends State<MarkdownTextInput> {
-  final _controller = TextEditingController();
+
 
   void onTap(BuildContext context, MarkdownType type, {int titleSize = 1}) {
-    final basePosition = _controller.selection.baseOffset;
+    final basePosition = widget.controller.selection.baseOffset;
 
     FormatMarkdown.convertToMarkdown(
-        type, _controller.text, _controller.selection.baseOffset, _controller.selection.extentOffset,context,
+        type, widget.controller.text, widget.controller.selection.baseOffset, widget.controller.selection.extentOffset,context,
         titleSize: titleSize).then((result){
-      _controller.value = _controller.value
+      widget.controller.value = widget.controller.value
           .copyWith(text: result.data, selection: TextSelection.collapsed(offset: basePosition + result.cursorIndex));
     });
 
@@ -46,16 +48,16 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
 
   @override
   void initState() {
-    _controller.text = widget.initialValue;
-    _controller.addListener(() {
-      widget.onTextChanged(_controller.text);
+    widget.controller.text = widget.initialValue;
+    widget.controller.addListener(() {
+      widget.onTextChanged(widget.controller.text);
     });
     super.initState();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    widget.controller.dispose();
     super.dispose();
   }
 
@@ -76,7 +78,7 @@ class _MarkdownTextInputState extends State<MarkdownTextInput> {
               expands: true,
               maxLengthEnforced: false,
               enableInteractiveSelection: true,
-              controller: _controller,
+              controller: widget.controller,
               textCapitalization: TextCapitalization.sentences,
               validator: widget.validators != null ? (value) => widget.validators(value) as String : null,
               cursorColor: Theme.of(context).primaryColor,
