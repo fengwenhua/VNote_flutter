@@ -369,7 +369,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                     onPressed: onWillPop,
                   )),
         body:
-            dataListModel.dataList == null || dataListModel.dataList.length == 0
+            dataListModel.dataList == null || dataListModel.dataList.length == 0||dataListModel.getLength()==0
                 ? Center(
                     child: Text(translate("noNoteBookTips")),
                   )
