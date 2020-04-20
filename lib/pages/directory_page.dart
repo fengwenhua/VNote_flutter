@@ -272,7 +272,7 @@ class _DirectoryPageState extends State<DirectoryPage>
             });
           } else {
             Fluttertoast.showToast(
-                msg: "该文件夹内容为空",
+                msg: "该文件夹内容为空了, 不可能的!!!",
                 toastLength: Toast.LENGTH_LONG,
                 gravity: ToastGravity.BOTTOM,
                 timeInSecForIosWeb: 3,
