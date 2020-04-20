@@ -248,11 +248,16 @@ class SearchBarDelegate extends SearchDelegate<String> {
 //                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
 //            Application.router
 //                .navigateTo(context, route, transition: TransitionType.fadeIn);
-
+            ConfigIdModel configIdModel =
+            Provider.of<ConfigIdModel>(context, listen: false);
+            ImageFolderIdModel _imageFolderIdModel =
+            Provider.of<ImageFolderIdModel>(context, listen: false);
+            String configId = configIdModel.configId;
+            String imageFolderId = _imageFolderIdModel.imageFolderId;
             await Utils.getMarkdownHtml(
                 document.name, data.toString()).then((result){
               String route =
-                  '/markdownWebView?content=${Uri.encodeComponent(result.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
+                  '/markdownWebView?content=${Uri.encodeComponent(result.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
               Application.router
                   .navigateTo(context, route, transition: TransitionType.fadeIn);
             });
