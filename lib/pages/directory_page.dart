@@ -70,7 +70,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
     ConfigIdModel configIdModel =
-    Provider.of<ConfigIdModel>(context, listen: false);
+        Provider.of<ConfigIdModel>(context, listen: false);
     bool hasImageFolder = false;
     final _imageFolderIdModel =
         Provider.of<ImageFolderIdModel>(context, listen: false);
@@ -92,26 +92,26 @@ class _DirectoryPageState extends State<DirectoryPage>
     if (Application.sp.containsKey(document.id)) {
       // 本地有文档缓存
       print("使用本地文章缓存");
+      String configId = configIdModel.configId;
+      String imageFolderId = _imageFolderIdModel.imageFolderId;
       await Future.delayed(Duration(milliseconds: 100), () {
         prt.hide().whenComplete(() async {
           // 下面使用 markdown_webview
-          await Utils.getMarkdownHtml(
-                  document.name, Application.sp.getString(document.id))
-              .then((data) {
-                // 因为是在目录, 所以不管了, 直接用
-            String configId = configIdModel.configId;
-            String imageFolderId = _imageFolderIdModel.imageFolderId;
-
-            String route =
-                '/markdownWebView?content=${Uri.encodeComponent(data)}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-            Application.router
-                .navigateTo(context, route, transition: TransitionType.fadeIn);
-          });
+//          await Utils.getMarkdownHtml(
+//                  document.name, Application.sp.getString(document.id))
+//              .then((data) {
+//                // 因为是在目录, 所以不管了, 直接用
+//
+//            String route =
+//                '/markdownWebView?content=${Uri.encodeComponent(data)}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+//            Application.router
+//                .navigateTo(context, route, transition: TransitionType.fadeIn);
+//          });
           // 下面使用 flutter_markdown
-//          String route =
-//              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&type=${Uri.encodeComponent("0")}';
-//          Application.router
-//              .navigateTo(context, route, transition: TransitionType.fadeIn);
+          String route =
+              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+          Application.router
+              .navigateTo(context, route, transition: TransitionType.fadeIn);
         });
       });
     } else {
@@ -165,20 +165,19 @@ class _DirectoryPageState extends State<DirectoryPage>
             String configId = configIdModel.configId;
             String imageFolderId = _imageFolderIdModel.imageFolderId;
             // 下面是用 markdown_webveiw
-            await Utils.getMarkdownHtml(
-                document.name, data.toString()).then((res){
-              String route =
-                  '/markdownWebView?content=${Uri.encodeComponent(res.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-              Application.router
-                  .navigateTo(context, route, transition: TransitionType.fadeIn);
-            });
-
+//            await Utils.getMarkdownHtml(
+//                document.name, data.toString()).then((res){
+//              String route =
+//                  '/markdownWebView?content=${Uri.encodeComponent(res.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+//              Application.router
+//                  .navigateTo(context, route, transition: TransitionType.fadeIn);
+//            });
 
             // 下面是用 flutter_markdown
-//            String route =
-//                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
-//            Application.router
-//                .navigateTo(context, route, transition: TransitionType.fadeIn);
+            String route =
+                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+            Application.router
+                .navigateTo(context, route, transition: TransitionType.fadeIn);
           });
         }
       });
@@ -370,22 +369,23 @@ class _DirectoryPageState extends State<DirectoryPage>
                     ),
                     onPressed: onWillPop,
                   )),
-        body:
-            dataListModel.dataList == null || dataListModel.dataList.length == 0||dataListModel.getLength()==0
-                ? Center(
-                    child: Text(translate("noNoteBookTips")),
-                  )
-                : Scrollbar(
-                    child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      controller: controller,
-                      itemCount: dataListModel.getLength(),
-                      itemBuilder: (context, index) {
-                        return getListWidget(dataListModel.dataList)
-                            .elementAt(index);
-                      },
-                    ),
-                  ),
+        body: dataListModel.dataList == null ||
+                dataListModel.dataList.length == 0 ||
+                dataListModel.getLength() == 0
+            ? Center(
+                child: Text(translate("noNoteBookTips")),
+              )
+            : Scrollbar(
+                child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  controller: controller,
+                  itemCount: dataListModel.getLength(),
+                  itemBuilder: (context, index) {
+                    return getListWidget(dataListModel.dataList)
+                        .elementAt(index);
+                  },
+                ),
+              ),
       ),
     );
   }
@@ -786,7 +786,7 @@ class _DirectoryPageState extends State<DirectoryPage>
             // 4. 更新 _vnote.json
             fileOrFolderName = fileOrFolderName.trim(); //去空
             // 防止手贱将 md 干掉的情况
-            if(document.isFile){
+            if (document.isFile) {
               if (!fileOrFolderName.contains(".md")) {
                 fileOrFolderName += ".md";
               }
@@ -950,9 +950,11 @@ class _DirectoryPageState extends State<DirectoryPage>
                     dirCacheModel.addDirOrFileEle(parentIdModel.parentId, doc);
 
                     // 下面是更新当前目录的 _vnote.json 文件
-                    print("directory_page 此时的 configId: " );
+                    print("directory_page 此时的 configId: ");
                     print(configId);
-                    if (configId == "approot"||configId==null||configId=="null") {
+                    if (configId == "approot" ||
+                        configId == null ||
+                        configId == "null") {
                       print("根目录, 不需要更新 _vnote.json 文件");
                     } else {
                       print(
@@ -960,7 +962,8 @@ class _DirectoryPageState extends State<DirectoryPage>
 
                       await pr.hide();
                       pr = new ProgressDialog(this.context,
-                          type: ProgressDialogType.Download, isDismissible: true);
+                          type: ProgressDialogType.Download,
+                          isDismissible: true);
                       pr.style(
                         message: "1. 下载 _vnote.json",
                         progress: 40,
@@ -988,7 +991,8 @@ class _DirectoryPageState extends State<DirectoryPage>
 
                           await pr.hide();
                           pr = new ProgressDialog(this.context,
-                              type: ProgressDialogType.Download, isDismissible: true);
+                              type: ProgressDialogType.Download,
+                              isDismissible: true);
                           pr.style(
                             message: "2. 更新 _vnote.json",
                             progress: 80,

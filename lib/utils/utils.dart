@@ -12,6 +12,7 @@ import 'package:vnote/models/personal_note_model.dart';
 import 'package:vnote/provider/image_folder_id_model.dart';
 
 import 'global.dart';
+import 'log_util.dart';
 
 class Utils {
   static String getFormattedDateTime({@required DateTime dateTime}) {
@@ -140,8 +141,6 @@ class Utils {
       //由于group(0)保存了匹配信息，因此字符串的总长度为：分组数+1
       matchString = m.group(1);
       entireMatchString = m.group(0);
-      //print("路径: " + matchString);
-      //print("完整: " + entireMatchString);
       if (matchString.contains("/image/")) {
         //print("添加进来");
         imageUrls.add(matchString);
@@ -157,12 +156,15 @@ class Utils {
           print("返回来的图片打不开, 用占位图片替代!");
           newData = '<img  src="data:image/jpg;base64,$BROKEN_IMAGE"/>';
         }else{
+          // 先不用 base64 的方式
           newData = '<img  src="data:image/jpg;base64,$data"/>';
+          String path  = imageUrls[i];
+          //newData = "<img  src=\"$path\"/>";
+
         }
 
-        //print("旧数据: " + imageUrls[i]);
-        //print("替换成新的数据: " + newData);
-        content = content.replaceAll(entireImageUrls[i], newData);
+        // 这里替换
+        //content = content.replaceAll(entireImageUrls[i], newData);
       });
     }
 
@@ -336,6 +338,11 @@ class Utils {
       cssString = data;
     });
 
+    await getBase64Content(content).then((data) {
+      content = data;
+      print("替换成功!!!!");
+    });
+
     htmlString = '''
   <!DOCTYPE html>
 <html lang="en">
@@ -358,6 +365,10 @@ class Utils {
      <style type="text/css">$cssString</style>
      <style type="text/css">img{max-width:100%;} </style>
     <script type="text/javascript">
+    
+function returnSource(){
+  return document.documentElement.outerHTML;
+}
 // 初始化 markdownit
 var md = window.markdownit({
     html:true,
@@ -588,16 +599,15 @@ var md = window.markdownit({
     </script>
 
     <textarea name="" id="md-area"  style="display:none;">$content</textarea>
-    <div id="show-area" class="clearfix"></div>
+    <div id="show-area" class="clearfix">
+    </div>
+    <p><img src="/var/mobile/Containers/Data/Application/7E9CEDFD-FC8C-4D44-8613-B99C44D0DE03/Documents/image/1587385417744.png" alt="新图片"></p>
 </body>
 
 </html>
   ''';
 
-    await getBase64Content(htmlString).then((data) {
-      htmlString = data;
-      print("替换成功!!!!");
-    });
+
     //print(htmlString);
     return htmlString;
   }

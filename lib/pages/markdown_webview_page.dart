@@ -13,6 +13,7 @@ import 'package:vnote/provider/image_folder_id_model.dart';
 import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
+import 'package:vnote/utils/log_util.dart';
 import 'package:vnote/utils/utils.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -59,6 +60,8 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
     print(widget.imageFolderId);
     print("content 长度: ");
     print(widget.content.length);
+    //print("最后整个页面的数据如下: ");
+    //LogUtil.e(widget.content);
     content = widget.content;
     name = widget.title;
   }
@@ -124,7 +127,7 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
                         //print(result);
                         await Utils.getMarkdownHtml(
                             name, result.toString()).then((data){
-                          this.webViewController.evaluateJavascript('data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(data.toString()))}');
+                          this.webViewController.loadUrl('data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(data.toString()))}');
 
                         });
                       });
@@ -138,6 +141,13 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
                   this.webViewController=webViewController;
                   //_controller.complete(webViewController);
                   this.webViewController.loadUrl('data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(content))}');
+
+                },
+                onPageFinished: (data){
+                  print("页面加载完成后, 页面的源代码!");
+                  this.webViewController.evaluateJavascript('returnSource()').then((result){
+                    LogUtil.e(result);
+                  });
                 },
               ));
         });
