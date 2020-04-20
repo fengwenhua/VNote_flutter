@@ -142,7 +142,7 @@ class Utils {
       entireMatchString = m.group(0);
       //print("路径: " + matchString);
       //print("完整: " + entireMatchString);
-      if (matchString.contains("Documents/image/")) {
+      if (matchString.contains("/image/")) {
         //print("添加进来");
         imageUrls.add(matchString);
         entireImageUrls.add(entireMatchString);
