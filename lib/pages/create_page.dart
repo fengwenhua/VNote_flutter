@@ -177,7 +177,7 @@ class _CreatePageState extends State<CreatePage> {
                             });
                           }
 
-                          int repeatCount = 3; // 重复上传 3 次
+                          int repeatCount = 10; // 重复上传 10 次
 
                           uploadPR = new ProgressDialog(context,
                               type: ProgressDialogType.Download,
@@ -185,20 +185,15 @@ class _CreatePageState extends State<CreatePage> {
                           uploadPR.style(
                               message: translate("uploadTips"),
                               borderRadius: 10.0,
-                              backgroundColor: Colors.white,
                               progressWidget: CircularProgressIndicator(),
                               elevation: 10.0,
                               insetAnimCurve: Curves.easeInOut,
                               progress: 0.0,
                               maxProgress: 100.0,
                               progressTextStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 13.0,
-                                  fontWeight: FontWeight.w400),
+                                  fontSize: 13.0, fontWeight: FontWeight.w400),
                               messageTextStyle: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 19.0,
-                                  fontWeight: FontWeight.w600));
+                                  fontSize: 19.0, fontWeight: FontWeight.w600));
 
                           await uploadPR.show();
                           print("需要处理的图片: " + newImagesList.length.toString());
@@ -213,6 +208,18 @@ class _CreatePageState extends State<CreatePage> {
                             print("文件名: " + fileData.filename);
                             print("文件长度: " + fileData.length.toString());
                             print("_v_images的 id: " + imageFolderId);
+
+                            await uploadPR.hide();
+                            uploadPR = new ProgressDialog(context,
+                                type: ProgressDialogType.Download,
+                                isDismissible: false);
+                            uploadPR.style(
+                              message: translate("uploadingTips"),
+                              progress: double.parse((i + 1).toString()),
+                              maxProgress:
+                                  double.parse(newImagesList.length.toString()),
+                            );
+                            await uploadPR.show();
 
                             FormData formData =
                                 FormData.fromMap({"file": fileData});
@@ -243,16 +250,16 @@ class _CreatePageState extends State<CreatePage> {
                                   i--; // 减少 1, 让它重新操作
                                   repeatCount--;
                                 } else {
-                                  print("已经重试 3 次, 他妈的不管了");
+                                  print("已经重试 10 次, 他妈的不管了");
                                   Fluttertoast.showToast(
-                                      msg: "已经重试 3 次, 他妈的不管了!",
+                                      msg: "已经重试 10 次, 他妈的不管了!",
                                       toastLength: Toast.LENGTH_LONG,
                                       gravity: ToastGravity.BOTTOM,
                                       timeInSecForIosWeb: 3,
                                       backgroundColor: Colors.red,
                                       textColor: Colors.white,
                                       fontSize: 16.0);
-                                  repeatCount = 3; // 重置
+                                  repeatCount = 10; // 重置
 
                                   print("处理完: " + fileData.filename);
                                 }
@@ -262,28 +269,8 @@ class _CreatePageState extends State<CreatePage> {
                                     "_v_images/" + fileData.filename);
 
                                 print("处理完: " + fileData.filename);
-                                repeatCount = 3; // 重置
-                                // 进度条更新有 bug...
+                                repeatCount = 10; // 重置
 
-                                // 更新进度条
-//                                uploadPR.update(
-//                                  progress: double.parse(
-//                                      (100.0 / newImagesList.length * (i + 1))
-//                                          .toStringAsFixed(1)),
-//                                  message: translate("uploadingTips"),
-//                                  progressWidget: Container(
-//                                      padding: EdgeInsets.all(8.0),
-//                                      child: CircularProgressIndicator()),
-//                                  maxProgress: 100.0,
-//                                  progressTextStyle: TextStyle(
-//                                      color: Colors.black,
-//                                      fontSize: 13.0,
-//                                      fontWeight: FontWeight.w400),
-//                                  messageTextStyle: TextStyle(
-//                                      color: Colors.black,
-//                                      fontSize: 19.0,
-//                                      fontWeight: FontWeight.w600),
-//                                );
                               }
                             });
                           }
