@@ -162,11 +162,13 @@ class _DirectoryPageState extends State<DirectoryPage>
           });
 
           prt.hide().whenComplete(() async {
+            String configId = configIdModel.configId;
+            String imageFolderId = _imageFolderIdModel.imageFolderId;
             // 下面是用 markdown_webveiw
             await Utils.getMarkdownHtml(
                 document.name, data.toString()).then((res){
               String route =
-                  '/markdownWebView?content=${Uri.encodeComponent(res.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
+                  '/markdownWebView?content=${Uri.encodeComponent(res.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
               Application.router
                   .navigateTo(context, route, transition: TransitionType.fadeIn);
             });
