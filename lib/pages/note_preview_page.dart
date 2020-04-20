@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/config_id_model.dart';
@@ -49,14 +50,15 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
   }
 
   /// 点击更新按钮, 更新 md 文件
-  _updateMDFile(String id, String name, String configId, String imageFolderId) async {
+  _updateMDFile(
+      String id, String name, String configId, String imageFolderId) async {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     DataListModel dataListModel =
         Provider.of<DataListModel>(context, listen: false);
     final _imageFolderIdModel =
         Provider.of<ImageFolderIdModel>(context, listen: false);
     ConfigIdModel configIdModel =
-    Provider.of<ConfigIdModel>(context, listen: false);
+        Provider.of<ConfigIdModel>(context, listen: false);
     // 点进来, 可能是文件夹那里点, 也可能是笔记那里点
     print("直接赋值 configId 和 imageFolderId");
     configIdModel.updateConfigId(configId);
@@ -135,7 +137,8 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
               onPressed: () async {
                 print("点击刷新了");
                 await pr1.show().then((_) {
-                  _updateMDFile(widget.id, widget.name,widget.configId, widget.imageFolderId);
+                  _updateMDFile(widget.id, widget.name, widget.configId,
+                      widget.imageFolderId);
                 });
               },
             ),
@@ -164,7 +167,24 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
           ],
         ),
         body: Material(
-          child: Markdown(data: content),
+          child: Markdown(
+              data: content,
+              onTapLink: (link) async {
+                print("点击了链接!!!");
+                print(link);
+                if (await canLaunch(link)) {
+                  await launch(link);
+                } else {
+                  Fluttertoast.showToast(
+                      msg: "Could not launch $link",
+                      toastLength: Toast.LENGTH_LONG,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 3,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
+              }),
         ));
   }
 }
