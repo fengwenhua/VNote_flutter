@@ -432,9 +432,7 @@ class DocumentListUtil {
     }
 
     // 批量下载图片
-    int repeatCount = 3; // 重复下次三次
-
-    final previewContent = Provider.of<PreviewModel>(context, listen: false);
+    int repeatCount = 10; // 重复下次10次
 
     // 这里才是真的获取所需下载图片数量的地方
     // 可以在这里弹下载对话框
@@ -444,16 +442,13 @@ class DocumentListUtil {
     pr.style(
         message: '开始下载...',
         borderRadius: 10.0,
-        backgroundColor: Colors.white,
         progressWidget: CircularProgressIndicator(),
         elevation: 10.0,
         insetAnimCurve: Curves.easeInOut,
         progress: 0.0,
         maxProgress: 100.0,
-        progressTextStyle: TextStyle(
-            color: Colors.black, fontSize: 13.0, fontWeight: FontWeight.w400),
-        messageTextStyle: TextStyle(
-            color: Colors.black, fontSize: 19.0, fontWeight: FontWeight.w600));
+        progressTextStyle: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle: TextStyle(fontSize: 19.0, fontWeight: FontWeight.w600));
 
     await pr.show();
     print("处理的图片: " + imagesList.length.toString());
@@ -468,8 +463,8 @@ class DocumentListUtil {
             i--; // 减少 1, 让它重新操作
             repeatCount--;
           } else {
-            print("已经重试 3 次, down 不下来, 用指定图片替换!");
-            repeatCount = 3; // 重置
+            print("已经重试 10 次, down 不下来, 用指定图片替换!");
+            repeatCount = 10; // 重置
             // https://gitee.com/tamlok/vnote/raw/master/screenshots/vnote.png
             content = content.replaceAll("_v_images/" + imagesList[i].name,
                 "https://gitee.com/tamlok/vnote/raw/master/screenshots/vnote.png");
@@ -481,7 +476,7 @@ class DocumentListUtil {
           content = content.replaceAll("_v_images/" + imagesList[i].name,
               path + "/" + imagesList[i].name);
           print("处理完: " + imagesList[i].name);
-          repeatCount = 3; // 重置
+          repeatCount = 10; // 重置
 
           // 每处理一张, 更新一下
           //previewContent.updateContent(content);

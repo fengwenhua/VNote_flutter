@@ -63,6 +63,17 @@ class _WebViewState extends State<WebView> {
             fontSize: 16.0);
       }
 
+      if(url.contains("login.live.com/Me.htm")){
+        Fluttertoast.showToast(
+            msg: translate("requestLogin"),
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 3,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+
       if (url.contains("code=")) {
         // 这里要解析code出来
         String code = url?.split("code=")[1];
@@ -83,14 +94,15 @@ class _WebViewState extends State<WebView> {
     _onHttpError =
         webviewReference.onHttpError.listen((WebViewHttpError error) {
       print("出现错误?");
-      showAboutDialog(
-        context: context,
-        applicationName:'连接异常',
-        children: <Widget>[
-          Text('错误信息如下:'),
-          Text(error.toString()),
-        ],
-      );
+//      showAboutDialog(
+//        context: context,
+//        applicationName:'连接异常',
+//        children: <Widget>[
+//          Text('错误信息如下:'),
+//          Text(error.toString()),
+//        ],
+//      );
+
 //      Fluttertoast.showToast(
 //          msg: "连接异常: " + error.toString() ,
 //          toastLength: Toast.LENGTH_LONG,
