@@ -396,11 +396,16 @@ class _DirectoryPageState extends State<DirectoryPage>
         Provider.of<DataListModel>(context, listen: false);
     ConfigIdModel configIdModel =
         Provider.of<ConfigIdModel>(context, listen: false);
-    if (_parentId.parentId != "approot" ||
+    _parentId.goBackParentId();
+    dataListModel.goBackDataList();
+    print("返回的时候判断 genId: "  + _parentId.genId);
+    print("当前的 parentId: " + _parentId.parentId);
+    print("当前的 parentName: " + _parentId.parentName);
+
+    if (_parentId.parentName != "VNote 根目录" &&
         _parentId.parentId != _parentId.genId) {
       print("不在根目录");
-      _parentId.goBackParentId();
-      dataListModel.goBackDataList();
+
       for (Document d in dataListModel.dataList) {
         if (d.name == "_vnote.json") {
           configIdModel.updateConfigId(d.id);
@@ -412,7 +417,7 @@ class _DirectoryPageState extends State<DirectoryPage>
       print("在根目录了, 所有没有返回的操作了, 也不需要给 parentid 弹栈了");
       print("打开侧滑菜单");
       configIdModel.updateConfigId("approot");
-      Navigator.pop(context);
+      //Navigator.pop(context);
     }
     return false;
   }
@@ -442,6 +447,9 @@ class _DirectoryPageState extends State<DirectoryPage>
     childDocuments.removeWhere((s) {
       return BLACK_NAME.contains(s.name);
     });
+
+    print("去掉黑名单中不显示的, 还剩多少?");
+    print(childDocuments.length);
 
     return childDocuments.map((document) {
       //print("要处理的是: " + document.name);
@@ -938,8 +946,9 @@ class _DirectoryPageState extends State<DirectoryPage>
                     dirCacheModel.addDirOrFileEle(parentIdModel.parentId, doc);
 
                     // 下面是更新当前目录的 _vnote.json 文件
-
-                    if (configId == "approot") {
+                    print("directory_page 此时的 configId: " );
+                    print(configId);
+                    if (configId == "approot"||configId==null||configId=="null") {
                       print("根目录, 不需要更新 _vnote.json 文件");
                     } else {
                       print(

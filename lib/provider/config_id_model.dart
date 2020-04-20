@@ -8,6 +8,7 @@ class ConfigIdModel with ChangeNotifier {
 
   void updateConfigId(String newId) {
     print("更新了 configID ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    print(newId);
     _configId = newId;
     notifyListeners();
   }

@@ -12,18 +12,25 @@ class ParentIdModel with ChangeNotifier{
 
   void setGenId(String id){
     this._genId = id;
+    print("这里设置 vnote 根目录的 id 是: " + id);
     notifyListeners();
   }
 
   void goAheadParentId(String newId, String newName){
     _parentId.push(newId);
     _parentName.push(newName);
+    print("goAhead 之后");
+    print("此时 ParentId 是: " + newId);
+    print("此时 ParentName 是: " + newName);
     notifyListeners();
   }
 
   void goBackParentId(){
     _parentId.pop();
     _parentName.pop();
+    print("goBack 之后");
+    print("此时 ParentId 是: " + _parentId.top());
+    print("此时 ParentName 是: " + _parentName.top());
     notifyListeners();
   }
 }
