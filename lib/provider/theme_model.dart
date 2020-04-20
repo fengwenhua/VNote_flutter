@@ -42,7 +42,7 @@ class ThemeProvider extends ChangeNotifier {
   }
 
   getTheme({bool isDarkMode: false}) {
-    print("夜间模式?" + isDarkMode.toString());
+    //print("夜间模式?" + isDarkMode.toString());
     return ThemeData(
         errorColor: isDarkMode ? Colours.dark_red : Colours.red,
         brightness: isDarkMode ? Brightness.dark : Brightness.light,

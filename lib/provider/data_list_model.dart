@@ -21,8 +21,8 @@ class DataListModel with ChangeNotifier{
         length--;
       }
     });
-    print("重新计算 dataList 的长度是: ");
-    print(length);
+    //print("重新计算 dataList 的长度是: ");
+    //print(length);
     return length;
   }
 

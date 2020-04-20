@@ -398,9 +398,9 @@ class _DirectoryPageState extends State<DirectoryPage>
         Provider.of<ConfigIdModel>(context, listen: false);
     _parentId.goBackParentId();
     dataListModel.goBackDataList();
-    print("返回的时候判断 genId: "  + _parentId.genId);
-    print("当前的 parentId: " + _parentId.parentId);
-    print("当前的 parentName: " + _parentId.parentName);
+    //print("返回的时候判断 genId: "  + _parentId.genId);
+    //print("当前的 parentId: " + _parentId.parentId);
+    //print("当前的 parentName: " + _parentId.parentName);
 
     if (_parentId.parentName != "VNote 根目录" &&
         _parentId.parentId != _parentId.genId) {
@@ -448,8 +448,8 @@ class _DirectoryPageState extends State<DirectoryPage>
       return BLACK_NAME.contains(s.name);
     });
 
-    print("去掉黑名单中不显示的, 还剩多少?");
-    print(childDocuments.length);
+    //print("去掉黑名单中不显示的, 还剩多少?");
+    //print(childDocuments.length);
 
     return childDocuments.map((document) {
       //print("要处理的是: " + document.name);
