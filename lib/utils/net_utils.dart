@@ -53,7 +53,7 @@ class NetUtils {
         chucuo = true;
         _handError(errorCallBack, exception.toString());
         print("这个扑街异常是什么? " + exception.toString());
-        if(exception.toString().contains("404")){
+        if (exception.toString().contains("404")) {
           print("说明服务器没有这个资源");
           chucuo = false;
         }
@@ -94,7 +94,6 @@ class NetUtils {
           callBack(response.toString());
         }
         return response;
-
       } catch (exception) {
         chucuo = true;
         _handError(errorCallBack, exception.toString());
@@ -293,10 +292,20 @@ class NetUtils {
       } catch (exception) {
         chucuo = true;
         _handError(errorCallBack, exception.toString());
-        if(exception.toString().contains("[404]")){
+        if (exception.toString().contains("[404]")) {
           chucuo = false;
           Fluttertoast.showToast(
               msg: "该资源已经从服务器中删除了~~~",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 2,
+              backgroundColor: Colors.red,
+              textColor: Colors.white);
+        }
+        if (exception.toString().contains("[401]")) {
+          chucuo = false;
+          Fluttertoast.showToast(
+              msg: "token 过期了, 请重新打开本 app",
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.CENTER,
               timeInSecForIosWeb: 2,
@@ -313,9 +322,8 @@ class NetUtils {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 2,
-          backgroundColor:  Colors.red,
-          textColor:  Colors.white);
-
+          backgroundColor: Colors.red,
+          textColor: Colors.white);
     }
   }
 

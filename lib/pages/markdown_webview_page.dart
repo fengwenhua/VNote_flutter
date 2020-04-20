@@ -57,7 +57,8 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
     print(widget.configId);
     print("imageFolderId: ");
     print(widget.imageFolderId);
-
+    print("content 长度: ");
+    print(widget.content.length);
     content = widget.content;
     name = widget.title;
   }
@@ -123,7 +124,7 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
                         //print(result);
                         await Utils.getMarkdownHtml(
                             name, result.toString()).then((data){
-                          this.webViewController.loadUrl('data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(data.toString()))}');
+                          this.webViewController.evaluateJavascript('data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(data.toString()))}');
 
                         });
                       });
