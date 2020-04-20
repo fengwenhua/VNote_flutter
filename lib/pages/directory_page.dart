@@ -784,8 +784,10 @@ class _DirectoryPageState extends State<DirectoryPage>
             // 4. 更新 _vnote.json
             fileOrFolderName = fileOrFolderName.trim(); //去空
             // 防止手贱将 md 干掉的情况
-            if (!fileOrFolderName.contains(".md")) {
-              fileOrFolderName += ".md";
+            if(document.isFile){
+              if (!fileOrFolderName.contains(".md")) {
+                fileOrFolderName += ".md";
+              }
             }
             if (fileOrFolderName != "") {
               await pr.show().then((_) async {
