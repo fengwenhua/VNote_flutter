@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fluro/fluro.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
@@ -205,14 +207,14 @@ class _NotePageState extends State<NotePage> {
             await OneDriveDataDao.getFileContent(
                     context, tokenModel.token.accessToken, document.configId)
                 .then((value) async {
-                  await pr.hide();
-                  pr = new ProgressDialog(this.context,
-                      type: ProgressDialogType.Download, isDismissible: true);
-                  pr.style(
-                    message: "2. 更新 _vnote.json",
-                    progress: 80,
-                  );
-                  await pr.show();
+              await pr.hide();
+              pr = new ProgressDialog(this.context,
+                  type: ProgressDialogType.Download, isDismissible: true);
+              pr.style(
+                message: "2. 更新 _vnote.json",
+                progress: 80,
+              );
+              await pr.show();
               //pr.update(message: "2. 更新 _vnote.json", progress: 80);
               print("拿到的 _vnote.json 文件数据为: " + value.toString());
               print("要干掉的文件/文件夹名字: " + document.name);
@@ -421,18 +423,20 @@ _getMDFile(BuildContext context, Document document, ProgressDialog prt) async {
     print("使用本地文章缓存");
     await Future.delayed(Duration(milliseconds: 100), () {
       prt.hide().whenComplete(() async {
-        String route =
-            '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
-        Application.router
-            .navigateTo(context, route, transition: TransitionType.fadeIn);
-//        await Utils.getMarkdownHtml(
-//            document.name, Application.sp.getString(document.id)).then((data){
-//          String route =
-//              '/markdownWebView?content=${Uri.encodeComponent(data.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
-//          Application.router
-//              .navigateTo(context, route, transition: TransitionType.fadeIn);
-//        });
-
+        // 下面用 flutter_markdown
+//        String route =
+//            '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
+//        Application.router
+//            .navigateTo(context, route, transition: TransitionType.fadeIn);
+        // 下面用 webview_markdown
+        await Utils.getMarkdownHtml(
+                document.name, Application.sp.getString(document.id))
+            .then((htmlPath) {
+          String route =
+              '/markdownWebView?htmlPath=${Uri.encodeComponent(htmlPath.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
+          Application.router
+              .navigateTo(context, route, transition: TransitionType.fadeIn);
+        });
       });
     });
   } else {
@@ -461,19 +465,18 @@ _getMDFile(BuildContext context, Document document, ProgressDialog prt) async {
         // 这里需要跳转到预览页面
         print("跳转到预览页面");
         prt.hide().whenComplete(() async {
-          String route =
-              '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
-          Application.router
-              .navigateTo(context, route, transition: TransitionType.fadeIn);
-//          await Utils.getMarkdownHtml(
-//              document.name, data.toString()).then((res){
-//            String route =
-//                '/markdownWebView?content=${Uri.encodeComponent(res.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
-//            Application.router
-//                .navigateTo(context, route, transition: TransitionType.fadeIn);
-//          });
+//          String route =
+//              '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
+//          Application.router
+//              .navigateTo(context, route, transition: TransitionType.fadeIn);
 
-
+          await Utils.getMarkdownHtml(document.name, data.toString())
+              .then((htmlPath) {
+            String route =
+                '/markdownWebView?htmlPath=${Uri.encodeComponent(htmlPath.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(document.configId)}&imageFolderId=${Uri.encodeComponent(document.imageFolderId)}';
+            Application.router
+                .navigateTo(context, route, transition: TransitionType.fadeIn);
+          });
         });
       }
     });

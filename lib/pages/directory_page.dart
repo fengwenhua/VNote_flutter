@@ -97,21 +97,21 @@ class _DirectoryPageState extends State<DirectoryPage>
       await Future.delayed(Duration(milliseconds: 100), () {
         prt.hide().whenComplete(() async {
           // 下面使用 markdown_webview
-//          await Utils.getMarkdownHtml(
-//                  document.name, Application.sp.getString(document.id))
-//              .then((data) {
-//                // 因为是在目录, 所以不管了, 直接用
-//
-//            String route =
-//                '/markdownWebView?content=${Uri.encodeComponent(data)}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-//            Application.router
-//                .navigateTo(context, route, transition: TransitionType.fadeIn);
-//          });
+          await Utils.getMarkdownHtml(
+                  document.name, Application.sp.getString(document.id))
+              .then((htmlPath) {
+            // 因为是在目录, 所以不管了, 直接用
+
+            String route =
+                '/markdownWebView?htmlPath=${Uri.encodeComponent(htmlPath)}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+            Application.router
+                .navigateTo(context, route, transition: TransitionType.fadeIn);
+          });
           // 下面使用 flutter_markdown
-          String route =
-              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-          Application.router
-              .navigateTo(context, route, transition: TransitionType.fadeIn);
+//          String route =
+//              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+//          Application.router
+//              .navigateTo(context, route, transition: TransitionType.fadeIn);
         });
       });
     } else {
@@ -165,19 +165,19 @@ class _DirectoryPageState extends State<DirectoryPage>
             String configId = configIdModel.configId;
             String imageFolderId = _imageFolderIdModel.imageFolderId;
             // 下面是用 markdown_webveiw
-//            await Utils.getMarkdownHtml(
-//                document.name, data.toString()).then((res){
-//              String route =
-//                  '/markdownWebView?content=${Uri.encodeComponent(res.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-//              Application.router
-//                  .navigateTo(context, route, transition: TransitionType.fadeIn);
-//            });
+            await Utils.getMarkdownHtml(document.name, data.toString())
+                .then((htmlPath) {
+              String route =
+                  '/markdownWebView?htmlPath=${Uri.encodeComponent(htmlPath.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+              Application.router.navigateTo(context, route,
+                  transition: TransitionType.fadeIn);
+            });
 
             // 下面是用 flutter_markdown
-            String route =
-                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-            Application.router
-                .navigateTo(context, route, transition: TransitionType.fadeIn);
+//            String route =
+//                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+//            Application.router
+//                .navigateTo(context, route, transition: TransitionType.fadeIn);
           });
         }
       });

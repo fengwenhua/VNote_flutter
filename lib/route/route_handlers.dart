@@ -107,7 +107,7 @@ var webViewHandler = new Handler(
   return WebViewPage(title: title, url: url);
 });
 
-// 主题页面
+// 主题切换页面
 var themeHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
   return new ThemePage();
@@ -116,10 +116,15 @@ var themeHandler = new Handler(
 // markdownWebView
 var markdownWebViewHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
-  String content = params['content']?.first;
+  String content = params['htmlPath']?.first;
   String title = params['title']?.first;
   String id = params["id"].first;
   String configId = params["configId"].first;
   String imageFolderId = params["imageFolderId"].first;
-  return MarkdownWebViewPage(title: title, content: content, id: id, configId: configId,imageFolderId: imageFolderId);
+  return MarkdownWebViewPage(
+      title: title,
+      htmlPath: content,
+      id: id,
+      configId: configId,
+      imageFolderId: imageFolderId);
 });

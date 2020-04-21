@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
@@ -21,7 +23,7 @@ class MarkdownWebViewPage extends StatefulWidget {
   const MarkdownWebViewPage(
       {Key key,
       @required this.title,
-      @required this.content,
+      @required this.htmlPath,
       this.id,
       this.configId,
       this.imageFolderId})
@@ -31,18 +33,16 @@ class MarkdownWebViewPage extends StatefulWidget {
   final String configId;
   final String imageFolderId;
   final String title;
-  final String content;
+  final String htmlPath;
 
   @override
   _MarkdownWebViewPageState createState() => _MarkdownWebViewPageState();
 }
 
 class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
-  String content;
   String name;
   ProgressDialog pr1;
-  Completer<WebViewController> _controller =
-      Completer<WebViewController>();
+  Completer<WebViewController> _controller = Completer<WebViewController>();
   WebViewController webViewController;
 
   @override
@@ -59,10 +59,7 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
     print("imageFolderId: ");
     print(widget.imageFolderId);
     print("content 长度: ");
-    print(widget.content.length);
-    //print("最后整个页面的数据如下: ");
-    //LogUtil.e(widget.content);
-    content = widget.content;
+    print(widget.htmlPath.length);
     name = widget.title;
   }
 
@@ -125,10 +122,9 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
                           .then((result) async {
                         print("获取从编辑页面返回的数据");
                         //print(result);
-                        await Utils.getMarkdownHtml(
-                            name, result.toString()).then((data){
-                          this.webViewController.loadUrl('data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(data.toString()))}');
-
+                        await Utils.getMarkdownHtml(name, result.toString())
+                            .then((htmlPath) {
+                          this.webViewController.loadUrl(htmlPath.toString());
                         });
                       });
                     },
@@ -136,17 +132,22 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
                 ],
               ),
               body: WebView(
+                initialUrl: widget.htmlPath,
                 javascriptMode: JavascriptMode.unrestricted,
                 onWebViewCreated: (WebViewController webViewController) {
-                  this.webViewController=webViewController;
+                  this.webViewController = webViewController;
                   //_controller.complete(webViewController);
-                  this.webViewController.loadUrl('data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(content))}');
+                  //this.webViewController.loadUrl('data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(content))}');
 
+                  //this.webViewController.loadUrl(Uri.dataFromString(content, mimeType: 'text/html', encoding: Encoding.getByName('utf-8')).toString());
                 },
-                onPageFinished: (data){
+                onPageFinished: (data) {
                   print("页面加载完成后, 页面的源代码!");
-                  this.webViewController.evaluateJavascript('returnSource()').then((result){
-                    LogUtil.e(result);
+                  this
+                      .webViewController
+                      .evaluateJavascript('returnSource()')
+                      .then((result) {
+                    //LogUtil.e(result);
                   });
                 },
               ));
@@ -202,12 +203,9 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
         print("拿到更新的数据");
         pr1.hide().whenComplete(() async {
           // 这里需要修改
-          await Utils.getMarkdownHtml(
-              name, value.toString()).then((data){
-            this.webViewController.loadUrl('data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(data.toString()))}');
-
+          await Utils.getMarkdownHtml(name, value.toString()).then((htmlPath) {
+            this.webViewController.loadUrl(htmlPath.toString());
           });
-
         });
       }
     });

@@ -152,13 +152,13 @@ class Utils {
     for (int i = 0; i < imageUrls.length; i++) {
       await image2Base64(imageUrls[i]).then((data) {
         String newData = "";
-        if(data==""){
+        if (data == "") {
           print("返回来的图片打不开, 用占位图片替代!");
           newData = '<img  src="data:image/jpg;base64,$BROKEN_IMAGE"/>';
-        }else{
+        } else {
           // 先不用 base64 的方式
           newData = '<img  src="data:image/jpg;base64,$data"/>';
-          String path  = imageUrls[i];
+          String path = imageUrls[i];
           //newData = "<img  src=\"$path\"/>";
 
         }
@@ -311,6 +311,8 @@ class Utils {
     return cssFile;
   }
 
+  /// 根据[title]和[content]生成一个 html
+  /// return 该 html 的路径
   static getMarkdownHtml(String title, String content) async {
     String markdown_it_js;
     String high_js;
@@ -601,25 +603,37 @@ var md = window.markdownit({
     <textarea name="" id="md-area"  style="display:none;">$content</textarea>
     <div id="show-area" class="clearfix">
     </div>
-    <p><img src="/var/mobile/Containers/Data/Application/7E9CEDFD-FC8C-4D44-8613-B99C44D0DE03/Documents/image/1587385417744.png" alt="新图片"></p>
-</body>
+    </body>
 
 </html>
   ''';
 
-
+    // 将这个 html 写到 document 下, 看看行不行
+    print("尝试将内容写到 document 下的 index.html");
+    Directory docsDir;
+    if (Platform.isIOS) {
+      docsDir = await getApplicationDocumentsDirectory();
+    } else {
+      docsDir = await getApplicationSupportDirectory();
+    }
+    String path = docsDir.path;
+    String filename = 'index.html';
+    File okFile = File('$path/image/$filename');
+    await okFile.writeAsString(htmlString);
+    print("写完了");
     //print(htmlString);
-    return htmlString;
+    // 这里直接返回那个 html 的地址算了
+    return "file://$path/image/$filename";
   }
 
   static Future image2Base64(String path) async {
-    try{
+    try {
       File file = new File(path);
       List<int> imageBytes = await file.readAsBytes();
       return base64Encode(imageBytes);
-    }catch(e){
-     print("图片转换 base64 异常: " + e.toString());
-     return "";
+    } catch (e) {
+      print("图片转换 base64 异常: " + e.toString());
+      return "";
     }
   }
 }

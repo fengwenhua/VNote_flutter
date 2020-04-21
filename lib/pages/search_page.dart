@@ -198,27 +198,26 @@ class SearchBarDelegate extends SearchDelegate<String> {
       print("使用本地文章缓存");
       await Future.delayed(Duration(milliseconds: 100), () {
         prt.hide().whenComplete(() async {
-                    ConfigIdModel configIdModel =
-          Provider.of<ConfigIdModel>(context, listen: false);
+          ConfigIdModel configIdModel =
+              Provider.of<ConfigIdModel>(context, listen: false);
           ImageFolderIdModel _imageFolderIdModel =
-          Provider.of<ImageFolderIdModel>(context, listen: false);
+              Provider.of<ImageFolderIdModel>(context, listen: false);
           String configId = configIdModel.configId;
           String imageFolderId = _imageFolderIdModel.imageFolderId;
 
-          String route =
-              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&name=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-          Application.router
-              .navigateTo(context, route, transition: TransitionType.fadeIn);
+//          String route =
+//              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&name=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+//          Application.router
+//              .navigateTo(context, route, transition: TransitionType.fadeIn);
 
-
-//          await Utils.getMarkdownHtml(
-//              document.name, Application.sp.getString(document.id)).then((data){
-//            String route =
-//                '/markdownWebView?content=${Uri.encodeComponent(data.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-//            Application.router
-//                .navigateTo(context, route, transition: TransitionType.fadeIn);
-//          });
-
+          await Utils.getMarkdownHtml(
+                  document.name, Application.sp.getString(document.id))
+              .then((htmlPath) {
+            String route =
+                '/markdownWebView?htmlPath=${Uri.encodeComponent(htmlPath.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+            Application.router
+                .navigateTo(context, route, transition: TransitionType.fadeIn);
+          });
         });
       });
     } else {
@@ -247,25 +246,24 @@ class SearchBarDelegate extends SearchDelegate<String> {
           // 这里需要跳转到预览页面
           print("跳转到预览页面");
           prt.hide().whenComplete(() async {
-                        ConfigIdModel configIdModel =
-            Provider.of<ConfigIdModel>(context, listen: false);
+            ConfigIdModel configIdModel =
+                Provider.of<ConfigIdModel>(context, listen: false);
             ImageFolderIdModel _imageFolderIdModel =
-            Provider.of<ImageFolderIdModel>(context, listen: false);
+                Provider.of<ImageFolderIdModel>(context, listen: false);
             String configId = configIdModel.configId;
             String imageFolderId = _imageFolderIdModel.imageFolderId;
-            String route =
-                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-            Application.router
-                .navigateTo(context, route, transition: TransitionType.fadeIn);
+//            String route =
+//                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+//            Application.router
+//                .navigateTo(context, route, transition: TransitionType.fadeIn);
 
-//            await Utils.getMarkdownHtml(
-//                document.name, data.toString()).then((result){
-//              String route =
-//                  '/markdownWebView?content=${Uri.encodeComponent(result.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-//              Application.router
-//                  .navigateTo(context, route, transition: TransitionType.fadeIn);
-//            });
-
+            await Utils.getMarkdownHtml(document.name, data.toString())
+                .then((htmlPath) {
+              String route =
+                  '/markdownWebView?htmlPath=${Uri.encodeComponent(htmlPath.toString())}&title=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+              Application.router.navigateTo(context, route,
+                  transition: TransitionType.fadeIn);
+            });
           });
         }
       });

@@ -407,29 +407,29 @@ class _CreatePageState extends State<CreatePage> {
                         });
 
                         // 搞完进入预览页面, 销毁本页面
-                        String route =
-                            '/preview?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(fileId)}&name=${Uri.encodeComponent(fileName)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
-                        Application.router
-                            .navigateTo(context, route,
-                                transition: TransitionType.fadeIn)
-                            .then((result) {
-                          print("搞定直接滚");
-                          Navigator.of(context).pop();
-                        });
-
-//                        await Utils.getMarkdownHtml(
-//                                fileName, Application.sp.getString(fileId))
-//                            .then((data) {
-//                          String route =
-//                              '/markdownWebView?content=${Uri.encodeComponent(data.toString())}&title=${Uri.encodeComponent(fileName)}&id=${Uri.encodeComponent(fileId)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
-//                          Application.router
-//                              .navigateTo(context, route,
-//                                  transition: TransitionType.fadeIn)
-//                              .then((result) {
-//                            print("搞定直接滚");
-//                            Navigator.of(context).pop();
-//                          });
+//                        String route =
+//                            '/preview?content=${Uri.encodeComponent(content)}&id=${Uri.encodeComponent(fileId)}&name=${Uri.encodeComponent(fileName)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
+//                        Application.router
+//                            .navigateTo(context, route,
+//                                transition: TransitionType.fadeIn)
+//                            .then((result) {
+//                          print("搞定直接滚");
+//                          Navigator.of(context).pop();
 //                        });
+
+                        await Utils.getMarkdownHtml(
+                                fileName, Application.sp.getString(fileId))
+                            .then((htmlPath) {
+                          String route =
+                              '/markdownWebView?htmlPath=${Uri.encodeComponent(htmlPath.toString())}&title=${Uri.encodeComponent(fileName)}&id=${Uri.encodeComponent(fileId)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
+                          Application.router
+                              .navigateTo(context, route,
+                                  transition: TransitionType.fadeIn)
+                              .then((result) {
+                            print("搞定直接滚");
+                            Navigator.of(context).pop();
+                          });
+                        });
                       });
                     } else {
                       Fluttertoast.showToast(
