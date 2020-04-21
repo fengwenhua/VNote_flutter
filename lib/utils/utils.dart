@@ -171,10 +171,30 @@ class Utils {
     return content;
   }
 
+  /// 开局设置图片文件夹位置
+  /// 如果文件夹不存在咋办?
   static Future<void> setImageFolder() async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
+    Directory appDocDir;
+    if (Platform.isIOS) {
+      appDocDir = await getApplicationDocumentsDirectory();
+    } else {
+      appDocDir = await getApplicationSupportDirectory();
+    }
+
     String appDocPath = appDocDir.path;
     String appImagePath = appDocPath + '/image';
+
+    Directory directory = new Directory(appImagePath);
+    try {
+      bool exists = await directory.exists();
+      if (!exists) {
+        print("图片目录不存在 创建它");
+        await directory.create(recursive: true);
+      }
+    } catch (e) {
+      print(e);
+    }
+
     print("设置图片文件夹: " + appImagePath);
     Application.sp.setString("appImagePath", appImagePath);
   }
@@ -616,6 +636,7 @@ var md = window.markdownit({
     } else {
       docsDir = await getApplicationSupportDirectory();
     }
+
     String path = docsDir.path;
     String filename = 'index.html';
     File okFile = File('$path/image/$filename');

@@ -407,11 +407,8 @@ class DocumentListUtil {
         print("此时笔记内容是: ");
         //print(data);
         // 存入本地
-        print("存入本地, 顺便将图片路径也存一下");
+        print("存入本地");
         Application.sp.setString(id, data);
-
-
-        Application.sp.setString("appImagePath", appImagePath);
         print("##########################################");
 
         // 更新预览数据
