@@ -20,6 +20,7 @@ class Routes {
   static String webViewPage = '/webview';
   static String theme = '/theme';
   static String markdownWebView = "/markdownWebView";
+  static String update = "/update";
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = new Handler(
@@ -42,5 +43,6 @@ class Routes {
     router.define(webViewPage, handler: webViewHandler);
     router.define(theme, handler: themeHandler);
     router.define(markdownWebView, handler: markdownWebViewHandler);
+    router.define(update, handler: updateHandler);
   }
 }

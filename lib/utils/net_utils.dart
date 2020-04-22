@@ -312,6 +312,26 @@ class NetUtils {
               backgroundColor: Colors.red,
               textColor: Colors.white);
         }
+        if(exception.toString().contains("Connection reset by peer")){
+          chucuo = false;
+          Fluttertoast.showToast(
+              msg: "当前网络不行, 请求不完整",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 2,
+              backgroundColor: Colors.red,
+              textColor: Colors.white);
+        }
+        if(exception.toString().contains("Connection refused")){
+          chucuo = false;
+          Fluttertoast.showToast(
+              msg: "github 拒绝连接...待会再试试...",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 2,
+              backgroundColor: Colors.red,
+              textColor: Colors.white);
+        }
       }
       if (!chucuo) {
         break;

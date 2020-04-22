@@ -13,6 +13,7 @@ import 'package:vnote/pages/setting_page.dart';
 import 'package:vnote/pages/splash_screen_page.dart';
 import 'package:vnote/pages/theme_page.dart';
 import 'package:vnote/pages/tutorial_page.dart';
+import 'package:vnote/pages/update_page.dart';
 import 'package:vnote/pages/webview_page.dart';
 import 'package:vnote/widgets/tab_navigator.dart';
 
@@ -127,4 +128,14 @@ var markdownWebViewHandler = new Handler(
       id: id,
       configId: configId,
       imageFolderId: imageFolderId);
+});
+
+// 更新页面
+var updateHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
+      String name = params['name']?.first;
+      String downloadUrl = params['downloadUrl']?.first;
+      String content = params["content"].first;
+      String version = params["version"].first;
+  return new UpdatePage(name: name,downloadUrl: downloadUrl,content: content,version: version,);
 });
