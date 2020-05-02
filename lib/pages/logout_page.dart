@@ -13,7 +13,7 @@ class _LogoutPageState extends State<LogoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text('OneDrive注销', style: TextStyle(fontSize: fontSize40)),
+          title: Text('OneDrive注销并重新登录', style: TextStyle(fontSize: fontSize40)),
           leading: IconButton(
             icon: Icon(
               Icons.arrow_back,

@@ -85,6 +85,12 @@ class _WebViewState extends State<WebView> {
           return null;
         }
       }
+
+      if(url.contains("logoutsession")){
+        print("注销完成，可以去登录了");
+        // 这里应该要清空本地 token
+        webviewReference.reloadUrl("https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=fd49989c-b57c-49a4-9832-8172ae6a4162&scope=files.readwrite%20offline_access&response_type=code&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient");
+      }
     });
 
     _onStateChanged =
@@ -161,8 +167,8 @@ class _WebViewState extends State<WebView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            title: Text('OneDrive登录', style: TextStyle(fontSize: fontSize40)),),
+//        appBar: AppBar(
+//            title: Text('OneDrive登录', style: TextStyle(fontSize: fontSize40)),),
         body: WebviewScaffold(
       url: widget.url,
       withZoom: false,
