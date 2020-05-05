@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:undo/undo.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/desktop_config_model.dart';
@@ -33,11 +34,13 @@ class CreatePage extends StatefulWidget {
 // 前面加下划线即为内部类, 不能为外部访问
 class _CreatePageState extends State<CreatePage> {
   String content;
+  String oldContent;
   ProgressDialog pr;
   String fileName;
   String fileId;
   var _nameController = new TextEditingController();
   var controller = TextEditingController();
+  var changes = ChangeStack();
 
   @override
   void initState() {
@@ -80,6 +83,36 @@ class _CreatePageState extends State<CreatePage> {
             },
           ),
           actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.undo),
+              onPressed: !changes.canUndo
+                  ? null
+                  : () {
+                //print("点击了撤销按钮");
+                if (mounted)
+                  setState(() {
+                    changes.undo();
+                    //print("撤销之后的内容如下: ");
+                    //print(content);
+                    this.controller.text = content;
+                  });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.redo),
+              onPressed: !changes.canRedo
+                  ? null
+                  : () {
+                //print("点击的恢复按钮");
+                if (mounted)
+                  setState(() {
+                    changes.redo();
+                    //print("恢复之后的内容如下: ");
+                    //print(content);
+                    this.controller.text = content;
+                  });
+              },
+            ),
             IconButton(
                 icon: Icon(Icons.remove_red_eye),
                 color: Colors.white,
@@ -462,7 +495,21 @@ class _CreatePageState extends State<CreatePage> {
             Expanded(
               child: MarkdownTextInput(
                 controller,
-                (String value) => setState(() => content = value),
+                    (String value) {
+                  setState(() {
+                    oldContent = content;
+                    content = value;
+                    if (mounted && oldContent != content) {
+                      print("提交");
+                      changes.add(Change.property(
+                        oldContent,
+                            () => content = value,
+                            (oldContent) => content = oldContent,
+                      ));
+                      changes.commit();
+                    }
+                  });
+                },
                 content,
                 label: translate("edit.contentTips"),
               ),

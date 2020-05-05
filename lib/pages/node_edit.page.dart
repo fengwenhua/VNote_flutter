@@ -75,8 +75,8 @@ class _NoteEditPageState extends State<NoteEditPage> {
                     if (mounted)
                       setState(() {
                         changes.undo();
-                        print("撤销之后的内容如下: ");
-                        print(content);
+                        //print("撤销之后的内容如下: ");
+                        //print(content);
                         this.controller.text = content;
                       });
                   },
@@ -90,8 +90,8 @@ class _NoteEditPageState extends State<NoteEditPage> {
                     if (mounted)
                       setState(() {
                         changes.redo();
-                        print("恢复之后的内容如下: ");
-                        print(content);
+                        //print("恢复之后的内容如下: ");
+                        //print(content);
                         this.controller.text = content;
                       });
                   },
