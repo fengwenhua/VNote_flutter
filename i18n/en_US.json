@@ -92,6 +92,13 @@
     "ok": "ok",
     "cancel": "cancel"
   },
+  "linkDialog": {
+    "title": "warm reminder",
+    "linkNameTips": "Please input link name.",
+    "linkTips": "Please input link.",
+    "ok": "ok",
+    "cancel": "cancel"
+  },
   "permission": {
     "camera_access_denied": "camera_access_denied",
     "photo_access_denied": "photo_access_denied"

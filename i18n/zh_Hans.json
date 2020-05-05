@@ -92,6 +92,13 @@
     "ok": "确定",
     "cancel": "取消"
   },
+  "linkDialog": {
+    "title": "温馨提示",
+    "linkNameTips": "请输入链接名字",
+    "linkTips": "请输入链接",
+    "ok": "确定",
+    "cancel": "取消"
+  },
   "permission": {
     "camera_access_denied": "没有拍照权限",
     "photo_access_denied": "没有相册权限"

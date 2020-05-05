@@ -31,9 +31,37 @@ class FormatMarkdown {
       case MarkdownType.link:
         changedData =
             '[${data.substring(fromIndex, toIndex)}](${data.substring(fromIndex, toIndex)})';
+        return await _showLinkInputDialog(context).then((String res) {
+          print("返回来的整体是: " + res);
+          print("返回来的名字是: " + res.split("#####")[0]);
+          print("返回来的路径是: " + res.split("#####")[1]);
+          var linkName = res.split("#####")[0];
+          var link = res.split("#####")[1];
+
+          if (linkName == "" && link == "") {
+            changedData = "[]()";
+            cursorIndex = 3;
+          } else if (linkName == "" && link != "") {
+            changedData = "[]($link)";
+            cursorIndex = 1;
+          } else if (linkName != "" && link == "") {
+            changedData = "[$linkName]()";
+            cursorIndex = changedData.length - 1;
+          } else {
+            changedData = '[$linkName]($link)';
+            cursorIndex = changedData.length;
+          }
+          print("changeData 是: " + changedData);
+
+          return ResultMarkdown(
+              data.substring(0, fromIndex) +
+                  changedData +
+                  data.substring(toIndex, data.length),
+              cursorIndex);
+        });
         break;
       case MarkdownType.photo:
-        return await _showInputDialog(context).then((String res) {
+        return await _showPhotoInputDialog(context).then((String res) {
           print("返回来的整体是: " + res);
           print("返回来的名字是: " + res.split("#####")[0]);
           print("返回来的路径是: " + res.split("#####")[1]);
@@ -111,7 +139,87 @@ Widget _imageView(image) {
 
 enum Action { Ok, Cancel }
 
-Future<String> _showInputDialog(BuildContext context) async {
+/// 链接输入对话框
+Future<String> _showLinkInputDialog(BuildContext context) async {
+  String _link = "";
+  String _linkName = "";
+  final action = await showDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Text(translate("linkDialog.title")),
+          content:
+              new StatefulBuilder(builder: (context, StateSetter setState) {
+            return Card(
+              elevation: 0.0,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: translate("linkDialog.linkNameTips"),
+                        filled: true,
+                      ),
+                      onChanged: (String value) {
+                        print("输入的链接名: " + value);
+                        _linkName = value;
+                      },
+                    ),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: translate("linkDialog.linkTips"),
+                        filled: true,
+                      ),
+                      onChanged: (String value) {
+                        print("输入的链接: " + value);
+                        _link = value;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              onPressed: () {
+                print("取消链接");
+                Navigator.pop(context, Action.Cancel);
+              },
+              child: Text(translate("linkDialog.cancel")),
+            ),
+            CupertinoDialogAction(
+              onPressed: () {
+                print("确定链接");
+
+                Navigator.pop(context, Action.Ok);
+              },
+              child: Text(translate("linkDialog.ok")),
+            ),
+          ],
+        );
+      });
+  switch (action) {
+    case Action.Ok:
+      print(_linkName);
+      print(_link);
+      var linkName = _linkName?.trim() ?? "";
+      var link = _link?.trim() ?? "";
+      var temp = linkName + "#####" + link;
+      print("链接名字和链接: " + temp);
+      return temp;
+      break;
+    case Action.Cancel:
+      return "#####";
+      break;
+    default:
+      return "#####";
+      break;
+  }
+}
+
+/// 图片输入框
+Future<String> _showPhotoInputDialog(BuildContext context) async {
   File _image;
   var _imgName = "";
   final action = await showDialog(
@@ -194,8 +302,7 @@ Future<String> _showInputDialog(BuildContext context) async {
                     TextField(
                       decoration: InputDecoration(
                           hintText: translate("picDialog.tips"),
-                          filled: true,
-                          fillColor: Colors.grey.shade50),
+                          filled: true),
                       onChanged: (String value) {
                         print("输入内容是: " + value);
                         _imgName = value;
