@@ -264,23 +264,6 @@ class DocumentListUtil {
     return result;
   }
 
-  Future<OneDriveDataModel> _getDataFromNetwork(
-      BuildContext context, String token) async {
-    print("从网络获得数据");
-    OneDriveDataModel oneDriveDataModel;
-    await OneDriveDataDao.getAllData(context, token).then((value) {
-      if (value == null) {
-        print("value 真特么没有数据");
-      } else {
-        oneDriveDataModel =
-            OneDriveDataModel.fromJson(json.decode(value.toString()));
-        //print("Model内容如下:");
-        //print(json.encode(oneDriveDataModel));
-      }
-    });
-    return oneDriveDataModel;
-  }
-
   /// 从网络获取笔记本, 即第一层文件夹
   Future<OneDriveDataModel> _getNoteBookFromNetwork(
       BuildContext context, String token) async {
