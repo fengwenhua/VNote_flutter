@@ -143,7 +143,7 @@ class _WebViewState extends State<WebView> {
   }
 
   void getTokenAndGoHomePage(String code) async {
-    await OnedriveTokenDao.getToken(context, code).then((value) async {
+    await OneDriveTokenDao.getToken(context, code).then((value) async {
       // 拿到 token 之后, 应该获取根列表, 然后跳转到主页
       TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
       await getNotebook(tokenModel.token.accessToken).then((data){

@@ -116,7 +116,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
           fontSize: 16.0);
 
       // 本地有token, 应该刷新一下token, 然后跳到主页
-      await OnedriveTokenDao.refreshToken(
+      await OneDriveTokenDao.refreshToken(
               context, tokenModel.token.refreshToken)
           .then((value) async {
         if (value.data != -1) {

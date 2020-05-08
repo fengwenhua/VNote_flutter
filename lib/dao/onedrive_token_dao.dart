@@ -8,12 +8,11 @@ import 'package:vnote/provider/token_model.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
 
-import '../application.dart';
-
-const ONEDRIVE_TOKEN_URL =
+const oneDrive_token_url =
     'https://login.microsoftonline.com/common/oauth2/v2.0/token';
 
-class OnedriveTokenDao {
+class OneDriveTokenDao {
+  /// [getToken] 通过 [code] 获取 token
   static Future<Response> getToken(BuildContext context, String code) {
     Map<String, String> params = {
       "client_id": CLIENT_ID,
@@ -24,13 +23,14 @@ class OnedriveTokenDao {
 
     return NetUtils.instance.post(
         context,
-        ONEDRIVE_TOKEN_URL,
+        oneDrive_token_url,
         (data) {
           OneDriveTokenModel model =
               OneDriveTokenModel.fromJson(json.decode(data));
           print('获取token, 解析出来的结果如下:');
           print("access_token: " + model.accessToken);
-          TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
+          TokenModel tokenModel =
+              Provider.of<TokenModel>(context, listen: false);
           tokenModel.updateToken(model);
         },
         params: params,
@@ -40,6 +40,7 @@ class OnedriveTokenDao {
         });
   }
 
+  /// [refreshToken] 通过 [refreshToken] 刷新token
   static Future<Response> refreshToken(
       BuildContext context, String refreshToken) {
     Map<String, String> params = {
@@ -51,7 +52,7 @@ class OnedriveTokenDao {
 
     return NetUtils.instance.post(
         context,
-        ONEDRIVE_TOKEN_URL,
+        oneDrive_token_url,
         (data) {
           OneDriveTokenModel model =
               OneDriveTokenModel.fromJson(json.decode(data));
@@ -59,7 +60,8 @@ class OnedriveTokenDao {
           print('刷新token, 解析出来的结果如下:');
           print("access_token: " + model.accessToken);
 
-          TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
+          TokenModel tokenModel =
+              Provider.of<TokenModel>(context, listen: false);
           tokenModel.updateToken(model);
         },
         params: params,
