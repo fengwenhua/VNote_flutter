@@ -56,7 +56,7 @@ class ClickItem extends StatelessWidget {
               opacity: onTap == null ? 0 : 1,
               child: Padding(
                 padding: EdgeInsets.only(top: maxLines == 1 ? 0.0 : 2.0),
-                child: Image.asset('images/ic_arrow_right.png', height: 16.0, width: 16.0),
+                child: Image.asset('assets/images/ic_arrow_right.png', height: 16.0, width: 16.0),
               ),
             )
           ],

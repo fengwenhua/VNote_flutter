@@ -96,7 +96,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                         height: 60.0,
                         child: CircleAvatar(
                           backgroundColor: Colors.white,
-                          backgroundImage: ExactAssetImage('images/vnote.png'),
+                          backgroundImage: ExactAssetImage('assets/images/vnote.png'),
                         ),
                       ),
                     ),

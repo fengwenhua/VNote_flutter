@@ -322,12 +322,12 @@ class Utils {
   }
 
   static Future<String> loadJS(String name) async {
-    var givenJS = rootBundle.loadString('js/$name');
+    var givenJS = rootBundle.loadString('assets/js/$name');
     return givenJS;
   }
 
   static Future<String> loadCss(String name) async {
-    var cssFile = rootBundle.loadString('styles/$name');
+    var cssFile = rootBundle.loadString('assets/styles/$name');
     return cssFile;
   }
 

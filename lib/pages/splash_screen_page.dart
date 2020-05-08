@@ -175,7 +175,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
         width: double.infinity,
         child: ScaleTransition(
           scale: _logoAnimation,
-          child: Image.asset('images/vnote.png'),
+          child: Image.asset('assets/images/vnote.png'),
         ),
       ),
     );

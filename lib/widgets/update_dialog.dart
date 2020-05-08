@@ -74,7 +74,7 @@ class _UpdateDialogState extends State<UpdateDialog> {
                               topLeft: const Radius.circular(8.0),
                               topRight: const Radius.circular(8.0)),
                           image: DecorationImage(
-                            image: AssetImage('images/update_head.jpg'),
+                            image: AssetImage('assets/images/update_head.jpg'),
                             fit: BoxFit.cover,
                           ),
                         )),

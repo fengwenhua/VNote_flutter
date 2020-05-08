@@ -33,7 +33,7 @@ void main() async {
   var delegate = await LocalizationDelegate.create(
       preferences: TranslatePreferences(),
       fallbackLocale: 'zh_Hans',
-      basePath: 'i18n/',
+      basePath: 'assets/i18n/',
       supportedLocales: ['zh_Hans', 'en_US']);
 
   runApp(LocalizedApp(
