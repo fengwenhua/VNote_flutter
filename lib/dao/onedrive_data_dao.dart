@@ -6,19 +6,16 @@ import 'package:vnote/utils/net_utils.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-const ONEDRIVE_SPECIAL_FOLDER_URL =
-    "https://graph.microsoft.com/v1.0/me/drive/special/approot/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
-const TEST_URL = "https://httpbin.org/get";
-
 class OneDriveDataDao {
-  /// 获取第一层的文件夹作为笔记本
+  /// [getNoteBookData] 获取第一层的文件夹作为笔记本
   /// 列出应用文件夹子项：GET /drive/special/approot/children
-  static Future<Response> getNoteBookData(
-      BuildContext context, String p_token) {
-    Map<String, dynamic> headers = {"Authorization": p_token};
+  static Future<Response> getNoteBookData(BuildContext context, String token) {
+    Map<String, dynamic> headers = {"Authorization": token};
+    String url =
+        "https://graph.microsoft.com/v1.0/me/drive/special/approot/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
     return NetUtils.instance.get(
         context,
-        ONEDRIVE_SPECIAL_FOLDER_URL,
+        url,
         (data) {
           print('返回的json数据如下2:');
           print(data);
@@ -33,16 +30,16 @@ class OneDriveDataDao {
         });
   }
 
-  // 根据 id 获取儿子那一层
+  /// [getChildData] 是根据 [id] 获取该文件夹下面的文件和文件夹
   static Future<Response> getChildData(
       BuildContext context, String token, String id) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL =
+    String url =
         "https://graph.microsoft.com/v1.0/me/drive/items/$id/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
 
     return NetUtils.instance.get(
         context,
-        URL,
+        url,
         (data) {
           print('返回的json数据如下3:');
           print(data);
@@ -57,14 +54,14 @@ class OneDriveDataDao {
         });
   }
 
-  // 根据 id 获取 md 文件内容
+  /// [getFileContent] 根据 [id] 获取文件内容
   static Future<Response> getFileContent(
       BuildContext context, String token, String id) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/$id/content";
+    String url = "https://graph.microsoft.com/v1.0/me/drive/items/$id/content";
     return NetUtils.instance.get(
         context,
-        URL,
+        url,
         (data) {
           //print('返回文件内容如下:');
           //print(data);
@@ -77,17 +74,17 @@ class OneDriveDataDao {
         });
   }
 
-  /// 根据 _v_images 的 Id 返回所有图片id
+  /// [getImagesID] 根据 _v_images 的 [id] 返回所有图片id
   static Future<Response> getImagesID(
       BuildContext context, String token, String id) {
     print("根据 _v_images 的 Id 返回所有图片id");
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL =
+    String url =
         "https://graph.microsoft.com/v1.0/me/drive/items/$id/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
 
     return NetUtils.instance.get(
         context,
-        URL,
+        url,
         (data) {
           print('返回的json数据如下4:');
           print(data);
@@ -103,14 +100,14 @@ class OneDriveDataDao {
         });
   }
 
-  /// 根据图片 id 下载图片内容
+  /// [downloadImage] 根据图片 [id] 下载图片内容
   static Future<Response> downloadImage(
       BuildContext context, String token, String id, String path) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/$id/content";
+    String url = "https://graph.microsoft.com/v1.0/me/drive/items/$id/content";
     return NetUtils.instance.download(
         context,
-        URL,
+        url,
         (data) {
           print("拿到图片的二进制数据");
           return data;
@@ -158,7 +155,7 @@ class OneDriveDataDao {
     });
   }
 
-  /// 根据文章 id 和 content 更新文章内容
+  /// [updateContent] 根据文章 [id] 和 [content] 更新文章内容
   static Future<Response> updateContent(
       BuildContext context, String token, String id, String content) {
     Map<String, dynamic> headers = {"Authorization": token};
@@ -184,11 +181,11 @@ class OneDriveDataDao {
   static Future<Response> uploadFile(BuildContext context, String token,
       String parentId, dynamic content, String filename) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL =
+    String url =
         "https://graph.microsoft.com/v1.0/me/drive/items/$parentId:/$filename:/content";
     return NetUtils.instance.put(
         context,
-        URL,
+        url,
         (data) {
           //print("请求返回来的内容如下:");
           //print(data);
@@ -207,10 +204,10 @@ class OneDriveDataDao {
   static Future<Response> deleteFile(
       BuildContext context, String token, String id) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL = "https://graph.microsoft.com/v1.0/me/drive/items/$id";
+    String url = "https://graph.microsoft.com/v1.0/me/drive/items/$id";
     return NetUtils.instance.delete(
         context,
-        URL,
+        url,
         (data, status) {
           print("这里拿到的 status 是 " + status.toString());
           return status.toString();
@@ -256,12 +253,12 @@ class OneDriveDataDao {
   static Future<Response> createFolder(
       BuildContext context, String token, String folderName, String parentId) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String URL;
+    String url;
     if (parentId == "approot") {
-      URL =
+      url =
           "https://graph.microsoft.com/v1.0/me/drive/special/approot/children";
     } else {
-      URL =
+      url =
           "https://graph.microsoft.com/v1.0/me/drive/items/$parentId/children";
     }
 
@@ -273,7 +270,7 @@ class OneDriveDataDao {
 
     return NetUtils.instance.post(
         context,
-        URL,
+        url,
         (data) {
           print("创建文件夹返回来的数据: " + data.toString());
           return data;
