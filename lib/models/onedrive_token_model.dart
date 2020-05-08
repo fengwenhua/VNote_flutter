@@ -1,3 +1,4 @@
+/// [OneDriveTokenModel] 用于解析 OneDrive 返回关于 token 的内容
 class OneDriveTokenModel {
 	String accessToken;
 	String refreshToken;
