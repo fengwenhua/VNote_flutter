@@ -1,27 +1,28 @@
-import 'package:meta/meta.dart';
-
+/// [Document] 代表每个文件/文件夹
 class Document {
-  final String id;
+  /// [id] 为该文档的唯一标志
+  String id;
+
+  /// [name] 为该文档的名字
   String name;
-  final bool isFile;
-  final DateTime dateModified;
-  List<Document> childData;
-  Document parent;
+
+  /// [isFile] 判断该文档是否是文件
+  bool isFile;
+
+  /// [dateModified] 为文档的修改时间
+  DateTime dateModified;
+
+  /// [configId] 为文档对应的 _vnote.json 配置文件的 id
   String configId;
+
+  /// [imageFolderId] 为文档对应的 _v_images 文件夹的 id
   String imageFolderId;
-  //final List<Document> childFiles;
 
-  Document({
-    this.id,
-    this.configId,
-    @required this.name,
-    this.dateModified,
-    this.isFile = false,
-    this.parent,
-    this.childData,
-    this.imageFolderId
-  //  this.childFiles
-  });
-
-
+  Document(
+      {this.id,
+      this.configId,
+      this.name,
+      this.dateModified,
+      this.isFile = false,
+      this.imageFolderId});
 }
