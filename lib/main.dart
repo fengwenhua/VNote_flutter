@@ -26,10 +26,16 @@ void main() async {
   final router = new Router();
   Routes.configureRoutes(router);
   Application.router = router;
-  Application.setupLocator();
+
+  // 必须加入这一行，不然会报错
+  // 这是由于 Provider 只能提供恒定的数据，不能通知依赖它的子部件刷新。
+  // 提示也说的很清楚了，假如你想使用一个会发生 change 的 Provider，请使用下面的 Provider。
+  // 这里我选择使用 ChangeNotifierProvider
   Provider.debugCheckInvalidValueType = null;
+
   LogUtil.init(tag: "VNote");
 
+  // 国际化
   var delegate = await LocalizationDelegate.create(
       preferences: TranslatePreferences(),
       fallbackLocale: 'zh_Hans',
@@ -97,7 +103,6 @@ class MyApp extends StatelessWidget {
               supportedLocales: localizationDelegate.supportedLocales,
               locale: localizationDelegate.currentLocale,
               debugShowCheckedModeBanner: false, // 去除调试
-              navigatorKey: Application.getIt<NavigateService>().key,
               theme: provider.getTheme(),
               darkTheme: provider.getTheme(isDarkMode: true),
               themeMode: provider.getThemeMode(),
@@ -110,6 +115,8 @@ class MyApp extends StatelessWidget {
   }
 }
 
+/// CupertinoAlertDialog，点击弹出按键时报：The getter 'alertDialogLabel' was called on null
+/// 加入这个类，然后在 material 里的 localizationsDelegates 引用解决
 class FallbackCupertinoLocalisationsDelegate
     extends LocalizationsDelegate<CupertinoLocalizations> {
   const FallbackCupertinoLocalisationsDelegate();

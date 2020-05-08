@@ -37,7 +37,6 @@ dependencies:
   flutter_webview_plugin: ^0.3.11
   webview_flutter: ^0.3.19+9
   dio_cookie_manager: ^1.0.0
-  get_it: ^4.0.1
   flutter_markdown: ^0.3.4
   progress_dialog: ^1.2.2
   image_picker: ^0.6.5
