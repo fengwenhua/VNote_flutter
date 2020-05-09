@@ -830,7 +830,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                             await Utils.getPersonalNoteModel();
 
                         personalNoteModel.renameFile(
-                            oldFileOrFolderName, fileOrFolderName);
+                            document.id, fileOrFolderName);
                         LocalDocumentProvider localDocumentProvider =
                             Provider.of<LocalDocumentProvider>(this.context,
                                 listen: false);

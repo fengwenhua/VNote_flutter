@@ -346,7 +346,7 @@ class _NotePageState extends State<NotePage> {
                         await Utils.getPersonalNoteModel();
 
                     personalNoteModel.renameFile(
-                        oldFileOrFolderName, fileOrFolderName);
+                        document.id, fileOrFolderName);
                     LocalDocumentProvider localDocumentProvider =
                         Provider.of<LocalDocumentProvider>(this.context,
                             listen: false);
