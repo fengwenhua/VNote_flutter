@@ -88,7 +88,7 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     // 初始化shared_preferences
     await Application.initSp();
 
-    Provider.of<ThemeProvider>(context, listen: false).syncTheme();
+    Provider.of<ThemeProvider>(context, listen: false).initTheme();
     Utils.setImageFolder();
 
     LocalDocumentProvider localDocumentProvider =

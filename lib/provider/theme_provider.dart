@@ -5,6 +5,7 @@ import 'package:vnote/application.dart';
 import 'package:vnote/res/colors.dart';
 import 'package:vnote/res/styles.dart';
 
+/// [ThemeProvider] 用于设置主题
 class ThemeProvider extends ChangeNotifier {
   static const Map<ThemeMode, String> themes = {
     ThemeMode.dark: 'Dark',
@@ -12,9 +13,10 @@ class ThemeProvider extends ChangeNotifier {
     ThemeMode.system: 'System'
   };
 
-  void syncTheme() {
+  /// [initTheme] 用于初始化主题, 默认是跟随系统
+  void initTheme() {
     String theme = Application.sp.getString('AppTheme');
-    if(theme==null){
+    if (theme == null) {
       Application.sp.setString("AppTheme", "System");
       theme = "System";
     }
@@ -23,6 +25,7 @@ class ThemeProvider extends ChangeNotifier {
     }
   }
 
+  /// [setTheme] 用于设置主题
   void setTheme(ThemeMode themeMode) {
     Application.sp.setString('AppTheme', themes[themeMode]);
     notifyListeners();
@@ -41,6 +44,7 @@ class ThemeProvider extends ChangeNotifier {
     }
   }
 
+  /// [getTheme] 用于获取主题
   getTheme({bool isDarkMode: false}) {
     //print("夜间模式?" + isDarkMode.toString());
     return ThemeData(
@@ -60,10 +64,10 @@ class ThemeProvider extends ChangeNotifier {
         textSelectionHandleColor: Colours.app_main,
         textTheme: TextTheme(
           // TextField输入文字颜色
-          subhead: isDarkMode ? TextStyles.textDark : TextStyles.text,
+          subtitle1: isDarkMode ? TextStyles.textDark : TextStyles.text,
           // Text文字样式
-          body1: isDarkMode ? TextStyles.textDark : TextStyles.text,
-          subtitle:
+          bodyText2: isDarkMode ? TextStyles.textDark : TextStyles.text,
+          subtitle2:
               isDarkMode ? TextStyles.textDarkGray12 : TextStyles.textGray12,
         ),
         inputDecorationTheme: InputDecorationTheme(
