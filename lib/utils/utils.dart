@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/personal_note_model.dart';
-import 'package:vnote/provider/image_folder_id_model.dart';
+import 'package:vnote/provider/image_folder_id_provider.dart';
 
 import 'global.dart';
 import 'log_util.dart';

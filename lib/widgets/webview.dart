@@ -9,9 +9,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
-import 'package:vnote/provider/data_list_model.dart';
-import 'package:vnote/provider/dir_and_file_cache_model.dart';
-import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/provider/data_list_provider.dart';
+import 'package:vnote/provider/dir_and_file_cache_provider.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/navigator_util.dart';
@@ -124,7 +124,7 @@ class _WebViewState extends State<WebView> {
   /// 该方法在 splash_screen_page.dart 定义过一次
   Future<List<Document>> getNotebook(String accessToken) async{
     return await DocumentListUtil.instance.getNotebookList(context, accessToken, (list){
-      DirAndFileCacheModel dirCacheModel = Provider.of<DirAndFileCacheModel>(context, listen: false);
+      DirAndFileCacheProvider dirCacheModel = Provider.of<DirAndFileCacheProvider>(context, listen: false);
       if(list.length==0){
         print("笔记本莫得数据!");
         dirCacheModel.addDirAndFileList("approot", null);
@@ -133,7 +133,7 @@ class _WebViewState extends State<WebView> {
         list.forEach((i) {
           print(i.name);
         });
-        DataListModel dataListModel = Provider.of<DataListModel>(context, listen: false);
+        DataListProvider dataListModel = Provider.of<DataListProvider>(context, listen: false);
         dataListModel.goAheadDataList(list);
 
         dirCacheModel.addDirAndFileList("approot", list);

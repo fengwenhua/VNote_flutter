@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/models/onedrive_token_model.dart';
 
+/// [TokenModel] 用于存储 token
 class TokenModel with ChangeNotifier{
   OneDriveTokenModel _token;
   OneDriveTokenModel get token => _token;

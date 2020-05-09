@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
-import 'package:vnote/provider/theme_model.dart';
+import 'package:vnote/provider/theme_provider.dart';
 import 'package:vnote/res/colors.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/widgets/click_item.dart';

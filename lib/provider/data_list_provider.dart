@@ -3,8 +3,8 @@ import 'package:vnote/models/document_model.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/my_stack.dart';
 
-/// [DataListModel] 类, 使用栈操作当前目录需要显示的 data
-class DataListModel with ChangeNotifier {
+/// [DataListProvider] 类, 使用栈操作当前目录需要显示的 data
+class DataListProvider with ChangeNotifier {
   MyStack<List<Document>> _dataList = MyStack<List<Document>>();
   List<Document> get dataList {
     if (_dataList.isNotEmpty) {

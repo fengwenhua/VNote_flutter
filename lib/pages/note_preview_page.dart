@@ -6,10 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/models/document_model.dart';
-import 'package:vnote/provider/config_id_model.dart';
-import 'package:vnote/provider/data_list_model.dart';
-import 'package:vnote/provider/image_folder_id_model.dart';
-import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/provider/config_id_provider.dart';
+import 'package:vnote/provider/data_list_provider.dart';
+import 'package:vnote/provider/image_folder_id_provider.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -53,12 +53,12 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
   _updateMDFile(
       String id, String name, String configId, String imageFolderId) async {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
-    DataListModel dataListModel =
-        Provider.of<DataListModel>(context, listen: false);
+    DataListProvider dataListModel =
+        Provider.of<DataListProvider>(context, listen: false);
     final _imageFolderIdModel =
-        Provider.of<ImageFolderIdModel>(context, listen: false);
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
+        Provider.of<ImageFolderIdProvider>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
     // 点进来, 可能是文件夹那里点, 也可能是笔记那里点
     print("直接赋值 configId 和 imageFolderId");
     configIdModel.updateConfigId(configId);

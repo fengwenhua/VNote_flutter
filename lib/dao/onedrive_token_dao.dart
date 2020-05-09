@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/models/onedrive_token_model.dart';
-import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
 

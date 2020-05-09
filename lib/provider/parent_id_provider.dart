@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:vnote/utils/my_stack.dart';
 
-/// 存储当前目录的爸爸的 id, 用于刷新用
-class ParentIdModel with ChangeNotifier{
+/// [ParentIdProvider] 存储当前目录的爸爸的 id, 用于刷新用
+class ParentIdProvider with ChangeNotifier {
   MyStack<String> _parentId = MyStack<String>();
   MyStack<String> _parentName = MyStack<String>();
   String _genId = "";
@@ -10,13 +10,13 @@ class ParentIdModel with ChangeNotifier{
   String get parentName => _parentName.top();
   String get genId => _genId;
 
-  void setGenId(String id){
+  void setGenId(String id) {
     this._genId = id;
     print("这里设置 vnote 根目录的 id 是: " + id);
     notifyListeners();
   }
 
-  void goAheadParentId(String newId, String newName){
+  void goAheadParentId(String newId, String newName) {
     _parentId.push(newId);
     _parentName.push(newName);
     print("goAhead 之后");
@@ -25,7 +25,7 @@ class ParentIdModel with ChangeNotifier{
     notifyListeners();
   }
 
-  void goBackParentId(){
+  void goBackParentId() {
     _parentId.pop();
     _parentName.pop();
     print("goBack 之后");

@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/pages/splash_screen_page.dart';
-import 'package:vnote/provider/config_id_model.dart';
-import 'package:vnote/provider/data_list_model.dart';
-import 'package:vnote/provider/dir_and_file_cache_model.dart';
-import 'package:vnote/provider/image_folder_id_model.dart';
+import 'package:vnote/provider/config_id_provider.dart';
+import 'package:vnote/provider/data_list_provider.dart';
+import 'package:vnote/provider/dir_and_file_cache_provider.dart';
+import 'package:vnote/provider/image_folder_id_provider.dart';
 import 'package:vnote/provider/local_document_provider.dart';
-import 'package:vnote/provider/new_images_model.dart';
-import 'package:vnote/provider/parent_id_model.dart';
-import 'package:vnote/provider/preview_model.dart';
-import 'package:vnote/provider/theme_model.dart';
-import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/provider/new_images_provider.dart';
+import 'package:vnote/provider/parent_id_provider.dart';
+import 'package:vnote/provider/theme_provider.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/route/navigate_service.dart';
 import 'package:vnote/route/routes.dart';
@@ -49,26 +48,23 @@ void main() async {
           ChangeNotifierProvider<TokenModel>(
             create: (context) => TokenModel(),
           ),
-          ChangeNotifierProvider<DataListModel>(
-            create: (context) => DataListModel(),
+          ChangeNotifierProvider<DataListProvider>(
+            create: (context) => DataListProvider(),
           ),
-          ChangeNotifierProvider<PreviewModel>(
-            create: (context) => PreviewModel(),
+          ChangeNotifierProvider<NewImageListProvider>(
+            create: (context) => NewImageListProvider(),
           ),
-          ChangeNotifierProvider<NewImageListModel>(
-            create: (context) => NewImageListModel(),
+          ChangeNotifierProvider<ImageFolderIdProvider>(
+            create: (context) => ImageFolderIdProvider(),
           ),
-          ChangeNotifierProvider<ImageFolderIdModel>(
-            create: (context) => ImageFolderIdModel(),
+          ChangeNotifierProvider<ParentIdProvider>(
+            create: (context) => ParentIdProvider(),
           ),
-          ChangeNotifierProvider<ParentIdModel>(
-            create: (context) => ParentIdModel(),
+          ChangeNotifierProvider<ConfigIdProvider>(
+            create: (context) => ConfigIdProvider(),
           ),
-          ChangeNotifierProvider<ConfigIdModel>(
-            create: (context) => ConfigIdModel(),
-          ),
-          ChangeNotifierProvider<DirAndFileCacheModel>(
-            create: (context) => DirAndFileCacheModel(),
+          ChangeNotifierProvider<DirAndFileCacheProvider>(
+            create: (context) => DirAndFileCacheProvider(),
           ),
           ChangeNotifierProvider<ThemeProvider>(
             create: (context) => ThemeProvider(),

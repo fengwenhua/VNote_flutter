@@ -13,13 +13,13 @@ import 'package:vnote/models/desktop_config_model.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
 import 'package:vnote/models/personal_note_model.dart';
-import 'package:vnote/provider/config_id_model.dart';
-import 'package:vnote/provider/data_list_model.dart';
-import 'package:vnote/provider/dir_and_file_cache_model.dart';
-import 'package:vnote/provider/image_folder_id_model.dart';
+import 'package:vnote/provider/config_id_provider.dart';
+import 'package:vnote/provider/data_list_provider.dart';
+import 'package:vnote/provider/dir_and_file_cache_provider.dart';
+import 'package:vnote/provider/image_folder_id_provider.dart';
 import 'package:vnote/provider/local_document_provider.dart';
-import 'package:vnote/provider/parent_id_model.dart';
-import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/provider/parent_id_provider.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/utils.dart';
@@ -67,13 +67,13 @@ class _DirectoryPageState extends State<DirectoryPage>
   _getMDFile(Document document, ProgressDialog prt) async {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     // 这里
-    DataListModel dataListModel =
-        Provider.of<DataListModel>(context, listen: false);
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
+    DataListProvider dataListModel =
+        Provider.of<DataListProvider>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
     bool hasImageFolder = false;
     final _imageFolderIdModel =
-        Provider.of<ImageFolderIdModel>(context, listen: false);
+        Provider.of<ImageFolderIdProvider>(context, listen: false);
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
         // 在这里拿到了 imageFolder 的 id, 即是 _v_images的 id
@@ -144,8 +144,8 @@ class _DirectoryPageState extends State<DirectoryPage>
           // 然后再更新provider
           PersonalNoteModel personalNoteModel =
               await Utils.getPersonalNoteModel();
-          ConfigIdModel configIdModel =
-              Provider.of<ConfigIdModel>(context, listen: false);
+          ConfigIdProvider configIdModel =
+              Provider.of<ConfigIdProvider>(context, listen: false);
           Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
               document.id,
               configIdModel.configId,
@@ -190,14 +190,14 @@ class _DirectoryPageState extends State<DirectoryPage>
   _postData(String id, String name, {bool update = false}) async {
     // 获取当前 token
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
-    ParentIdModel parentIdModel =
-        Provider.of<ParentIdModel>(context, listen: false);
-    DataListModel dataListModel =
-        Provider.of<DataListModel>(context, listen: false);
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
-    DirAndFileCacheModel dirCacheModel =
-        Provider.of<DirAndFileCacheModel>(context, listen: false);
+    ParentIdProvider parentIdModel =
+        Provider.of<ParentIdProvider>(context, listen: false);
+    DataListProvider dataListModel =
+        Provider.of<DataListProvider>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
+    DirAndFileCacheProvider dirCacheModel =
+        Provider.of<DirAndFileCacheProvider>(context, listen: false);
     // 在根目录点击了更新
     if (id == "approot" || name == "VNote 根目录") {
       await DocumentListUtil.instance
@@ -300,16 +300,16 @@ class _DirectoryPageState extends State<DirectoryPage>
     //print("进入 directory_page 的 build 方法");
     pr = new ProgressDialog(context, isDismissible: true);
     pr.style(message: translate("waitTips"));
-    DataListModel dataListModel =
-        Provider.of<DataListModel>(context, listen: false);
+    DataListProvider dataListModel =
+        Provider.of<DataListProvider>(context, listen: false);
 
-    ParentIdModel parentIdModel =
-        Provider.of<ParentIdModel>(context, listen: false);
+    ParentIdProvider parentIdModel =
+        Provider.of<ParentIdProvider>(context, listen: false);
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
-    DirAndFileCacheModel dirCacheModel =
-        Provider.of<DirAndFileCacheModel>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
+    DirAndFileCacheProvider dirCacheModel =
+        Provider.of<DirAndFileCacheProvider>(context, listen: false);
     return WillPopScope(
       onWillPop: onWillPop,
       child: Scaffold(
@@ -392,12 +392,12 @@ class _DirectoryPageState extends State<DirectoryPage>
 
   Future<bool> onWillPop() async {
     // 退回, 所以要弹栈, 更新 ParentID
-    final _parentId = Provider.of<ParentIdModel>(context, listen: false);
+    final _parentId = Provider.of<ParentIdProvider>(context, listen: false);
 
-    DataListModel dataListModel =
-        Provider.of<DataListModel>(context, listen: false);
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
+    DataListProvider dataListModel =
+        Provider.of<DataListProvider>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
     _parentId.goBackParentId();
     dataListModel.goBackDataList();
     //print("返回的时候判断 genId: "  + _parentId.genId);
@@ -457,8 +457,8 @@ class _DirectoryPageState extends State<DirectoryPage>
       //print("要处理的是: " + document.name);
 
       TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
-      DataListModel dataListModel =
-          Provider.of<DataListModel>(context, listen: false);
+      DataListProvider dataListModel =
+          Provider.of<DataListProvider>(context, listen: false);
 
       // 目录
       return Slidable(
@@ -526,15 +526,15 @@ class _DirectoryPageState extends State<DirectoryPage>
       onPressedNext: () async {
         print("点开 ${document.name} 目录, 然后显示该目录下的所有文件");
         // 记得将这个 id 记录下来, 以后刷新用
-        final _parentId = Provider.of<ParentIdModel>(context, listen: false);
+        final _parentId = Provider.of<ParentIdProvider>(context, listen: false);
         _parentId.goAheadParentId(document.id, document.name);
 
-        DirAndFileCacheModel dirAndFileCacheModel =
-            Provider.of<DirAndFileCacheModel>(context, listen: false);
-        DataListModel dataListModel =
-            Provider.of<DataListModel>(context, listen: false);
-        ConfigIdModel configIdModel =
-            Provider.of<ConfigIdModel>(context, listen: false);
+        DirAndFileCacheProvider dirAndFileCacheModel =
+            Provider.of<DirAndFileCacheProvider>(context, listen: false);
+        DataListProvider dataListModel =
+            Provider.of<DataListProvider>(context, listen: false);
+        ConfigIdProvider configIdModel =
+            Provider.of<ConfigIdProvider>(context, listen: false);
         List<Document> cache =
             dirAndFileCacheModel.getDirAndFileCache(document.id);
         // 这里可以先查看本地缓存???
@@ -623,13 +623,13 @@ class _DirectoryPageState extends State<DirectoryPage>
   }
 
   Widget _deleteDialog(BuildContext context, Document document,
-      TokenModel tokenModel, DataListModel dataListModel) {
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
-    DirAndFileCacheModel dirCacheModel =
-        Provider.of<DirAndFileCacheModel>(context, listen: false);
-    ParentIdModel parentIdModel =
-        Provider.of<ParentIdModel>(context, listen: false);
+      TokenModel tokenModel, DataListProvider dataListModel) {
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
+    DirAndFileCacheProvider dirCacheModel =
+        Provider.of<DirAndFileCacheProvider>(context, listen: false);
+    ParentIdProvider parentIdModel =
+        Provider.of<ParentIdProvider>(context, listen: false);
     return AlertDialog(
       title: Text(translate("delDialog.name")),
       content: document.isFile
@@ -735,13 +735,13 @@ class _DirectoryPageState extends State<DirectoryPage>
   }
 
   Widget _renameDialog(BuildContext context, Document document,
-      TokenModel tokenModel, DataListModel dataListModel) {
-    DirAndFileCacheModel dirCacheModel =
-        Provider.of<DirAndFileCacheModel>(context, listen: false);
-    ParentIdModel parentIdModel =
-        Provider.of<ParentIdModel>(context, listen: false);
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
+      TokenModel tokenModel, DataListProvider dataListModel) {
+    DirAndFileCacheProvider dirCacheModel =
+        Provider.of<DirAndFileCacheProvider>(context, listen: false);
+    ParentIdProvider parentIdModel =
+        Provider.of<ParentIdProvider>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
     String fileOrFolderName = "";
     String oldFileOrFolderName = document.name;
     return CupertinoAlertDialog(
@@ -866,17 +866,17 @@ class _DirectoryPageState extends State<DirectoryPage>
 
   /// 添加目录的那个对话框
   Widget _addFolderDialog() {
-    DataListModel dataListModel =
-        Provider.of<DataListModel>(context, listen: false);
-    ParentIdModel parentIdModel =
-        Provider.of<ParentIdModel>(context, listen: false);
+    DataListProvider dataListModel =
+        Provider.of<DataListProvider>(context, listen: false);
+    ParentIdProvider parentIdModel =
+        Provider.of<ParentIdProvider>(context, listen: false);
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
-    DirAndFileCacheModel dirCacheModel =
-        Provider.of<DirAndFileCacheModel>(context, listen: false);
-    ImageFolderIdModel _imageFolderId =
-        Provider.of<ImageFolderIdModel>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
+    DirAndFileCacheProvider dirCacheModel =
+        Provider.of<DirAndFileCacheProvider>(context, listen: false);
+    ImageFolderIdProvider _imageFolderId =
+        Provider.of<ImageFolderIdProvider>(context, listen: false);
     String folderName = "";
     return CupertinoAlertDialog(
       title: Text(translate("createDialog.title")),

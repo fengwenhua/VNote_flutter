@@ -15,13 +15,13 @@ import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/desktop_config_model.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/personal_note_model.dart';
-import 'package:vnote/provider/config_id_model.dart';
-import 'package:vnote/provider/data_list_model.dart';
-import 'package:vnote/provider/dir_and_file_cache_model.dart';
-import 'package:vnote/provider/image_folder_id_model.dart';
+import 'package:vnote/provider/config_id_provider.dart';
+import 'package:vnote/provider/data_list_provider.dart';
+import 'package:vnote/provider/dir_and_file_cache_provider.dart';
+import 'package:vnote/provider/image_folder_id_provider.dart';
 import 'package:vnote/provider/local_document_provider.dart';
-import 'package:vnote/provider/parent_id_model.dart';
-import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/provider/parent_id_provider.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -51,8 +51,8 @@ class _NotePageState extends State<NotePage> {
       maxProgress: 100.0,
     );
 
-    DataListModel dataListModel =
-        Provider.of<DataListModel>(context, listen: false);
+    DataListProvider dataListModel =
+        Provider.of<DataListProvider>(context, listen: false);
 
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
 
@@ -167,13 +167,13 @@ class _NotePageState extends State<NotePage> {
   }
 
   Widget _deleteDialog(BuildContext context, Document document,
-      TokenModel tokenModel, DataListModel dataListModel) {
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
-    DirAndFileCacheModel dirCacheModel =
-        Provider.of<DirAndFileCacheModel>(context, listen: false);
-    ParentIdModel parentIdModel =
-        Provider.of<ParentIdModel>(context, listen: false);
+      TokenModel tokenModel, DataListProvider dataListModel) {
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
+    DirAndFileCacheProvider dirCacheModel =
+        Provider.of<DirAndFileCacheProvider>(context, listen: false);
+    ParentIdProvider parentIdModel =
+        Provider.of<ParentIdProvider>(context, listen: false);
     return AlertDialog(
       title: Text(translate("delDialog.name")),
       content: document.isFile
@@ -257,13 +257,13 @@ class _NotePageState extends State<NotePage> {
   }
 
   Widget _renameDialog(BuildContext context, Document document,
-      TokenModel tokenModel, DataListModel dataListModel) {
-    DirAndFileCacheModel dirCacheModel =
-        Provider.of<DirAndFileCacheModel>(context, listen: false);
-    ParentIdModel parentIdModel =
-        Provider.of<ParentIdModel>(context, listen: false);
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
+      TokenModel tokenModel, DataListProvider dataListModel) {
+    DirAndFileCacheProvider dirCacheModel =
+        Provider.of<DirAndFileCacheProvider>(context, listen: false);
+    ParentIdProvider parentIdModel =
+        Provider.of<ParentIdProvider>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
     String fileOrFolderName = "";
     String oldFileOrFolderName = document.name;
     return CupertinoAlertDialog(
@@ -398,12 +398,12 @@ FileWidget getFileWidget(BuildContext context, {@required Document document}) =>
 _getMDFile(BuildContext context, Document document, ProgressDialog prt) async {
   TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
   // 这里
-  DataListModel dataListModel =
-      Provider.of<DataListModel>(context, listen: false);
+  DataListProvider dataListModel =
+      Provider.of<DataListProvider>(context, listen: false);
 
   bool hasImageFolder = false;
   final _imageFolderIdAndConfigIdModel =
-      Provider.of<ImageFolderIdModel>(context, listen: false);
+      Provider.of<ImageFolderIdProvider>(context, listen: false);
   for (Document d in dataListModel.dataList) {
     if (d.name == "_v_images") {
       // 在这里拿到了 imageFolder 的 id, 即是 _v_images的 id

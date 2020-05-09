@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:vnote/models/document_model.dart';
 
-/// [DirAndFileCacheModel]是目录缓存
+/// [DirAndFileCacheProvider]是目录缓存
 /// 在首页 id 为 approot
 /// 其他的每点进去一个目录, 记录其 id 和 list
-class DirAndFileCacheModel with ChangeNotifier {
+class DirAndFileCacheProvider with ChangeNotifier {
   Map<String, List<Document>> _dirCache = new Map<String, List<Document>>();
 
   /// [getDirAndFileCache]判断缓存是否存在该 [id]
@@ -17,6 +17,7 @@ class DirAndFileCacheModel with ChangeNotifier {
     }
   }
 
+  /// [addDirAndFileList]
   void addDirAndFileList(String id, List<Document> list) {
     //this._dirCache.putIfAbsent(id, ()=>list);
     this._dirCache[id] = list;
@@ -39,14 +40,14 @@ class DirAndFileCacheModel with ChangeNotifier {
   void addDirOrFileEle(String parentId, Document newEle) {
     //print("传入 model 的 id 是: " + id);
     List<Document> cur = this._dirCache[parentId];
-    if(cur==null){
+    if (cur == null) {
       // 根目录没有数据
       print("根目录没有数据");
       cur = new List<Document>();
       cur.add(newEle);
       this._dirCache[parentId] = cur;
       notifyListeners();
-    }else{
+    } else {
       if (!cur.contains(newEle)) {
         print("cache 中没有这个元素!");
         cur.add(newEle);
@@ -54,13 +55,12 @@ class DirAndFileCacheModel with ChangeNotifier {
         notifyListeners();
       }
     }
-
   }
 
-  void renameEle(String parentId, String id, String name){
+  void renameEle(String parentId, String id, String name) {
     List<Document> cur = this._dirCache[parentId];
-    List<Document> newList = cur.map((f){
-      if(f.id == id){
+    List<Document> newList = cur.map((f) {
+      if (f.id == id) {
         f.name = name;
         print("DirCache 重命名");
       }

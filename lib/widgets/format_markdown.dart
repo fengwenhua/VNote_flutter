@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
-import 'package:vnote/provider/new_images_model.dart';
+import 'package:vnote/provider/new_images_provider.dart';
 
 /// Use this class for converting String to [ResultMarkdown]
 class FormatMarkdown {
@@ -368,7 +368,7 @@ Future<String> _showPhotoInputDialog(BuildContext context) async {
       String newPath = imgPath + Platform.pathSeparator + newName;
       return await file.copy(newPath).then((_) {
         final _newImageList =
-            Provider.of<NewImageListModel>(context, listen: false);
+            Provider.of<NewImageListProvider>(context, listen: false);
         _newImageList.addImage(newPath);
 
         var temp = _imgName.trim() + "#####" + newPath.trim();

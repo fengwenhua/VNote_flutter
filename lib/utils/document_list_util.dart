@@ -11,12 +11,11 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
-import 'package:vnote/provider/config_id_model.dart';
-import 'package:vnote/provider/dir_and_file_cache_model.dart';
-import 'package:vnote/provider/image_folder_id_model.dart';
-import 'package:vnote/provider/parent_id_model.dart';
-import 'package:vnote/provider/preview_model.dart';
-import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/provider/config_id_provider.dart';
+import 'package:vnote/provider/dir_and_file_cache_provider.dart';
+import 'package:vnote/provider/image_folder_id_provider.dart';
+import 'package:vnote/provider/parent_id_provider.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/utils/utils.dart';
 
 import 'global.dart';
@@ -70,8 +69,8 @@ class DocumentListUtil {
       {bool fromNetwork = false}) async {
     List<Document> result = new List<Document>();
     OneDriveDataModel oneDriveDataModel;
-    DirAndFileCacheModel dirCacheModel =
-    Provider.of<DirAndFileCacheModel>(context, listen: false);
+    DirAndFileCacheProvider dirCacheModel =
+    Provider.of<DirAndFileCacheProvider>(context, listen: false);
     oneDriveDataModel = await _getNoteBookFromNetwork(context, token);
     if (oneDriveDataModel != null) {
       print("拿到 oneDriveDataModel");
@@ -116,10 +115,10 @@ class DocumentListUtil {
           isFile = true;
         }
       }
-      ConfigIdModel configIdModel =
-      Provider.of<ConfigIdModel>(context, listen: false);
-      ImageFolderIdModel _imageFolderId =
-      Provider.of<ImageFolderIdModel>(context, listen: false);
+      ConfigIdProvider configIdModel =
+      Provider.of<ConfigIdProvider>(context, listen: false);
+      ImageFolderIdProvider _imageFolderId =
+      Provider.of<ImageFolderIdProvider>(context, listen: false);
       Document temp = new Document(
           id: value.id,
           configId: configIdModel.configId,
@@ -145,10 +144,10 @@ class DocumentListUtil {
     print("要找的图片大小: " + imageUrls.length.toString());
 
     final _imageFolderId =
-        Provider.of<ImageFolderIdModel>(context, listen: false);
+        Provider.of<ImageFolderIdProvider>(context, listen: false);
     String imageFolderId = _imageFolderId.imageFolderId;
-    ConfigIdModel configIdModel =
-    Provider.of<ConfigIdModel>(context, listen: false);
+    ConfigIdProvider configIdModel =
+    Provider.of<ConfigIdProvider>(context, listen: false);
 
     print("此时的 imageFolderId: ");
     print(imageFolderId);
@@ -275,8 +274,8 @@ class DocumentListUtil {
       } else {
         oneDriveDataModel =
             OneDriveDataModel.fromJson(json.decode(value.toString()));
-        ParentIdModel parentIdModel =
-            Provider.of<ParentIdModel>(context, listen: false);
+        ParentIdProvider parentIdModel =
+            Provider.of<ParentIdProvider>(context, listen: false);
 
         String genId;
         if (oneDriveDataModel.value.length == 0) {
@@ -290,8 +289,8 @@ class DocumentListUtil {
         parentIdModel.goAheadParentId(genId, "VNote 根目录");
         parentIdModel.setGenId(genId);
         print("同时设置_vnote.json 的 id, 当然, 因为这里是第一层, 没有这文件, 所以设置默认是 approot");
-        ConfigIdModel configIdModel =
-            Provider.of<ConfigIdModel>(context, listen: false);
+        ConfigIdProvider configIdModel =
+            Provider.of<ConfigIdProvider>(context, listen: false);
         configIdModel.updateConfigId("approot");
 
       }

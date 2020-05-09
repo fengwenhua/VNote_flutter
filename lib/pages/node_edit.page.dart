@@ -9,13 +9,13 @@ import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
-import 'package:vnote/provider/config_id_model.dart';
-import 'package:vnote/provider/data_list_model.dart';
-import 'package:vnote/provider/dir_and_file_cache_model.dart';
-import 'package:vnote/provider/image_folder_id_model.dart';
-import 'package:vnote/provider/new_images_model.dart';
-import 'package:vnote/provider/parent_id_model.dart';
-import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/provider/config_id_provider.dart';
+import 'package:vnote/provider/data_list_provider.dart';
+import 'package:vnote/provider/dir_and_file_cache_provider.dart';
+import 'package:vnote/provider/image_folder_id_provider.dart';
+import 'package:vnote/provider/new_images_provider.dart';
+import 'package:vnote/provider/parent_id_provider.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/widgets/markdown_text_input.dart';
 
 class NoteEditPage extends StatefulWidget {
@@ -120,15 +120,15 @@ class _NoteEditPageState extends State<NoteEditPage> {
 
                 // 获取到 newImageList
                 final _newImageList =
-                    Provider.of<NewImageListModel>(context, listen: false);
+                    Provider.of<NewImageListProvider>(context, listen: false);
                 final _imageFolderId =
-                    Provider.of<ImageFolderIdModel>(context, listen: false);
-                ParentIdModel parentIdModel =
-                    Provider.of<ParentIdModel>(context, listen: false);
-                DataListModel dataListModel =
-                    Provider.of<DataListModel>(context, listen: false);
-                DirAndFileCacheModel dirAndFileCacheModel =
-                    Provider.of<DirAndFileCacheModel>(context, listen: false);
+                    Provider.of<ImageFolderIdProvider>(context, listen: false);
+                ParentIdProvider parentIdModel =
+                    Provider.of<ParentIdProvider>(context, listen: false);
+                DataListProvider dataListModel =
+                    Provider.of<DataListProvider>(context, listen: false);
+                DirAndFileCacheProvider dirAndFileCacheModel =
+                    Provider.of<DirAndFileCacheProvider>(context, listen: false);
                 // 本地增加的所有图片
                 List<String> newImagesList = _newImageList.newImageList;
 
@@ -154,8 +154,8 @@ class _NoteEditPageState extends State<NoteEditPage> {
                       String newFolderName = jsonData["name"];
                       String dateString = jsonData['lastModifiedDateTime'];
                       DateTime date = DateTime.parse(dateString);
-                      ConfigIdModel configIdModel =
-                          Provider.of<ConfigIdModel>(context, listen: false);
+                      ConfigIdProvider configIdModel =
+                          Provider.of<ConfigIdProvider>(context, listen: false);
                       Document doc = new Document(
                           id: id,
                           configId: configIdModel.configId,

@@ -8,12 +8,12 @@ import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
-import 'package:vnote/provider/data_list_model.dart';
-import 'package:vnote/provider/dir_and_file_cache_model.dart';
+import 'package:vnote/provider/data_list_provider.dart';
+import 'package:vnote/provider/dir_and_file_cache_provider.dart';
 import 'package:vnote/provider/local_document_provider.dart';
-import 'package:vnote/provider/parent_id_model.dart';
-import 'package:vnote/provider/theme_model.dart';
-import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/provider/parent_id_provider.dart';
+import 'package:vnote/provider/theme_provider.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/navigator_util.dart';
@@ -64,10 +64,10 @@ class _SplashScreenPageState extends State<SplashScreenPage>
   Future<List<Document>> getNotebook(String accessToken) async {
     return await DocumentListUtil.instance.getNotebookList(context, accessToken,
         (list) {
-      ParentIdModel parentIdModel =
-          Provider.of<ParentIdModel>(context, listen: false);
-      DirAndFileCacheModel dirCacheModel =
-          Provider.of<DirAndFileCacheModel>(context, listen: false);
+      ParentIdProvider parentIdModel =
+          Provider.of<ParentIdProvider>(context, listen: false);
+      DirAndFileCacheProvider dirCacheModel =
+          Provider.of<DirAndFileCacheProvider>(context, listen: false);
       if (list.length == 0) {
         print("笔记本没有数据!");
         dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
@@ -76,8 +76,8 @@ class _SplashScreenPageState extends State<SplashScreenPage>
         list.forEach((i) {
           print(i.name);
         });
-        DataListModel dataListModel =
-            Provider.of<DataListModel>(context, listen: false);
+        DataListProvider dataListModel =
+            Provider.of<DataListProvider>(context, listen: false);
         dataListModel.goAheadDataList(list);
         dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
       }

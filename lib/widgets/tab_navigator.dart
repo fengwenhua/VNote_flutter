@@ -8,8 +8,8 @@ import 'package:vnote/pages/create_page.dart';
 import 'package:vnote/pages/directory_page.dart';
 import 'package:vnote/pages/note_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:vnote/provider/data_list_model.dart';
-import 'package:vnote/provider/parent_id_model.dart';
+import 'package:vnote/provider/data_list_provider.dart';
+import 'package:vnote/provider/parent_id_provider.dart';
 import 'package:vnote/utils/navigator_util.dart';
 import 'package:vnote/pages/search_page.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -58,8 +58,8 @@ class _TabNavigatorState extends State<TabNavigator> {
                 onPressed: () {
                   print('FloatingActionButton');
                   // 这里应该点击进入 create 页面
-                  ParentIdModel parentIdModel =
-                      Provider.of<ParentIdModel>(context, listen: false);
+                  ParentIdProvider parentIdModel =
+                      Provider.of<ParentIdProvider>(context, listen: false);
                   if (parentIdModel.parentId == parentIdModel.genId) {
                     print("在根目录, 没办法新建文件");
                     Fluttertoast.showToast(
@@ -203,8 +203,8 @@ class _TabNavigatorState extends State<TabNavigator> {
                 )),
           ],
         ),
-        body: Consumer<DataListModel>(
-          builder: (context, DataListModel model, _) => PageView(
+        body: Consumer<DataListProvider>(
+          builder: (context, DataListProvider model, _) => PageView(
             onPageChanged: _pageChange,
             controller: _controller,
             children: <Widget>[NotePage(), DirectoryPage(), SearchPage()],

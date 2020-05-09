@@ -13,14 +13,14 @@ import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/desktop_config_model.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/personal_note_model.dart';
-import 'package:vnote/provider/config_id_model.dart';
-import 'package:vnote/provider/data_list_model.dart';
-import 'package:vnote/provider/dir_and_file_cache_model.dart';
-import 'package:vnote/provider/image_folder_id_model.dart';
+import 'package:vnote/provider/config_id_provider.dart';
+import 'package:vnote/provider/data_list_provider.dart';
+import 'package:vnote/provider/dir_and_file_cache_provider.dart';
+import 'package:vnote/provider/image_folder_id_provider.dart';
 import 'package:vnote/provider/local_document_provider.dart';
-import 'package:vnote/provider/new_images_model.dart';
-import 'package:vnote/provider/parent_id_model.dart';
-import 'package:vnote/provider/token_model.dart';
+import 'package:vnote/provider/new_images_provider.dart';
+import 'package:vnote/provider/parent_id_provider.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/utils.dart';
 import 'package:vnote/widgets/markdown_text_input.dart';
@@ -50,18 +50,18 @@ class _CreatePageState extends State<CreatePage> {
   @override
   Widget build(BuildContext context) {
     TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
-    ParentIdModel parentIdModel =
-        Provider.of<ParentIdModel>(context, listen: false);
-    NewImageListModel _newImageList =
-        Provider.of<NewImageListModel>(context, listen: false);
-    ImageFolderIdModel _imageFolderId =
-        Provider.of<ImageFolderIdModel>(context, listen: false);
-    DataListModel dataListModel =
-        Provider.of<DataListModel>(context, listen: false);
-    DirAndFileCacheModel dirAndFileCacheModel =
-        Provider.of<DirAndFileCacheModel>(context, listen: false);
-    ConfigIdModel configIdModel =
-        Provider.of<ConfigIdModel>(context, listen: false);
+    ParentIdProvider parentIdModel =
+        Provider.of<ParentIdProvider>(context, listen: false);
+    NewImageListProvider _newImageList =
+        Provider.of<NewImageListProvider>(context, listen: false);
+    ImageFolderIdProvider _imageFolderId =
+        Provider.of<ImageFolderIdProvider>(context, listen: false);
+    DataListProvider dataListModel =
+        Provider.of<DataListProvider>(context, listen: false);
+    DirAndFileCacheProvider dirAndFileCacheModel =
+        Provider.of<DirAndFileCacheProvider>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
 
     pr = new ProgressDialog(context);
     pr.style(message: translate("createFileTips"));
@@ -191,8 +191,8 @@ class _CreatePageState extends State<CreatePage> {
                               String dateString =
                                   jsonData['lastModifiedDateTime'];
                               DateTime date = DateTime.parse(dateString);
-                              ConfigIdModel configIdModel =
-                                  Provider.of<ConfigIdModel>(context,
+                              ConfigIdProvider configIdModel =
+                                  Provider.of<ConfigIdProvider>(context,
                                       listen: false);
                               Document doc = new Document(
                                   id: id,
@@ -416,8 +416,8 @@ class _CreatePageState extends State<CreatePage> {
                         PersonalNoteModel personalNoteModel =
                             await Utils.getPersonalNoteModel();
 
-                        ConfigIdModel configIdModel =
-                            Provider.of<ConfigIdModel>(context, listen: false);
+                        ConfigIdProvider configIdModel =
+                            Provider.of<ConfigIdProvider>(context, listen: false);
                         print("要写进_myNote.json 的 imageFolderId是: ");
                         print(_imageFolderId.imageFolderId);
                         Map<String, dynamic> newFileMap = jsonDecode(
