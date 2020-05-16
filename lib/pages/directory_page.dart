@@ -564,6 +564,8 @@ class _DirectoryPageState extends State<DirectoryPage>
         onPressedNext: () async {
           print("点击了 ${document.name} 文件");
 
+          pr = new ProgressDialog(context, isDismissible: true);
+          pr.style(message: translate("waitTips"));
           // 转圈圈和下载 md 文件
           await pr.show().then((_) {
             _getMDFile(document, pr);

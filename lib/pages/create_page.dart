@@ -13,6 +13,7 @@ import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/desktop_config_model.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/personal_note_model.dart';
+import 'package:vnote/pages/markdown_webview_page.dart';
 import 'package:vnote/provider/config_id_provider.dart';
 import 'package:vnote/provider/data_list_provider.dart';
 import 'package:vnote/provider/dir_and_file_cache_provider.dart';
@@ -88,30 +89,30 @@ class _CreatePageState extends State<CreatePage> {
               onPressed: !changes.canUndo
                   ? null
                   : () {
-                //print("点击了撤销按钮");
-                if (mounted)
-                  setState(() {
-                    changes.undo();
-                    //print("撤销之后的内容如下: ");
-                    //print(content);
-                    this.controller.text = content;
-                  });
-              },
+                      //print("点击了撤销按钮");
+                      if (mounted)
+                        setState(() {
+                          changes.undo();
+                          //print("撤销之后的内容如下: ");
+                          //print(content);
+                          this.controller.text = content;
+                        });
+                    },
             ),
             IconButton(
               icon: Icon(Icons.redo),
               onPressed: !changes.canRedo
                   ? null
                   : () {
-                //print("点击的恢复按钮");
-                if (mounted)
-                  setState(() {
-                    changes.redo();
-                    //print("恢复之后的内容如下: ");
-                    //print(content);
-                    this.controller.text = content;
-                  });
-              },
+                      //print("点击的恢复按钮");
+                      if (mounted)
+                        setState(() {
+                          changes.redo();
+                          //print("恢复之后的内容如下: ");
+                          //print(content);
+                          this.controller.text = content;
+                        });
+                    },
             ),
             IconButton(
                 icon: Icon(Icons.remove_red_eye),
@@ -417,7 +418,8 @@ class _CreatePageState extends State<CreatePage> {
                             await Utils.getPersonalNoteModel();
 
                         ConfigIdProvider configIdModel =
-                            Provider.of<ConfigIdProvider>(context, listen: false);
+                            Provider.of<ConfigIdProvider>(context,
+                                listen: false);
                         print("要写进_myNote.json 的 imageFolderId是: ");
                         print(_imageFolderId.imageFolderId);
                         Map<String, dynamic> newFileMap = jsonDecode(
@@ -453,6 +455,18 @@ class _CreatePageState extends State<CreatePage> {
                         await Utils.getMarkdownHtml(
                                 fileName, Application.sp.getString(fileId))
                             .then((htmlPath) {
+                          // 销毁式跳转
+//                          Navigator.of(context).pushAndRemoveUntil(
+//                              MaterialPageRoute(
+//                                  builder: (context) => MarkdownWebViewPage(
+//                                        htmlPath: htmlPath.toString(),
+//                                        title: fileName,
+//                                        id: fileId,
+//                                        configId: configIdModel.configId,
+//                                        imageFolderId:
+//                                            _imageFolderId.imageFolderId,
+//                                      )),
+//                              (route) => route == null);
                           String route =
                               '/markdownWebView?htmlPath=${Uri.encodeComponent(htmlPath.toString())}&title=${Uri.encodeComponent(fileName)}&id=${Uri.encodeComponent(fileId)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
                           Application.router
@@ -460,7 +474,7 @@ class _CreatePageState extends State<CreatePage> {
                                   transition: TransitionType.fadeIn)
                               .then((result) {
                             print("搞定直接滚");
-                            Navigator.of(context).pop();
+                            Navigator.pop(context);
                           });
                         });
                       });
@@ -495,7 +509,7 @@ class _CreatePageState extends State<CreatePage> {
             Expanded(
               child: MarkdownTextInput(
                 controller,
-                    (String value) {
+                (String value) {
                   setState(() {
                     oldContent = content;
                     content = value;
@@ -503,8 +517,8 @@ class _CreatePageState extends State<CreatePage> {
                       print("提交");
                       changes.add(Change.property(
                         oldContent,
-                            () => content = value,
-                            (oldContent) => content = oldContent,
+                        () => content = value,
+                        (oldContent) => content = oldContent,
                       ));
                       changes.commit();
                     }

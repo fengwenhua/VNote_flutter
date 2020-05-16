@@ -415,10 +415,10 @@ class DocumentListUtil {
 
     // 这里才是真的获取所需下载图片数量的地方
     // 可以在这里弹下载对话框
-    ProgressDialog pr;
-    pr = new ProgressDialog(context,
+    ProgressDialog downloadPR;
+    downloadPR = new ProgressDialog(context,
         type: ProgressDialogType.Download, isDismissible: true);
-    pr.style(
+    downloadPR.style(
         message: '开始下载...',
         borderRadius: 10.0,
         progressWidget: CircularProgressIndicator(),
@@ -429,7 +429,7 @@ class DocumentListUtil {
         progressTextStyle: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400),
         messageTextStyle: TextStyle(fontSize: 19.0, fontWeight: FontWeight.w600));
 
-    await pr.show();
+    await downloadPR.show();
     print("处理的图片: " + imagesList.length.toString());
     for (int i = 0; i < imagesList.length; i++) {
       await OneDriveDataDao.downloadImage(
@@ -460,7 +460,7 @@ class DocumentListUtil {
           // 每处理一张, 更新一下
           //previewContent.updateContent(content);
 
-          pr.update(
+          downloadPR.update(
             progress: double.parse(
                 (100.0 / imagesList.length * (i + 1)).toStringAsFixed(1)),
             message: "下载 ing...",
@@ -480,7 +480,12 @@ class DocumentListUtil {
         }
       });
     }
-    pr.hide();
+    print("关闭下载对话框");
+    await downloadPR.hide();
+    if(downloadPR.isShowing()){
+      print("下载对话框竟然还有??");
+      downloadPR.hide();
+    }
     return content;
   }
 

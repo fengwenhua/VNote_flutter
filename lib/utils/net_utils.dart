@@ -313,7 +313,7 @@ class NetUtils {
               textColor: Colors.white);
         }
         if(exception.toString().contains("Connection reset by peer")){
-          chucuo = false;
+          chucuo = true;
           Fluttertoast.showToast(
               msg: "当前网络不行, 请求不完整",
               toastLength: Toast.LENGTH_LONG,
@@ -323,7 +323,7 @@ class NetUtils {
               textColor: Colors.white);
         }
         if(exception.toString().contains("Connection refused")){
-          chucuo = false;
+          chucuo = true;
           Fluttertoast.showToast(
               msg: "github 拒绝连接...待会再试试...",
               toastLength: Toast.LENGTH_LONG,

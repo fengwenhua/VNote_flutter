@@ -44,7 +44,7 @@ class _NotePageState extends State<NotePage> {
   @override
   Widget build(BuildContext context) {
     pr = new ProgressDialog(this.context,
-        type: ProgressDialogType.Download, isDismissible: true);
+        type: ProgressDialogType.Download);
     pr.style(
       message: translate("waitTips"),
       progress: 0.0,
@@ -188,7 +188,13 @@ class _NotePageState extends State<NotePage> {
           child: Text(translate("delDialog.ok")),
           onPressed: () async {
             Navigator.of(context).pop(true);
-
+            pr = new ProgressDialog(this.context,
+                type: ProgressDialogType.Download);
+            pr.style(
+              message: translate("waitTips"),
+              progress: 0.0,
+              maxProgress: 100.0,
+            );
             await pr.show();
             print("点击了删除");
             pr.update(message: "0. 开始删除", progress: 30);
@@ -207,11 +213,14 @@ class _NotePageState extends State<NotePage> {
             await OneDriveDataDao.getFileContent(
                     context, tokenModel.token.accessToken, document.configId)
                 .then((value) async {
-              await pr.hide();
+              await pr.hide().then((isHidden){
+                print("1. 下载 _vnote.json 的对话框关闭了?");
+                print(isHidden);
+              });
               pr = new ProgressDialog(this.context,
                   type: ProgressDialogType.Download, isDismissible: true);
               pr.style(
-                message: "2. 更新 _vnote.json",
+                message: "2. 删除本地缓存",
                 progress: 80,
               );
               await pr.show();
@@ -238,18 +247,43 @@ class _NotePageState extends State<NotePage> {
                 localDocumentProvider.updateList(data);
               });
 
-              //print("干掉之后: ");
-              //print(json.encode(desktopConfigModel));
+              print("干掉之后: ");
+              print(json.encode(desktopConfigModel));
               // 修改成功_vnote.json 之后, 就是更新这个文件
-              Utils.showMyToast("修改 _vnote.json");
+              //Utils.showMyToast("修改 _vnote.json");
+              await pr.hide().then((isHidden) async {
+                print("2. 删除本地缓存 的对话框关闭了?");
+                print(isHidden);
+                if(!isHidden){
+                  await pr.hide();
+                }
+              });
+
+              print("3. 更新 _vnote.json");
+              pr = new ProgressDialog(this.context,
+                  type: ProgressDialogType.Download, isDismissible: true);
+              pr.style(
+                message: "3. 更新 _vnote.json",
+                progress: 90,
+              );
               await OneDriveDataDao.updateContent(
                   context,
                   tokenModel.token.accessToken,
                   document.configId,
-                  json.encode(desktopConfigModel));
+                  json.encode(desktopConfigModel)).then((value) async {
+                    print("更新完成");
+                    await pr.hide().then((isHidden) async {
+                      print("3. 更新 _vnote.json 的对话框关闭了?");
+                      print(isHidden);
+                      if(!isHidden){
+                        await pr.hide();
+                      }
+                    });
+              });
             });
-
-            await pr.hide();
+            if(pr.isShowing())
+              print("还没关闭?");
+              await pr.hide();
           },
         ),
       ],
