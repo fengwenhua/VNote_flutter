@@ -64,8 +64,6 @@ class _CreatePageState extends State<CreatePage> {
     ConfigIdProvider configIdModel =
         Provider.of<ConfigIdProvider>(context, listen: false);
 
-
-
     return Scaffold(
         appBar: AppBar(
           title: Text(translate("edit.currentDir") + parentIdModel.parentName),
@@ -216,19 +214,12 @@ class _CreatePageState extends State<CreatePage> {
 
                           uploadPR = new ProgressDialog(context,
                               type: ProgressDialogType.Download,
-                              isDismissible: true);
+                              isDismissible: false);
                           uploadPR.style(
-                              message: translate("uploadTips"),
-                              borderRadius: 10.0,
-                              progressWidget: CircularProgressIndicator(),
-                              elevation: 10.0,
-                              insetAnimCurve: Curves.easeInOut,
-                              progress: 0.0,
-                              maxProgress: 100.0,
-                              progressTextStyle: TextStyle(
-                                  fontSize: 13.0, fontWeight: FontWeight.w400),
-                              messageTextStyle: TextStyle(
-                                  fontSize: 19.0, fontWeight: FontWeight.w600));
+                            message: translate("uploadTips"),
+                            progress: 0.0,
+                            maxProgress: 100.0,
+                          );
 
                           await uploadPR.show();
                           print("需要处理的图片: " + newImagesList.length.toString());
@@ -244,16 +235,16 @@ class _CreatePageState extends State<CreatePage> {
                             print("文件长度: " + fileData.length.toString());
                             print("_v_images的 id: " + imageFolderId);
 
-                            await uploadPR.hide().then((isHidden){
+                            await uploadPR.hide().then((isHidden) {
                               print("0. 上传 对话框干掉了没?");
                               print(isHidden);
-                              if(!isHidden){
+                              if (!isHidden) {
                                 Navigator.of(context).pop();
                               }
                             });
                             uploadPR = new ProgressDialog(context,
                                 type: ProgressDialogType.Download,
-                                isDismissible: false);
+                                isDismissible: true);
                             uploadPR.style(
                               message: translate("uploadingTips"),
                               progress: double.parse((i + 1).toString()),
@@ -317,22 +308,21 @@ class _CreatePageState extends State<CreatePage> {
                           }
                         }
 
-                        if (uploadPR != null && uploadPR.isShowing()) {
-                          // 上传完关闭进度框
-                          await uploadPR.hide().then((isHidden){
-                            print("2. 上传完成 对话框干掉了没?");
-                            print(isHidden);
-                            if(!isHidden){
-                              Navigator.of(context).pop();
-                            }
-                          });
-                        }
+                        // 上传完关闭进度框
+                        await uploadPR.hide().then((isHidden) {
+                          print("2. 上传完成 对话框干掉了没?");
+                          print(isHidden);
+                          if (!isHidden) {
+                            Navigator.of(context).pop();
+                          }
+                        });
+
                         // 记得要清空
                         _newImageList.clearList();
                         print("新建一个进度对话框!");
                         uploadPR = new ProgressDialog(context,
                             type: ProgressDialogType.Normal,
-                            isDismissible: true);
+                            isDismissible: false);
                         uploadPR.style(message: translate("uploadTips"));
                         await uploadPR.show();
                         t_content =
@@ -375,16 +365,16 @@ class _CreatePageState extends State<CreatePage> {
                           // 下面是更新当前目录的 _vnote.json 文件
                           Utils.showMyToast("开始下载 _vnote.json");
                           //pr.update(message: "开始下载_vnote.json");
-                          await uploadPR.hide().then((isHidden){
+                          await uploadPR.hide().then((isHidden) {
                             print("2. 上传 对话框干掉了没?");
                             print(isHidden);
-                            if(!isHidden){
+                            if (!isHidden) {
                               Navigator.of(context).pop();
                             }
                           });
                           uploadPR = new ProgressDialog(context,
                               type: ProgressDialogType.Normal,
-                              isDismissible: true);
+                              isDismissible: false);
                           uploadPR.style(message: "开始下载 _vnote.json");
                           await uploadPR.show();
                           print(
@@ -406,17 +396,17 @@ class _CreatePageState extends State<CreatePage> {
                             print(json.encode(desktopConfigModel));
                             //pr.style(message: "开始更新 _vnote.json");
                             print("添加成功_vnote.json 之后, 就是更新这个文件");
-                            await uploadPR.hide().then((isHidden){
+                            await uploadPR.hide().then((isHidden) {
                               print("3. 开始下载 vnote.json 对话框干掉了没?");
                               print(isHidden);
-                              if(!isHidden){
+                              if (!isHidden) {
                                 Navigator.of(context).pop();
                               }
                             });
 
                             uploadPR = new ProgressDialog(context,
                                 type: ProgressDialogType.Normal,
-                                isDismissible: true);
+                                isDismissible: false);
                             uploadPR.style(message: "更新 _vnote.json");
                             await uploadPR.show();
 
@@ -429,10 +419,10 @@ class _CreatePageState extends State<CreatePage> {
                                 .then((value) async {
                               if (value != null) {
                                 print("_vnote.json 更新成功");
-                                await uploadPR.hide().then((isHidden){
+                                await uploadPR.hide().then((isHidden) {
                                   print("4. _vnote.json 更新成功 对话框干掉了没?");
                                   print(isHidden);
-                                  if(!isHidden){
+                                  if (!isHidden) {
                                     Navigator.of(context).pop();
                                   }
                                 });
@@ -441,11 +431,11 @@ class _CreatePageState extends State<CreatePage> {
                           });
                         });
                       }).then((_) async {
-                        await pr.hide().then((isHidden){
+                        await pr.hide().then((isHidden) {
                           print("0. 开始新建文件夹 对话框干掉了没?");
                           print(isHidden);
-                          if(!isHidden){
-                            //Navigator.of(this.context).pop();
+                          if (!isHidden) {
+                            Navigator.of(this.context).pop();
                           }
                         });
                         print("新建后将内容存入本地");
@@ -511,7 +501,8 @@ class _CreatePageState extends State<CreatePage> {
                                   transition: TransitionType.fadeIn)
                               .then((result) {
                             print("搞定直接滚");
-                            Navigator.pop(context);
+                            if (this.context != null)
+                              Navigator.pop(this.context);
                             //Navigator.of(context).pop();
                           });
                         });

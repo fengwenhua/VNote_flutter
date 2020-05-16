@@ -18,7 +18,7 @@
     "note": "Notes",
     "dir": "Directories",
     "search": "Search",
-    "tips": "Make sure you go to your notebook first, then create a new file!"
+    "tips": "Please go to the notebook first, and create a new file in the notebook folder!"
   },
   "drawer": {
     "settings":"Settings",

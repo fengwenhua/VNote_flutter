@@ -128,7 +128,8 @@ class _NoteEditPageState extends State<NoteEditPage> {
                 DataListProvider dataListModel =
                     Provider.of<DataListProvider>(context, listen: false);
                 DirAndFileCacheProvider dirAndFileCacheModel =
-                    Provider.of<DirAndFileCacheProvider>(context, listen: false);
+                    Provider.of<DirAndFileCacheProvider>(context,
+                        listen: false);
                 // 本地增加的所有图片
                 List<String> newImagesList = _newImageList.newImageList;
 
@@ -177,10 +178,6 @@ class _NoteEditPageState extends State<NoteEditPage> {
                       type: ProgressDialogType.Download, isDismissible: false);
                   uploadPR.style(
                       message: translate("uploadTips"),
-                      borderRadius: 10.0,
-                      progressWidget: CircularProgressIndicator(),
-                      elevation: 10.0,
-                      insetAnimCurve: Curves.easeInOut,
                       progress: 0.0,
                       maxProgress:
                           double.parse(newImagesList.length.toString()));
@@ -199,7 +196,14 @@ class _NoteEditPageState extends State<NoteEditPage> {
                     print("文件长度: " + fileData.length.toString());
                     print("_v_images的 id: " + imageFolderId);
 
-                    await uploadPR.hide();
+                    //await uploadPR.hide();
+                    await uploadPR.hide().then((isHidden) async {
+                      print("关闭旧的进度框?");
+                      print(isHidden);
+                      if (!isHidden) {
+                        Navigator.of(context).pop();
+                      }
+                    });
                     uploadPR = new ProgressDialog(context,
                         type: ProgressDialogType.Download,
                         isDismissible: false);
@@ -262,7 +266,14 @@ class _NoteEditPageState extends State<NoteEditPage> {
                   }
 
                   // 上传完关闭进度框
-                  uploadPR.hide();
+                  //uploadPR.hide();
+                  await uploadPR.hide().then((isHidden) async {
+                    print("关闭进度框?");
+                    print(isHidden);
+                    if (!isHidden) {
+                      Navigator.of(context).pop();
+                    }
+                  });
                   // 记得要清空
                   _newImageList.clearList();
                 }
@@ -274,11 +285,16 @@ class _NoteEditPageState extends State<NoteEditPage> {
                           tokenModel.token.accessToken, widget.id, t_content)
                       .then((_) {
                     // 3. 应该在这里更新 _vnote.json 文件
-                  }).then((_) {
+                  }).then((_) async {
                     print("到此更新完了, 可以跳转了!");
-                    pr.hide().then((_) {
-                      Navigator.pop(context, content);
+                    await pr.hide().then((isHidden) async {
+                      print("到此更新完了, 可以跳转了! dialog killed ?");
+                      print(isHidden);
+                      if (!isHidden) {
+                        Navigator.of(context).pop();
+                      }
                     });
+                    Navigator.pop(context, content);
                   });
                 });
               }

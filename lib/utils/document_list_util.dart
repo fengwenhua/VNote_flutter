@@ -433,7 +433,7 @@ class DocumentListUtil {
     // 这里才是真的获取所需下载图片数量的地方
     // 可以在这里弹下载对话框
     prt = new ProgressDialog(context,
-        type: ProgressDialogType.Download, isDismissible: true);
+        type: ProgressDialogType.Download, isDismissible: false);
     prt.style(
         message: '开始下载...',
         progress: 0.0,

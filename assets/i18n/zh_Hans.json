@@ -18,7 +18,7 @@
     "note": "笔记",
     "dir": "文件夹",
     "search": "搜索",
-    "tips": "确定请先进入笔记本, 再新建文件!"
+    "tips": "请先进入笔记本, 在笔记本的文件夹下新建文件!"
   },
   "drawer": {
     "settings":"设置",
@@ -74,7 +74,7 @@
   "createFileTips": "文件创建中...",
   "updateContentTips": "更新内容中...",
   "uploadTips": "开始上传...",
-  "uploadingTips": "上传: ",
+  "uploadingTips": "上传中...",
   "networkErrorTips": "网络异常, 再试一次",
   "requestsTips": "请求中, 请等待...",
   "requestLogin": "请求登录...",

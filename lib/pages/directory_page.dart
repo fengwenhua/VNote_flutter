@@ -252,7 +252,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               if (update) {
                 if (position.length > 0) position.removeLast();
               }
-              print("此时的 offset 是:");
+              //print("此时的 offset 是:");
               position.add(controller.offset);
             }
             if (update) {
