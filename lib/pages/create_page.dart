@@ -64,8 +64,7 @@ class _CreatePageState extends State<CreatePage> {
     ConfigIdProvider configIdModel =
         Provider.of<ConfigIdProvider>(context, listen: false);
 
-    pr = new ProgressDialog(context);
-    pr.style(message: translate("createFileTips"));
+
 
     return Scaffold(
         appBar: AppBar(
@@ -145,6 +144,8 @@ class _CreatePageState extends State<CreatePage> {
                       content = content.trim();
                       //pr.update(message: "开始创建...");
                       Utils.showMyToast("上传内容到 onedrive 中...");
+                      pr = new ProgressDialog(context);
+                      pr.style(message: translate("createFileTips"));
                       await pr.show().then((_) async {
                         // 应该先找图片
 
@@ -243,7 +244,13 @@ class _CreatePageState extends State<CreatePage> {
                             print("文件长度: " + fileData.length.toString());
                             print("_v_images的 id: " + imageFolderId);
 
-                            await uploadPR.hide();
+                            await uploadPR.hide().then((isHidden){
+                              print("0. 上传 对话框干掉了没?");
+                              print(isHidden);
+                              if(!isHidden){
+                                Navigator.of(context).pop();
+                              }
+                            });
                             uploadPR = new ProgressDialog(context,
                                 type: ProgressDialogType.Download,
                                 isDismissible: false);
@@ -312,7 +319,13 @@ class _CreatePageState extends State<CreatePage> {
 
                         if (uploadPR != null && uploadPR.isShowing()) {
                           // 上传完关闭进度框
-                          uploadPR.hide();
+                          await uploadPR.hide().then((isHidden){
+                            print("2. 上传完成 对话框干掉了没?");
+                            print(isHidden);
+                            if(!isHidden){
+                              Navigator.of(context).pop();
+                            }
+                          });
                         }
                         // 记得要清空
                         _newImageList.clearList();
@@ -362,7 +375,13 @@ class _CreatePageState extends State<CreatePage> {
                           // 下面是更新当前目录的 _vnote.json 文件
                           Utils.showMyToast("开始下载 _vnote.json");
                           //pr.update(message: "开始下载_vnote.json");
-                          await uploadPR.hide();
+                          await uploadPR.hide().then((isHidden){
+                            print("2. 上传 对话框干掉了没?");
+                            print(isHidden);
+                            if(!isHidden){
+                              Navigator.of(context).pop();
+                            }
+                          });
                           uploadPR = new ProgressDialog(context,
                               type: ProgressDialogType.Normal,
                               isDismissible: true);
@@ -387,7 +406,13 @@ class _CreatePageState extends State<CreatePage> {
                             print(json.encode(desktopConfigModel));
                             //pr.style(message: "开始更新 _vnote.json");
                             print("添加成功_vnote.json 之后, 就是更新这个文件");
-                            await uploadPR.hide();
+                            await uploadPR.hide().then((isHidden){
+                              print("3. 开始下载 vnote.json 对话框干掉了没?");
+                              print(isHidden);
+                              if(!isHidden){
+                                Navigator.of(context).pop();
+                              }
+                            });
 
                             uploadPR = new ProgressDialog(context,
                                 type: ProgressDialogType.Normal,
@@ -404,13 +429,25 @@ class _CreatePageState extends State<CreatePage> {
                                 .then((value) async {
                               if (value != null) {
                                 print("_vnote.json 更新成功");
-                                await uploadPR.hide();
+                                await uploadPR.hide().then((isHidden){
+                                  print("4. _vnote.json 更新成功 对话框干掉了没?");
+                                  print(isHidden);
+                                  if(!isHidden){
+                                    Navigator.of(context).pop();
+                                  }
+                                });
                               }
                             });
                           });
                         });
                       }).then((_) async {
-                        await pr.hide();
+                        await pr.hide().then((isHidden){
+                          print("0. 开始新建文件夹 对话框干掉了没?");
+                          print(isHidden);
+                          if(!isHidden){
+                            //Navigator.of(this.context).pop();
+                          }
+                        });
                         print("新建后将内容存入本地");
                         Application.sp.setString(fileId, content);
 
@@ -475,6 +512,7 @@ class _CreatePageState extends State<CreatePage> {
                               .then((result) {
                             print("搞定直接滚");
                             Navigator.pop(context);
+                            //Navigator.of(context).pop();
                           });
                         });
                       });
