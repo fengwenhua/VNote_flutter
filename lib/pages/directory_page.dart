@@ -692,7 +692,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                   print("0. 开始删除 对话框删除了?");
                   print(isHidden);
                   if (!isHidden) {
-                    Navigator.of(context).pop();
+                    Navigator.of(this.context).pop();
                   }
                 });
                 pr = new ProgressDialog(this.context,

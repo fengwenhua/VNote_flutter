@@ -187,7 +187,7 @@ class _NotePageState extends State<NotePage> {
           child: Text(translate("delDialog.ok")),
           onPressed: () async {
             Navigator.of(context).pop(true);
-            pr = new ProgressDialog(this.context,
+            pr = new ProgressDialog(context,
                 type: ProgressDialogType.Download);
             pr.style(
               message: translate("waitTips"),
@@ -217,9 +217,7 @@ class _NotePageState extends State<NotePage> {
                 print("1. 下载 _vnote.json 的对话框关闭了?");
                 print(isHidden);
                 if (!isHidden) {
-                  await Future.delayed(Duration(seconds: 1)).then((_) async {
-                    await pr.hide();
-                  });
+                  await pr.hide();
                 }
               });
               pr = new ProgressDialog(this.context,
@@ -286,9 +284,9 @@ class _NotePageState extends State<NotePage> {
                     await pr.hide();
                   }
                 });
-                Future.delayed(Duration(seconds: 2));
               });
             });
+            Utils.showMyToast("删除完成");
             if (pr.isShowing()) print("还没关闭?");
             await pr.hide();
           },
