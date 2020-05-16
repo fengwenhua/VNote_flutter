@@ -48,17 +48,24 @@ class DocumentListUtil {
 
     OneDriveDataModel bean = OneDriveDataModel.fromJson(response.data);
     for (Value value in bean.value) {
-      if (value.name.contains(key)) {
-        if (value.name.endsWith(".json")) {
-          print("跳过 json 配置文件");
-          continue;
+      // 首先要是文件
+      if (value.file != null) {
+        if (value.name.contains(key)) {
+          if (value.name.endsWith(".json")) {
+            print("跳过 json 配置文件");
+            continue;
+          }
+          if (value.name.endsWith(".jpg")||value.name.endsWith(".png")||value.name.endsWith(".gif")) {
+            print("跳过图片");
+            continue;
+          }
+          Document temp = new Document(
+              id: value.id,
+              name: value.name,
+              isFile: value.file == null ? false : true,
+              dateModified: DateTime.parse(value.lastModifiedDateTime));
+          result.add(temp);
         }
-        Document temp = new Document(
-            id: value.id,
-            name: value.name,
-            isFile: value.file == null ? false : true,
-            dateModified: DateTime.parse(value.lastModifiedDateTime));
-        result.add(temp);
       }
     }
     return result;

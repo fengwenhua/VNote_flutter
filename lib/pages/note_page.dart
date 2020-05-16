@@ -221,7 +221,7 @@ class _NotePageState extends State<NotePage> {
                 }
               });
               pr = new ProgressDialog(this.context,
-                  type: ProgressDialogType.Download, isDismissible: true);
+                  type: ProgressDialogType.Download);
               pr.style(
                 message: "2. 删除本地缓存",
                 progress: 80,
@@ -265,7 +265,7 @@ class _NotePageState extends State<NotePage> {
 
               print("3. 更新 _vnote.json");
               pr = new ProgressDialog(this.context,
-                  type: ProgressDialogType.Download, isDismissible: true);
+                  type: ProgressDialogType.Download);
               pr.style(
                 message: "3. 更新 _vnote.json",
                 progress: 90,
