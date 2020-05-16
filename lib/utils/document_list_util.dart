@@ -380,17 +380,10 @@ class DocumentListUtil {
       if (imagesList == null) {
         return null;
       } else {
-       return await downloadImages(
+        return await downloadImages(
             context, token, appImagePath, imagesList, content, prt);
       }
     }).then((data) async {
-      if(prt.isShowing()){
-        print("下载对话框还在?????");
-      }
-      await prt.hide().then((isHidden){
-        print("这波还在?");
-        print(isHidden);
-      });
       if (data == null) {
         return null;
       } else {
@@ -497,15 +490,14 @@ class DocumentListUtil {
       });
     }
     print("关闭下载对话框");
-
+    Utils.showMyToast("下载完成!!");
     await prt.hide().then((isHidden) async {
       print("下载对话框关闭了吗? ");
       print(isHidden);
       if (!isHidden) {
-        await prt.hide();
+        Navigator.of(context).pop();
       }
     });
-
     return content;
   }
 

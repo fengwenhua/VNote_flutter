@@ -39,7 +39,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     with AutomaticKeepAliveClientMixin {
   // 进度圈圈
   ProgressDialog pr;
-  ScrollController controller = ScrollController();
+  ScrollController controller = ScrollController(initialScrollOffset: 10.0);
   List<double> position = [];
   //List<Document> rootDocuments = <Document>[];
   final SlidableController slidableController = SlidableController();
@@ -121,6 +121,7 @@ class _DirectoryPageState extends State<DirectoryPage>
           .then((data) async {
         print("看看这玩意张啥样:");
         print(data);
+
         if (data == null) {
           print("超时, 没有获得数据");
           if (prt.isShowing()) {
@@ -247,11 +248,13 @@ class _DirectoryPageState extends State<DirectoryPage>
         } else {
           // 显示
           if (data.length > 0) {
-            if (update) {
-              position.removeLast();
+            if (controller.hasClients) {
+              if (update) {
+                if (position.length > 0) position.removeLast();
+              }
+              print("此时的 offset 是:");
+              position.add(controller.offset);
             }
-            position.add(controller.offset);
-
             if (update) {
               dataListModel.updateCurrentDir(data);
               dirCacheModel.updateDirAndFileList(id, data);
@@ -298,8 +301,8 @@ class _DirectoryPageState extends State<DirectoryPage>
   Widget build(BuildContext context) {
     super.build(context);
     //print("进入 directory_page 的 build 方法");
-    pr = new ProgressDialog(context, isDismissible: true);
-    pr.style(message: translate("waitTips"));
+//    pr = new ProgressDialog(context, isDismissible: true);
+//    pr.style(message: translate("waitTips"));
     DataListProvider dataListModel =
         Provider.of<DataListProvider>(context, listen: false);
 
@@ -554,6 +557,8 @@ class _DirectoryPageState extends State<DirectoryPage>
         } else {
           // 转圈圈和网络请求
           print("该目录本地没有缓存");
+          pr = new ProgressDialog(context, isDismissible: true);
+          pr.style(message: translate("waitTips"));
           await pr.show().then((_) {
             _postData(document.id, document.name);
           });
@@ -648,10 +653,19 @@ class _DirectoryPageState extends State<DirectoryPage>
           child: Text(translate("delDialog.ok")),
           onPressed: () async {
             Navigator.of(context).pop(true);
+            pr = new ProgressDialog(context, isDismissible: true);
+            pr.style(message: "删除中...");
             await pr.show().then((_) async {
               print("点击了删除");
 
-              await pr.hide();
+              await pr.hide().then((isHidden) async {
+                print("旧对话框删除了?");
+                print(isHidden);
+                if (!isHidden) {
+                  Navigator.of(context).pop();
+                }
+              });
+
               pr = new ProgressDialog(this.context,
                   type: ProgressDialogType.Download, isDismissible: true);
               pr.style(
@@ -660,6 +674,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               );
               await pr.show();
               // 网络请求删除在线的文件夹
+              //Utils.showMyToast("0. 开始删除", type: 0);
               await OneDriveDataDao.deleteFile(
                   context, tokenModel.token.accessToken, document.id);
               // 删除本地缓存的文件夹
@@ -673,7 +688,13 @@ class _DirectoryPageState extends State<DirectoryPage>
                   parentIdModel.parentId == parentIdModel.genId) {
                 print("根目录, 不需要更新 _vnote.json 文件");
               } else {
-                await pr.hide();
+                await pr.hide().then((isHidden) async {
+                  print("0. 开始删除 对话框删除了?");
+                  print(isHidden);
+                  if (!isHidden) {
+                    Navigator.of(context).pop();
+                  }
+                });
                 pr = new ProgressDialog(this.context,
                     type: ProgressDialogType.Download, isDismissible: true);
                 pr.style(
@@ -681,6 +702,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                   progress: 40,
                 );
                 await pr.show();
+                //Utils.showMyToast("1. 下载 _vnote.json", type: 0);
                 print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
                 await OneDriveDataDao.getFileContent(
                         context, tokenModel.token.accessToken, configId)
@@ -688,7 +710,13 @@ class _DirectoryPageState extends State<DirectoryPage>
                   print("拿到的 _vnote.json 文件数据为: " + value.toString());
                   print("要干掉的文件/文件夹名字: " + document.name);
 
-                  await pr.hide();
+                  await pr.hide().then((isHidden) async {
+                    print("1. 下载 _vnote.json 对话框删除了?");
+                    print(isHidden);
+                    if (!isHidden) {
+                      Navigator.of(this.context).pop();
+                    }
+                  });
                   pr = new ProgressDialog(this.context,
                       type: ProgressDialogType.Download, isDismissible: true);
                   pr.style(
@@ -696,7 +724,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                     progress: 80,
                   );
                   await pr.show();
-
+                  //Utils.showMyToast("2. 删除本地缓存", type: 0);
                   DesktopConfigModel desktopConfigModel =
                       DesktopConfigModel.fromJson(
                           json.decode(value.toString()));
@@ -720,8 +748,9 @@ class _DirectoryPageState extends State<DirectoryPage>
                   } else {
                     desktopConfigModel.deleteFolder(document.name);
                   }
-                  //print("干掉之后: ");
-                  //print(json.encode(desktopConfigModel));
+                  print("干掉之后: ");
+                  print(json.encode(desktopConfigModel));
+                  //Utils.showMyToast("3. 更新 _vnote.json", type: 0);
                   // 修改成功_vnote.json 之后, 就是更新这个文件
                   await OneDriveDataDao.updateContent(
                       context,
@@ -731,7 +760,14 @@ class _DirectoryPageState extends State<DirectoryPage>
                 });
               }
             });
-            await pr.hide();
+            Utils.showMyToast("删除完成");
+            await pr.hide().then((isHidden) async {
+              print("2. 更新 _vnote.json 对话框删除了?");
+              print(isHidden);
+              if (!isHidden) {
+                Navigator.of(this.context).pop();
+              }
+            });
           },
         ),
       ],
@@ -796,6 +832,8 @@ class _DirectoryPageState extends State<DirectoryPage>
               }
             }
             if (fileOrFolderName != "") {
+              pr = new ProgressDialog(context, isDismissible: true);
+              pr.style(message: translate("waitTips"));
               await pr.show().then((_) async {
                 await OneDriveDataDao.rename(
                         context,

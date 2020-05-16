@@ -310,10 +310,10 @@ class Utils {
     }
   }
 
-  static showMyToast(String text) {
+  static showMyToast(String text, {type = 1}) {
     Fluttertoast.showToast(
         msg: text,
-        toastLength: Toast.LENGTH_LONG,
+        toastLength: type == 1 ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 3,
         backgroundColor: Colors.red,
