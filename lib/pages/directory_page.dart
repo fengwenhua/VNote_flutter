@@ -1004,10 +1004,10 @@ class _DirectoryPageState extends State<DirectoryPage>
                       print(
                           "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 sub_directories 字段");
 
-                      await pr.hide().then((isHidden){
+                      await pr.hide().then((isHidden) {
                         print("0. 开始新建文件夹 对话框干掉了没?");
                         print(isHidden);
-                        if(!isHidden){
+                        if (!isHidden) {
                           Navigator.of(this.context).pop();
                         }
                       });
@@ -1039,10 +1039,10 @@ class _DirectoryPageState extends State<DirectoryPage>
                           print("添加之后: ");
                           print(json.encode(desktopConfigModel));
 
-                          await pr.hide().then((isHidden){
+                          await pr.hide().then((isHidden) {
                             print("1. 下载 _vnote.json 对话框干掉了没?");
                             print(isHidden);
-                            if(!isHidden){
+                            if (!isHidden) {
                               Navigator.of(this.context).pop();
                             }
                           });
@@ -1069,10 +1069,10 @@ class _DirectoryPageState extends State<DirectoryPage>
                       });
                     }
 
-                    await pr.hide().then((isHidden){
+                    await pr.hide().then((isHidden) {
                       print("2. 更新 _vnote.json 对话框干掉了没?");
                       print(isHidden);
-                      if(!isHidden){
+                      if (!isHidden) {
                         Navigator.of(this.context).pop();
                       }
                     });
@@ -1096,10 +1096,10 @@ class _DirectoryPageState extends State<DirectoryPage>
                     });
                   }
                 }).then((_) async {
-                  await pr.hide().then((isHidden){
+                  await pr.hide().then((isHidden) {
                     print("3. 给新建的目录添加 _vnote.json 对话框干掉了没?");
                     print(isHidden);
-                    if(!isHidden){
+                    if (!isHidden) {
                       Navigator.of(this.context).pop();
                     }
                   });

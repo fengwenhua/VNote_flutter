@@ -183,11 +183,7 @@ class _NoteEditPageState extends State<NoteEditPage> {
                       insetAnimCurve: Curves.easeInOut,
                       progress: 0.0,
                       maxProgress:
-                          double.parse(newImagesList.length.toString()),
-                      progressTextStyle: TextStyle(
-                          fontSize: 13.0, fontWeight: FontWeight.w400),
-                      messageTextStyle: TextStyle(
-                          fontSize: 19.0, fontWeight: FontWeight.w600));
+                          double.parse(newImagesList.length.toString()));
 
                   await uploadPR.show();
                   print("需要处理的图片: " + newImagesList.length.toString());

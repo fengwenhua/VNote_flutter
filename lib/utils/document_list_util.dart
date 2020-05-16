@@ -55,7 +55,9 @@ class DocumentListUtil {
             print("跳过 json 配置文件");
             continue;
           }
-          if (value.name.endsWith(".jpg")||value.name.endsWith(".png")||value.name.endsWith(".gif")) {
+          if (value.name.endsWith(".jpg") ||
+              value.name.endsWith(".png") ||
+              value.name.endsWith(".gif")) {
             print("跳过图片");
             continue;
           }
@@ -420,7 +422,7 @@ class DocumentListUtil {
         print("old dialog was killed ??");
         print(isHidden);
         if (!isHidden) {
-          await prt.hide();
+          Navigator.of(context).pop();
         }
       });
     }
@@ -434,23 +436,15 @@ class DocumentListUtil {
         type: ProgressDialogType.Download, isDismissible: true);
     prt.style(
         message: '开始下载...',
-        borderRadius: 10.0,
-        progressWidget: CircularProgressIndicator(),
-        elevation: 10.0,
-        insetAnimCurve: Curves.easeInOut,
         progress: 0.0,
-        maxProgress: 100.0,
-        progressTextStyle:
-            TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400),
-        messageTextStyle:
-            TextStyle(fontSize: 19.0, fontWeight: FontWeight.w600));
+        maxProgress: double.parse(imagesList.length.toString()));
 
     await prt.show();
     print("处理的图片: " + imagesList.length.toString());
     for (int i = 0; i < imagesList.length; i++) {
       await OneDriveDataDao.downloadImage(
               context, token, imagesList[i].id, path + "/" + imagesList[i].name)
-          .then((value) {
+          .then((value) async {
         if (value == null) {
           print("没有数据, 得知连接超时");
           if (repeatCount > 0) {
@@ -471,28 +465,35 @@ class DocumentListUtil {
           content = content.replaceAll("_v_images/" + imagesList[i].name,
               path + "/" + imagesList[i].name);
           print("处理完: " + imagesList[i].name);
+
           repeatCount = 10; // 重置
 
           // 每处理一张, 更新一下
           //previewContent.updateContent(content);
-
-          prt.update(
-            progress: double.parse(
-                (100.0 / imagesList.length * (i + 1)).toStringAsFixed(1)),
-            message: "下载 ing...",
-            progressWidget: Container(
-                padding: EdgeInsets.all(8.0),
-                child: CircularProgressIndicator()),
-            maxProgress: 100.0,
-            progressTextStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 13.0,
-                fontWeight: FontWeight.w400),
-            messageTextStyle: TextStyle(
-                color: Colors.black,
-                fontSize: 19.0,
-                fontWeight: FontWeight.w600),
+          await prt.hide().then((isHidden) async {
+            print("download dialog killed ?");
+            print(isHidden);
+            if (!isHidden) {
+              Navigator.of(context).pop();
+            }
+          });
+          prt = new ProgressDialog(context,
+              type: ProgressDialogType.Download, isDismissible: false);
+          prt.style(
+            message: "下载中...",
+            progress: double.parse((i + 1).toString()),
+            maxProgress: double.parse(imagesList.length.toString()),
           );
+          await prt.show();
+//          prt.update(
+//            progress: double.parse(
+//                (100.0 / imagesList.length * (i + 1)).toStringAsFixed(1)),
+//            message: "下载 ing...",
+//            progressWidget: Container(
+//                padding: EdgeInsets.all(8.0),
+//                child: CircularProgressIndicator()),
+//            maxProgress: 100.0,
+//          );
         }
       });
     }
