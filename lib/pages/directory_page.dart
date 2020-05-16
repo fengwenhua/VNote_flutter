@@ -952,6 +952,8 @@ class _DirectoryPageState extends State<DirectoryPage>
               String errorText = "";
               // 应该先关闭询问对话框
               Navigator.pop(context);
+              pr = new ProgressDialog(context, isDismissible: true);
+              pr.style(message: translate("waitTips"));
               await pr.show().then((_) async {
                 await pr.hide();
                 pr = new ProgressDialog(this.context,
@@ -1002,7 +1004,13 @@ class _DirectoryPageState extends State<DirectoryPage>
                       print(
                           "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 sub_directories 字段");
 
-                      await pr.hide();
+                      await pr.hide().then((isHidden){
+                        print("0. 开始新建文件夹 对话框干掉了没?");
+                        print(isHidden);
+                        if(!isHidden){
+                          Navigator.of(this.context).pop();
+                        }
+                      });
                       pr = new ProgressDialog(this.context,
                           type: ProgressDialogType.Download,
                           isDismissible: true);
@@ -1031,7 +1039,13 @@ class _DirectoryPageState extends State<DirectoryPage>
                           print("添加之后: ");
                           print(json.encode(desktopConfigModel));
 
-                          await pr.hide();
+                          await pr.hide().then((isHidden){
+                            print("1. 下载 _vnote.json 对话框干掉了没?");
+                            print(isHidden);
+                            if(!isHidden){
+                              Navigator.of(this.context).pop();
+                            }
+                          });
                           pr = new ProgressDialog(this.context,
                               type: ProgressDialogType.Download,
                               isDismissible: true);
@@ -1055,7 +1069,13 @@ class _DirectoryPageState extends State<DirectoryPage>
                       });
                     }
 
-                    await pr.hide();
+                    await pr.hide().then((isHidden){
+                      print("2. 更新 _vnote.json 对话框干掉了没?");
+                      print(isHidden);
+                      if(!isHidden){
+                        Navigator.of(this.context).pop();
+                      }
+                    });
                     pr = new ProgressDialog(this.context,
                         type: ProgressDialogType.Download, isDismissible: true);
                     pr.style(
@@ -1076,7 +1096,13 @@ class _DirectoryPageState extends State<DirectoryPage>
                     });
                   }
                 }).then((_) async {
-                  await pr.hide();
+                  await pr.hide().then((isHidden){
+                    print("3. 给新建的目录添加 _vnote.json 对话框干掉了没?");
+                    print(isHidden);
+                    if(!isHidden){
+                      Navigator.of(this.context).pop();
+                    }
+                  });
                   if (errorText != "") {
                     Fluttertoast.showToast(
                         msg: errorText,
