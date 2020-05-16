@@ -340,6 +340,8 @@ class _DirectoryPageState extends State<DirectoryPage>
                   tooltip: "Update",
                   onPressed: () async {
                     // 手动点击更新按钮
+                    pr = new ProgressDialog(context, isDismissible: true);
+                    pr.style(message: translate("waitTips"));
                     await pr.show().then((_) {
                       String parentId = parentIdModel.parentId;
                       String parentName = parentIdModel.parentName;

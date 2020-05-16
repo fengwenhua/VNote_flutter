@@ -70,7 +70,7 @@ class DocumentListUtil {
     List<Document> result = new List<Document>();
     OneDriveDataModel oneDriveDataModel;
     DirAndFileCacheProvider dirCacheModel =
-    Provider.of<DirAndFileCacheProvider>(context, listen: false);
+        Provider.of<DirAndFileCacheProvider>(context, listen: false);
     oneDriveDataModel = await _getNoteBookFromNetwork(context, token);
     if (oneDriveDataModel != null) {
       print("拿到 oneDriveDataModel");
@@ -116,9 +116,9 @@ class DocumentListUtil {
         }
       }
       ConfigIdProvider configIdModel =
-      Provider.of<ConfigIdProvider>(context, listen: false);
+          Provider.of<ConfigIdProvider>(context, listen: false);
       ImageFolderIdProvider _imageFolderId =
-      Provider.of<ImageFolderIdProvider>(context, listen: false);
+          Provider.of<ImageFolderIdProvider>(context, listen: false);
       Document temp = new Document(
           id: value.id,
           configId: configIdModel.configId,
@@ -147,11 +147,14 @@ class DocumentListUtil {
         Provider.of<ImageFolderIdProvider>(context, listen: false);
     String imageFolderId = _imageFolderId.imageFolderId;
     ConfigIdProvider configIdModel =
-    Provider.of<ConfigIdProvider>(context, listen: false);
+        Provider.of<ConfigIdProvider>(context, listen: false);
 
     print("此时的 imageFolderId: ");
     print(imageFolderId);
-    if (imageFolderId == null||imageFolderId == "null" || imageFolderId == "noimagefolder"||imageUrls.length==0) {
+    if (imageFolderId == null ||
+        imageFolderId == "null" ||
+        imageFolderId == "noimagefolder" ||
+        imageUrls.length == 0) {
       print("md, 你特么的本地没有 imageFolder 文件夹, 你下个鸡儿的图片!");
       return result;
     }
@@ -292,7 +295,6 @@ class DocumentListUtil {
         ConfigIdProvider configIdModel =
             Provider.of<ConfigIdProvider>(context, listen: false);
         configIdModel.updateConfigId("approot");
-
       }
     });
     return oneDriveDataModel;
@@ -378,10 +380,17 @@ class DocumentListUtil {
       if (imagesList == null) {
         return null;
       } else {
-        return await downloadImages(
+       return await downloadImages(
             context, token, appImagePath, imagesList, content, prt);
       }
-    }).then((data) {
+    }).then((data) async {
+      if(prt.isShowing()){
+        print("下载对话框还在?????");
+      }
+      await prt.hide().then((isHidden){
+        print("这波还在?");
+        print(isHidden);
+      });
       if (data == null) {
         return null;
       } else {
@@ -407,7 +416,13 @@ class DocumentListUtil {
     print("准备下载图片");
     // 先将旧窗口隐藏掉
     if (prt.isShowing()) {
-      prt.hide();
+      await prt.hide().then((isHidden) async {
+        print("old dialog was killed ??");
+        print(isHidden);
+        if (!isHidden) {
+          await prt.hide();
+        }
+      });
     }
 
     // 批量下载图片
@@ -415,10 +430,9 @@ class DocumentListUtil {
 
     // 这里才是真的获取所需下载图片数量的地方
     // 可以在这里弹下载对话框
-    ProgressDialog downloadPR;
-    downloadPR = new ProgressDialog(context,
+    prt = new ProgressDialog(context,
         type: ProgressDialogType.Download, isDismissible: true);
-    downloadPR.style(
+    prt.style(
         message: '开始下载...',
         borderRadius: 10.0,
         progressWidget: CircularProgressIndicator(),
@@ -426,10 +440,12 @@ class DocumentListUtil {
         insetAnimCurve: Curves.easeInOut,
         progress: 0.0,
         maxProgress: 100.0,
-        progressTextStyle: TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400),
-        messageTextStyle: TextStyle(fontSize: 19.0, fontWeight: FontWeight.w600));
+        progressTextStyle:
+            TextStyle(fontSize: 13.0, fontWeight: FontWeight.w400),
+        messageTextStyle:
+            TextStyle(fontSize: 19.0, fontWeight: FontWeight.w600));
 
-    await downloadPR.show();
+    await prt.show();
     print("处理的图片: " + imagesList.length.toString());
     for (int i = 0; i < imagesList.length; i++) {
       await OneDriveDataDao.downloadImage(
@@ -460,7 +476,7 @@ class DocumentListUtil {
           // 每处理一张, 更新一下
           //previewContent.updateContent(content);
 
-          downloadPR.update(
+          prt.update(
             progress: double.parse(
                 (100.0 / imagesList.length * (i + 1)).toStringAsFixed(1)),
             message: "下载 ing...",
@@ -481,11 +497,15 @@ class DocumentListUtil {
       });
     }
     print("关闭下载对话框");
-    await downloadPR.hide();
-    if(downloadPR.isShowing()){
-      print("下载对话框竟然还有??");
-      downloadPR.hide();
-    }
+
+    await prt.hide().then((isHidden) async {
+      print("下载对话框关闭了吗? ");
+      print(isHidden);
+      if (!isHidden) {
+        await prt.hide();
+      }
+    });
+
     return content;
   }
 

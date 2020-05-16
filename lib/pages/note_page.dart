@@ -43,8 +43,7 @@ class _NotePageState extends State<NotePage> {
   ProgressDialog pr;
   @override
   Widget build(BuildContext context) {
-    pr = new ProgressDialog(this.context,
-        type: ProgressDialogType.Download);
+    pr = new ProgressDialog(this.context, type: ProgressDialogType.Download);
     pr.style(
       message: translate("waitTips"),
       progress: 0.0,
@@ -213,9 +212,15 @@ class _NotePageState extends State<NotePage> {
             await OneDriveDataDao.getFileContent(
                     context, tokenModel.token.accessToken, document.configId)
                 .then((value) async {
-              await pr.hide().then((isHidden){
+              //pr.update(message: "这是更新测试,崩溃?", progress: 70);
+              await pr.hide().then((isHidden) async {
                 print("1. 下载 _vnote.json 的对话框关闭了?");
                 print(isHidden);
+                if (!isHidden) {
+                  await Future.delayed(Duration(seconds: 1)).then((_) async {
+                    await pr.hide();
+                  });
+                }
               });
               pr = new ProgressDialog(this.context,
                   type: ProgressDialogType.Download, isDismissible: true);
@@ -254,10 +259,11 @@ class _NotePageState extends State<NotePage> {
               await pr.hide().then((isHidden) async {
                 print("2. 删除本地缓存 的对话框关闭了?");
                 print(isHidden);
-                if(!isHidden){
+                if (!isHidden) {
                   await pr.hide();
                 }
               });
+              Future.delayed(Duration(seconds: 2));
 
               print("3. 更新 _vnote.json");
               pr = new ProgressDialog(this.context,
@@ -267,23 +273,24 @@ class _NotePageState extends State<NotePage> {
                 progress: 90,
               );
               await OneDriveDataDao.updateContent(
-                  context,
-                  tokenModel.token.accessToken,
-                  document.configId,
-                  json.encode(desktopConfigModel)).then((value) async {
-                    print("更新完成");
-                    await pr.hide().then((isHidden) async {
-                      print("3. 更新 _vnote.json 的对话框关闭了?");
-                      print(isHidden);
-                      if(!isHidden){
-                        await pr.hide();
-                      }
-                    });
+                      context,
+                      tokenModel.token.accessToken,
+                      document.configId,
+                      json.encode(desktopConfigModel))
+                  .then((value) async {
+                print("更新完成");
+                await pr.hide().then((isHidden) async {
+                  print("3. 更新 _vnote.json 的对话框关闭了?");
+                  print(isHidden);
+                  if (!isHidden) {
+                    await pr.hide();
+                  }
+                });
+                Future.delayed(Duration(seconds: 2));
               });
             });
-            if(pr.isShowing())
-              print("还没关闭?");
-              await pr.hide();
+            if (pr.isShowing()) print("还没关闭?");
+            await pr.hide();
           },
         ),
       ],
@@ -379,8 +386,7 @@ class _NotePageState extends State<NotePage> {
                     PersonalNoteModel personalNoteModel =
                         await Utils.getPersonalNoteModel();
 
-                    personalNoteModel.renameFile(
-                        document.id, fileOrFolderName);
+                    personalNoteModel.renameFile(document.id, fileOrFolderName);
                     LocalDocumentProvider localDocumentProvider =
                         Provider.of<LocalDocumentProvider>(this.context,
                             listen: false);
