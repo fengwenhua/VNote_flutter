@@ -309,13 +309,15 @@ class _CreatePageState extends State<CreatePage> {
                         }
 
                         // 上传完关闭进度框
-                        await uploadPR.hide().then((isHidden) {
-                          print("2. 上传完成 对话框干掉了没?");
-                          print(isHidden);
-                          if (!isHidden) {
-                            Navigator.of(context).pop();
-                          }
-                        });
+                        if (uploadPR != null) {
+                          await uploadPR.hide().then((isHidden) {
+                            print("2. 上传完成 对话框干掉了没?");
+                            print(isHidden);
+                            if (!isHidden) {
+                              Navigator.of(context).pop();
+                            }
+                          });
+                        }
 
                         // 记得要清空
                         _newImageList.clearList();
@@ -435,7 +437,8 @@ class _CreatePageState extends State<CreatePage> {
                           print("0. 开始新建文件夹 对话框干掉了没?");
                           print(isHidden);
                           if (!isHidden) {
-                            Navigator.of(this.context).pop();
+                            //Navigator.of(this.context).pop();
+                            print("这里假装弹框了");
                           }
                         });
                         print("新建后将内容存入本地");
@@ -497,7 +500,7 @@ class _CreatePageState extends State<CreatePage> {
                           String route =
                               '/markdownWebView?htmlPath=${Uri.encodeComponent(htmlPath.toString())}&title=${Uri.encodeComponent(fileName)}&id=${Uri.encodeComponent(fileId)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
                           Application.router
-                              .navigateTo(context, route,
+                              .navigateTo(this.context, route,
                                   transition: TransitionType.fadeIn)
                               .then((result) {
                             print("搞定直接滚");
