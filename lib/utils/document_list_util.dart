@@ -61,6 +61,10 @@ class DocumentListUtil {
             print("跳过图片");
             continue;
           }
+          if(value.name.endsWith(".vswp")){
+            print("跳过中间文件");
+            continue;
+          }
           Document temp = new Document(
               id: value.id,
               name: value.name,
