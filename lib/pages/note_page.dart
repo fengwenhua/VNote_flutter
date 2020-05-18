@@ -188,7 +188,7 @@ class _NotePageState extends State<NotePage> {
           onPressed: () async {
             Navigator.of(context).pop(true);
             pr = new ProgressDialog(context,
-                type: ProgressDialogType.Download);
+                type: ProgressDialogType.Download,isDismissible: false);
             pr.style(
               message: translate("waitTips"),
               progress: 0.0,
@@ -221,7 +221,7 @@ class _NotePageState extends State<NotePage> {
                 }
               });
               pr = new ProgressDialog(this.context,
-                  type: ProgressDialogType.Download);
+                  type: ProgressDialogType.Download,isDismissible: false);
               pr.style(
                 message: "2. 删除本地缓存",
                 progress: 80,
@@ -265,7 +265,7 @@ class _NotePageState extends State<NotePage> {
 
               print("3. 更新 _vnote.json");
               pr = new ProgressDialog(this.context,
-                  type: ProgressDialogType.Download);
+                  type: ProgressDialogType.Download,isDismissible: false);
               pr.style(
                 message: "3. 更新 _vnote.json",
                 progress: 90,

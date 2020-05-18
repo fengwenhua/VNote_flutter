@@ -142,7 +142,7 @@ class _CreatePageState extends State<CreatePage> {
                       content = content.trim();
                       //pr.update(message: "开始创建...");
                       Utils.showMyToast("上传内容到 onedrive 中...");
-                      pr = new ProgressDialog(context);
+                      pr = new ProgressDialog(context,isDismissible: false);
                       pr.style(message: translate("createFileTips"));
                       await pr.show().then((_) async {
                         // 应该先找图片
@@ -244,7 +244,7 @@ class _CreatePageState extends State<CreatePage> {
                             });
                             uploadPR = new ProgressDialog(context,
                                 type: ProgressDialogType.Download,
-                                isDismissible: true);
+                                isDismissible: false);
                             uploadPR.style(
                               message: translate("uploadingTips"),
                               progress: double.parse((i + 1).toString()),

@@ -653,7 +653,7 @@ class _DirectoryPageState extends State<DirectoryPage>
           child: Text(translate("delDialog.ok")),
           onPressed: () async {
             Navigator.of(context).pop(true);
-            pr = new ProgressDialog(context, isDismissible: true);
+            pr = new ProgressDialog(context, isDismissible: false);
             pr.style(message: "删除中...");
             await pr.show().then((_) async {
               print("点击了删除");
@@ -667,7 +667,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               });
 
               pr = new ProgressDialog(this.context,
-                  type: ProgressDialogType.Download, isDismissible: true);
+                  type: ProgressDialogType.Download, isDismissible: false);
               pr.style(
                 message: "0. 开始删除",
                 progress: 0,
@@ -696,7 +696,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                   }
                 });
                 pr = new ProgressDialog(this.context,
-                    type: ProgressDialogType.Download, isDismissible: true);
+                    type: ProgressDialogType.Download, isDismissible: false);
                 pr.style(
                   message: "1. 下载 _vnote.json",
                   progress: 40,
@@ -718,7 +718,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                     }
                   });
                   pr = new ProgressDialog(this.context,
-                      type: ProgressDialogType.Download, isDismissible: true);
+                      type: ProgressDialogType.Download, isDismissible: false);
                   pr.style(
                     message: "2. 更新 _vnote.json",
                     progress: 80,
