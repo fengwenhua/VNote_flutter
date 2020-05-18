@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/notebooks_list_provider.dart';
 import 'package:vnote/provider/token_provider.dart';
-import 'package:vnote/widgets/directory_widget.dart';
 
 class NotebooksPage extends StatefulWidget {
   @override
@@ -121,11 +120,60 @@ class _NotebooksPageState extends State<NotebooksPage> {
     }).toList();
   }
 
-  Widget _getNotebooksWidget({@required Document document}) => DirectoryWidget(
+  Widget _getNotebooksWidget({@required Document document}) => NotebooksWidget(
       directoryName: document.name,
-      lastModified: document.dateModified,
       onPressedNext: () async {
         print("点开 ${document.name} 笔记本");
         // 记得将这个 id 记录下来, 以后刷新用
       });
+}
+
+class NotebooksWidget extends StatefulWidget {
+  final String directoryName;
+  final VoidCallback onPressedNext;
+
+  NotebooksWidget({
+    Key key,
+    @required this.directoryName,
+    this.onPressedNext,
+  }) : super(key: key);
+
+  @override
+  _NotebooksWidgetState createState() => _NotebooksWidgetState();
+}
+
+class _NotebooksWidgetState extends State<NotebooksWidget> {
+  bool _color;
+
+  @override
+  void initState() {
+    super.initState();
+    _color = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget titleWidget = GestureDetector(
+      child: Text(widget.directoryName),
+      onTap: widget.onPressedNext,
+    );
+    //Icon folderIcon = Icon(Icons.folder);
+    IconButton folderIcon = IconButton(
+      icon: Icon(Icons.folder),
+      onPressed: () => widget.onPressedNext,
+    );
+
+    return Card(
+        color: _color ? Theme.of(context).primaryColor :null,
+        child: ListTile(
+          leading: folderIcon,
+          title: titleWidget,
+          onTap: () {
+            setState(() {
+              _color = !_color;
+              widget.onPressedNext();
+            });
+          },
+        ));
+  }
 }

@@ -105,7 +105,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                     children: <Widget>[
                       ListTile(
                         title: Text(translate("drawer.notebooks")),
-                        leading: Icon(Icons.settings, color: Colors.blue),
+                        leading: Icon(Icons.import_contacts, color: Colors.blue),
                         onTap: () {
                           print("点击笔记本");
                           Application.router.navigateTo(context, "/notebooks",

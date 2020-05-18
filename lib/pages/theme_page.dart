@@ -10,7 +10,11 @@ class ThemePage extends StatefulWidget {
 }
 
 class _ThemePageState extends State<ThemePage> {
-  var _list = [translate("theme.followSystem"), translate("theme.open"), translate("theme.close")];
+  var _list = [
+    translate("theme.followSystem"),
+    translate("theme.open"),
+    translate("theme.close")
+  ];
 
   @override
   void initState() {
