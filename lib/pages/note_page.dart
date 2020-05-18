@@ -258,7 +258,7 @@ class _NotePageState extends State<NotePage> {
                 print("2. 删除本地缓存 的对话框关闭了?");
                 print(isHidden);
                 if (!isHidden) {
-                  await pr.hide();
+                  Navigator.of(this.context).pop();
                 }
               });
               Future.delayed(Duration(seconds: 2));
