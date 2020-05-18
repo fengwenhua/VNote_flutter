@@ -11,6 +11,7 @@ import 'package:vnote/models/document_model.dart';
 import 'package:vnote/provider/data_list_provider.dart';
 import 'package:vnote/provider/dir_and_file_cache_provider.dart';
 import 'package:vnote/provider/local_document_provider.dart';
+import 'package:vnote/provider/notebooks_list_provider.dart';
 import 'package:vnote/provider/parent_id_provider.dart';
 import 'package:vnote/provider/theme_provider.dart';
 import 'package:vnote/provider/token_provider.dart';
@@ -80,6 +81,10 @@ class _SplashScreenPageState extends State<SplashScreenPage>
             Provider.of<DataListProvider>(context, listen: false);
         dataListModel.goAheadDataList(list);
         dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
+
+        NotebooksProvider notebooksProvider =
+            Provider.of<NotebooksProvider>(context, listen: false);
+        notebooksProvider.updateList(list);
       }
     });
   }
@@ -92,9 +97,9 @@ class _SplashScreenPageState extends State<SplashScreenPage>
     Utils.setImageFolder();
 
     LocalDocumentProvider localDocumentProvider =
-    Provider.of<LocalDocumentProvider>(context, listen: false);
+        Provider.of<LocalDocumentProvider>(context, listen: false);
 
-    await Utils.model2ListDocument().then((data){
+    await Utils.model2ListDocument().then((data) {
       print("这里拿到 _myNote.json 的数据");
       localDocumentProvider.updateList(data);
     });

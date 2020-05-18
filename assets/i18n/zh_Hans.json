@@ -9,6 +9,9 @@
     "appbar": "个人笔记",
     "tips": "没有本地数据"
   },
+  "notebooks": {
+    "title": "选择你的笔记本"
+  },
   "about": {
     "name": "关于",
     "version": "版本",
@@ -21,6 +24,7 @@
     "tips": "请先进入笔记本, 在笔记本的文件夹下新建文件!"
   },
   "drawer": {
+    "notebooks":"笔记本",
     "settings":"设置",
     "logout": "退出登录"
   },

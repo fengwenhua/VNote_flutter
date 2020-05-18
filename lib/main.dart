@@ -9,6 +9,7 @@ import 'package:vnote/provider/dir_and_file_cache_provider.dart';
 import 'package:vnote/provider/image_folder_id_provider.dart';
 import 'package:vnote/provider/local_document_provider.dart';
 import 'package:vnote/provider/new_images_provider.dart';
+import 'package:vnote/provider/notebooks_list_provider.dart';
 import 'package:vnote/provider/parent_id_provider.dart';
 import 'package:vnote/provider/theme_provider.dart';
 import 'package:vnote/provider/token_provider.dart';
@@ -71,6 +72,9 @@ void main() async {
           ),
           ChangeNotifierProvider<LocalDocumentProvider>(
             create: (context) => LocalDocumentProvider(),
+          ),
+          ChangeNotifierProvider<NotebooksProvider>(
+            create: (context) => NotebooksProvider(),
           )
         ],
         child: MyApp(),

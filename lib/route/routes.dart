@@ -17,6 +17,7 @@ class Routes {
   static String tutorial = "/tutorial";
   static String language = "/language";
   static String settings = "/settings";
+  static String notebooks = "/notebooks";
   static String webViewPage = '/webview';
   static String theme = '/theme';
   static String markdownWebView = "/markdownWebView";
@@ -40,6 +41,7 @@ class Routes {
     router.define(tutorial, handler: tutorialHandler);
     router.define(language, handler: languageHandler);
     router.define(settings, handler: settingsHandler);
+    router.define(notebooks, handler: notebooksHandler);
     router.define(webViewPage, handler: webViewHandler);
     router.define(theme, handler: themeHandler);
     router.define(markdownWebView, handler: markdownWebViewHandler);

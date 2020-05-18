@@ -9,6 +9,7 @@ import 'package:vnote/pages/logout_page.dart';
 import 'package:vnote/pages/markdown_webview_page.dart';
 import 'package:vnote/pages/node_edit.page.dart';
 import 'package:vnote/pages/note_preview_page.dart';
+import 'package:vnote/pages/notebooks_page.dart';
 import 'package:vnote/pages/setting_page.dart';
 import 'package:vnote/pages/splash_screen_page.dart';
 import 'package:vnote/pages/theme_page.dart';
@@ -94,11 +95,17 @@ var languageHandler = new Handler(
   return new LanguagePage();
 });
 
-// 语言设置页面
+// 设置页面
 var settingsHandler = new Handler(
     handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
   return new SettingPage();
 });
+
+// 笔记本选择页面
+var notebooksHandler = new Handler(
+    handlerFunc: (BuildContext context, Map<String, List<Object>> params) {
+      return new NotebooksPage();
+    });
 
 // webview
 var webViewHandler = new Handler(

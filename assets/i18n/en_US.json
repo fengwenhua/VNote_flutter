@@ -9,6 +9,9 @@
     "appbar": "Personal Notes",
     "tips": "No local data"
   },
+  "notebooks": {
+    "title": "Choose your notebook"
+  },
   "about": {
     "name": "About",
     "version": "version",
@@ -21,6 +24,7 @@
     "tips": "Please go to the notebook first, and create a new file in the notebook folder!"
   },
   "drawer": {
+    "notebooks":"Notebooks",
     "settings":"Settings",
     "logout": "Logout"
   },
