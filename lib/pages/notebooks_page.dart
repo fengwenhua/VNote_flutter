@@ -150,14 +150,14 @@ class _NotebooksPageState extends State<NotebooksPage> {
         ],
         dismissal: SlidableDismissal(
           child: SlidableDrawerDismissal(),
-//          onWillDismiss: (actionType) {
-//            return showDialog<bool>(
-//                context: context,
-//                builder: (context) {
-//                  return _deleteDialog(
-//                      context, document, tokenModel, dataListModel);
-//                });
-//          },
+          onWillDismiss: (actionType) {
+          return showDialog<bool>(
+              context: context,
+              builder: (context) {
+                return _deleteDialog(
+                    context, document, tokenModel);
+              });
+        },
           onDismissed: (actionType) {
             print("actionType: " + actionType.toString());
           },
