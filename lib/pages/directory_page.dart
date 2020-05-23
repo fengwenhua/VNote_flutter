@@ -203,6 +203,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     // 这段笔记本根目录的刷新方法,应该移动到笔记本页面
 
     // 在根目录点击了更新
+    // 修改完后,这段代码可以不要了
     if (id == "approot" || name == "VNote 根目录") {
       await DocumentListUtil.instance
           .getNotebookList(context, tokenModel.token.accessToken, (data) async {
@@ -968,6 +969,9 @@ class _DirectoryPageState extends State<DirectoryPage>
                 );
                 await pr.show();
 
+                print("将要新建的 id和 name 如下:");
+                print(parentIdModel.parentId);
+                print(parentIdModel.parentName);
                 await OneDriveDataDao.createFolder(
                         context,
                         tokenModel.token.accessToken,

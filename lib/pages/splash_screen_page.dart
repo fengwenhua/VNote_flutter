@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_token_dao.dart';
 import 'package:vnote/models/document_model.dart';
+import 'package:vnote/provider/config_id_provider.dart';
 import 'package:vnote/provider/data_list_provider.dart';
 import 'package:vnote/provider/dir_and_file_cache_provider.dart';
 import 'package:vnote/provider/local_document_provider.dart';
@@ -64,33 +65,67 @@ class _SplashScreenPageState extends State<SplashScreenPage>
   /// 趁播放 logo 的时候, 将一级目录(笔记本)下载下来
   Future<List<Document>> getNotebook(String accessToken) async {
     return await DocumentListUtil.instance.getNotebookList(context, accessToken,
-        (list) {
+        (list) async {
       ParentIdProvider parentIdModel =
           Provider.of<ParentIdProvider>(context, listen: false);
       DirAndFileCacheProvider dirCacheModel =
           Provider.of<DirAndFileCacheProvider>(context, listen: false);
+      DataListProvider dataListModel =
+          Provider.of<DataListProvider>(context, listen: false);
+      ConfigIdProvider configIdModel =
+          Provider.of<ConfigIdProvider>(context, listen: false);
       if (list.length == 0) {
         print("笔记本没有数据!");
         // 为毛没有数据我还要插入? 感觉这里有 bug
         dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
       } else {
         print("获取了笔记本List, 如下:");
-        list.forEach((i) {
-          print(i.name);
-        });
-        print("开始更新笔记本 list");
         NotebooksProvider notebooksProvider =
-        Provider.of<NotebooksProvider>(context, listen: false);
+            Provider.of<NotebooksProvider>(context, listen: false);
         notebooksProvider.updateList(list);
 
         // 这里应该用 SP,记录选择的笔记本的 id,如果没有则取list第一个
+        String chooseNotebookId =
+            Application.sp.getString("choose_notebook_id");
+        String chooseNotebookName =
+            Application.sp.getString("choose_notebook_name");
 
-        DataListProvider dataListModel =
-            Provider.of<DataListProvider>(context, listen: false);
-        dataListModel.goAheadDataList(list);
-        dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
+        // 同时需要判断从本地取出来的 id 是否真的存在, 不存在则取 list 第一个
+        bool idIsValue = false;
 
+        list.forEach((i) {
+          print(i.name);
+          if (i.id == chooseNotebookId) {
+            idIsValue = true;
+          }
+        });
 
+        // 本地有用户曾经选择过的笔记本 id,同时该笔记本还活着,没有被删掉
+        if (chooseNotebookId == null || !idIsValue) {
+          chooseNotebookId = list[0].id;
+          chooseNotebookName = list[0].name;
+        }
+
+        await DocumentListUtil.instance
+            .getChildList(context, accessToken, chooseNotebookId, (list) {})
+            .then((data) {
+          if (data == null) {
+            print("获取的儿子为空, 不处理!");
+          } else {
+            print("在 splash_screen 页面, 获取的儿子有数据");
+            parentIdModel.goAheadParentId(chooseNotebookId, chooseNotebookName);
+            parentIdModel.setGenId(chooseNotebookId);
+
+            dataListModel.goAheadDataList(data);
+            for (Document d in dataListModel.dataList) {
+              if (d.name == "_vnote.json") {
+                configIdModel.updateConfigId(d.id);
+                break;
+              }
+            }
+            dirCacheModel.addDirAndFileList(chooseNotebookId, data);
+          }
+        });
       }
     });
   }

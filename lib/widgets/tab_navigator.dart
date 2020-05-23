@@ -108,8 +108,10 @@ class _TabNavigatorState extends State<TabNavigator> {
                         leading: Icon(Icons.import_contacts, color: Colors.blue),
                         onTap: () {
                           print("点击笔记本");
+                          Navigator.of(context).pop();
                           Application.router.navigateTo(context, "/notebooks",
                               transition: TransitionType.fadeIn);
+
                         },
                       ),
                       ListTile(

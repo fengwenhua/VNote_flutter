@@ -21,7 +21,7 @@
     "note": "Notes",
     "dir": "Directories",
     "search": "Search",
-    "tips": "Please go to the notebook first, and create a new file in the notebook folder!"
+    "tips": "Please create a new file in the folder!"
   },
   "drawer": {
     "notebooks":"Notebooks",

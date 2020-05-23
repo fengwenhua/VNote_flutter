@@ -70,6 +70,11 @@ class DataListProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// [clear] 清空数据
+  void clear(){
+    _dataListStack.clear();
+    notifyListeners();
+  }
   /// [goAheadDataList] 点开来目录, 所以要压栈
   void goAheadDataList(List<Document> newDataList) {
     _dataListStack.push(newDataList);

@@ -25,4 +25,9 @@ class MyStack<T> {
   T top() {
     return _list.last;
   }
+
+  /// clear the list
+  void clear(){
+    _list.clear();
+  }
 }

@@ -17,6 +17,12 @@ class DirAndFileCacheProvider with ChangeNotifier {
     }
   }
 
+  /// [clear]清空数据
+  void clear(){
+    _dirCache.clear();
+    notifyListeners();
+  }
+
   /// [addDirAndFileList]
   void addDirAndFileList(String id, List<Document> list) {
     //this._dirCache.putIfAbsent(id, ()=>list);

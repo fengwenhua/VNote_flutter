@@ -18,6 +18,12 @@ class ParentIdProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void clear(){
+    _parentIdStack.clear();
+    _parentNameStack.clear();
+    notifyListeners();
+  }
+
   /// [goAheadParentId] 用户点击了目录, 则设置新的 parentId 的 [newId] 和 [newName]
   void goAheadParentId(String newId, String newName) {
     _parentIdStack.push(newId);
