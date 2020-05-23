@@ -359,7 +359,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                   })
             ],
             // 因为将笔记本抽离开了, 所以这里应该用 SP 获取当前选择笔记本的 id,判断一下
-            leading: parentIdModel.parentId == "approot" ||
+            leading: parentIdModel.parentId == "VNote" ||parentIdModel.parentId == "approot" ||
                     parentIdModel.parentId == parentIdModel.rootId
                 ? IconButton(
                     icon: Icon(

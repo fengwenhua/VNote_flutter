@@ -19,13 +19,13 @@ class NotebooksProvider with ChangeNotifier {
   }
 
   /// [addNotebook] 用于新增笔记本
-  void addNotebook(Document doc){
+  void addNotebook(Document doc) {
     _list.add(doc);
     notifyListeners();
   }
 
   /// [renameEle] 根据 [id] 和 [name] 重命名 list 的某个元素
-  void renameEle(String id, String name){
+  void renameEle(String id, String name) {
     List<Document> newList = _list.map((f) {
       if (f.id == id) {
         f.name = name;
@@ -33,6 +33,12 @@ class NotebooksProvider with ChangeNotifier {
       return f;
     }).toList();
     _list = newList;
+    notifyListeners();
+  }
+
+  /// [removeEle] 删除list 中的某个元素, 干掉某个笔记本时要调用的
+  void removeEle(Document document) {
+    _list.removeWhere((test) => test.id == document.id);
     notifyListeners();
   }
 }

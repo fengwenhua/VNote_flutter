@@ -140,12 +140,11 @@ class _NotebooksPageState extends State<NotebooksPage> {
             closeOnTap: true,
             onTap: () async {
               print("点击了删除");
-//              showDialog<bool>(
-//                  context: context,
-//                  builder: (context) {
-//                    return _deleteDialog(
-//                        context, document, tokenModel, dataListModel);
-//                  });
+              showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return _deleteDialog(context, document, tokenModel);
+                  });
             },
           ),
         ],
@@ -171,55 +170,60 @@ class _NotebooksPageState extends State<NotebooksPage> {
       directoryName: document.name,
       onPressedNext: () async {
         print("点开 ${document.name} 笔记本");
-        // 记得将这个 id 记录下来, 以后刷新用
-        Application.sp.setString("choose_notebook_id", document.id);
-        Application.sp.setString("choose_notebook_name", document.name);
-
-        ParentIdProvider parentIdModel =
-            Provider.of<ParentIdProvider>(context, listen: false);
-        DirAndFileCacheProvider dirCacheModel =
-            Provider.of<DirAndFileCacheProvider>(context, listen: false);
-        DataListProvider dataListModel =
-            Provider.of<DataListProvider>(context, listen: false);
-        ConfigIdProvider configIdModel =
-            Provider.of<ConfigIdProvider>(context, listen: false);
-        TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
-
-        ProgressDialog pr = new ProgressDialog(context,
-            type: ProgressDialogType.Normal, isDismissible: false);
-        pr.style(message: "加载笔记本中...");
-        await pr.show();
-
-        await DocumentListUtil.instance
-            .getChildList(
-                context, tokenModel.token.accessToken, document.id, (list) {})
-            .then((data) {
-          if (data == null) {
-            print("获取的儿子为空, 不处理!");
-          } else {
-            print("在 splash_screen 页面, 获取的儿子有数据");
-            print("操作的id和 name 如下:");
-            print(document.id);
-            print(document.name);
-            parentIdModel.clear();
-            parentIdModel.goAheadParentId(document.id, document.name);
-            parentIdModel.setGenId(document.id);
-
-            dataListModel.clear();
-            dataListModel.goAheadDataList(data);
-            for (Document d in dataListModel.dataList) {
-              if (d.name == "_vnote.json") {
-                configIdModel.updateConfigId(d.id);
-                break;
-              }
-            }
-            dirCacheModel.clear();
-            dirCacheModel.addDirAndFileList(document.id, data);
-            print("完成了笔记本的加载工作");
-            Navigator.of(context).pop();
-          }
-        }).whenComplete(() async => await pr.hide());
+        _chooseNotebook(document);
       });
+
+  /// [] 选择笔记本
+  _chooseNotebook(Document document) async {
+    // 记得将这个 id 记录下来, 以后刷新用
+    Application.sp.setString("choose_notebook_id", document.id);
+    Application.sp.setString("choose_notebook_name", document.name);
+
+    ParentIdProvider parentIdModel =
+        Provider.of<ParentIdProvider>(context, listen: false);
+    DirAndFileCacheProvider dirCacheModel =
+        Provider.of<DirAndFileCacheProvider>(context, listen: false);
+    DataListProvider dataListModel =
+        Provider.of<DataListProvider>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
+    TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
+
+    ProgressDialog pr = new ProgressDialog(context,
+        type: ProgressDialogType.Normal, isDismissible: false);
+    pr.style(message: "加载笔记本中...");
+    await pr.show();
+
+    await DocumentListUtil.instance
+        .getChildList(
+            context, tokenModel.token.accessToken, document.id, (list) {})
+        .then((data) {
+      if (data == null) {
+        print("获取的儿子为空, 不处理!");
+      } else {
+        print("在 splash_screen 页面, 获取的儿子有数据");
+        print("操作的id和 name 如下:");
+        print(document.id);
+        print(document.name);
+        parentIdModel.clear();
+        parentIdModel.goAheadParentId(document.id, document.name);
+        parentIdModel.setGenId(document.id);
+
+        dataListModel.clear();
+        dataListModel.goAheadDataList(data);
+        for (Document d in dataListModel.dataList) {
+          if (d.name == "_vnote.json") {
+            configIdModel.updateConfigId(d.id);
+            break;
+          }
+        }
+        dirCacheModel.clear();
+        dirCacheModel.addDirAndFileList(document.id, data);
+        print("完成了笔记本的加载工作");
+        Navigator.of(context).pop();
+      }
+    }).whenComplete(() async => await pr.hide());
+  }
 
   /// [_updateNoteBooks] 更新笔记本
   _updateNoteBooks() async {
@@ -272,7 +276,7 @@ class _NotebooksPageState extends State<NotebooksPage> {
     NotebooksProvider notebooksProvider =
         Provider.of<NotebooksProvider>(context, listen: false);
     ParentIdProvider parentIdModel =
-    Provider.of<ParentIdProvider>(context, listen: false);
+        Provider.of<ParentIdProvider>(context, listen: false);
     return CupertinoAlertDialog(
       title: document.isFile
           ? Text(translate("renameDialog.fileTitle"))
@@ -337,17 +341,86 @@ class _NotebooksPageState extends State<NotebooksPage> {
     );
   }
 
-  /// 添加目录的那个对话框
-  Widget _addFolderDialog() {
+  /// [_deleteDialog] 删除对话框
+  Widget _deleteDialog(
+      BuildContext context, Document document, TokenModel tokenModel) {
     DataListProvider dataListModel =
         Provider.of<DataListProvider>(context, listen: false);
-    ParentIdProvider parentIdModel =
-        Provider.of<ParentIdProvider>(context, listen: false);
-    TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     ConfigIdProvider configIdModel =
         Provider.of<ConfigIdProvider>(context, listen: false);
     DirAndFileCacheProvider dirCacheModel =
         Provider.of<DirAndFileCacheProvider>(context, listen: false);
+    ParentIdProvider parentIdModel =
+        Provider.of<ParentIdProvider>(context, listen: false);
+    NotebooksProvider notebooksProvider =
+        Provider.of<NotebooksProvider>(context, listen: false);
+    return AlertDialog(
+      title: Text(translate("delDialog.name")),
+      content: document.isFile
+          ? Text(translate("delDialog.fileTitle"))
+          : Text(translate("delDialog.dirTitle")),
+      actions: <Widget>[
+        FlatButton(
+          child: Text(translate("delDialog.cancel")),
+          onPressed: () => Navigator.of(context).pop(false),
+        ),
+        FlatButton(
+          child: Text(translate("delDialog.ok")),
+          onPressed: () async {
+            Navigator.of(context).pop(true);
+            pr = new ProgressDialog(context, isDismissible: false);
+            pr.style(message: "删除中...");
+            await pr.show().then((_) async {
+              print("点击了删除");
+
+              await pr.hide().then((isHidden) async {
+                print("旧对话框删除了?");
+                print(isHidden);
+                if (!isHidden) {
+                  Navigator.of(context).pop();
+                }
+              });
+
+              pr = new ProgressDialog(this.context,
+                  type: ProgressDialogType.Download, isDismissible: false);
+              pr.style(
+                message: "0. 开始删除",
+                progress: 0,
+              );
+              await pr.show();
+              // 网络请求删除在线的文件夹
+              //Utils.showMyToast("0. 开始删除", type: 0);
+              await OneDriveDataDao.deleteFile(
+                  context, tokenModel.token.accessToken, document.id);
+//              // 删除本地缓存的文件夹
+//              dataListModel.removeEle(document);
+//              dirCacheModel.delDirOrFileEle(parentIdModel.parentId, document);
+              // 1. 删除笔记本 list对应 document
+              notebooksProvider.removeEle(document);
+              // 2. 参考点击文件夹(记得清空 dataListModel 和 dirCacheModel)
+              parentIdModel.clear();
+              dataListModel.clear();
+              dirCacheModel.clear();
+            });
+            Utils.showMyToast("删除完成");
+            await pr.hide().then((isHidden) async {
+              print(isHidden);
+              if (!isHidden) {
+                Navigator.of(this.context).pop();
+              }
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  /// 添加目录的那个对话框
+  Widget _addFolderDialog() {
+    TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
+
     ImageFolderIdProvider _imageFolderId =
         Provider.of<ImageFolderIdProvider>(context, listen: false);
     String folderName = "";

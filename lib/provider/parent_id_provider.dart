@@ -7,8 +7,10 @@ class ParentIdProvider with ChangeNotifier {
   MyStack<String> _parentNameStack = MyStack<String>();
   String _genId = "";
 
-  String get parentId => _parentIdStack.top();
-  String get parentName => _parentNameStack.top();
+  String get parentId =>
+      _parentIdStack.isEmpty ? "VNote" : _parentIdStack.top();
+  String get parentName =>
+      _parentNameStack.isEmpty ? "VNote" : _parentNameStack.top();
   String get rootId => _genId;
 
   /// [setGenId] 设置根 id
@@ -19,14 +21,14 @@ class ParentIdProvider with ChangeNotifier {
   }
 
   /// [clear]清空数据
-  void clear(){
+  void clear() {
     _parentIdStack.clear();
     _parentNameStack.clear();
     notifyListeners();
   }
 
   /// [rename]重命名
-  void rename(String newName){
+  void rename(String newName) {
     _parentNameStack.pop();
     _parentNameStack.push(newName);
     notifyListeners();
