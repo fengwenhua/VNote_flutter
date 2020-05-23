@@ -60,7 +60,7 @@ class _TabNavigatorState extends State<TabNavigator> {
                   // 这里应该点击进入 create 页面
                   ParentIdProvider parentIdModel =
                       Provider.of<ParentIdProvider>(context, listen: false);
-                  if (parentIdModel.parentId == parentIdModel.genId) {
+                  if (parentIdModel.parentId == parentIdModel.rootId) {
                     print("在根目录, 没办法新建文件");
                     Fluttertoast.showToast(
                         msg: translate("tab.tips"),

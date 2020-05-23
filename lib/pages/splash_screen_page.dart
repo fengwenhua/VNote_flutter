@@ -71,20 +71,26 @@ class _SplashScreenPageState extends State<SplashScreenPage>
           Provider.of<DirAndFileCacheProvider>(context, listen: false);
       if (list.length == 0) {
         print("笔记本没有数据!");
+        // 为毛没有数据我还要插入? 感觉这里有 bug
         dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
       } else {
         print("获取了笔记本List, 如下:");
         list.forEach((i) {
           print(i.name);
         });
+        print("开始更新笔记本 list");
+        NotebooksProvider notebooksProvider =
+        Provider.of<NotebooksProvider>(context, listen: false);
+        notebooksProvider.updateList(list);
+
+        // 这里应该用 SP,记录选择的笔记本的 id,如果没有则取list第一个
+
         DataListProvider dataListModel =
             Provider.of<DataListProvider>(context, listen: false);
         dataListModel.goAheadDataList(list);
         dirCacheModel.addDirAndFileList(parentIdModel.parentId, list);
 
-        NotebooksProvider notebooksProvider =
-            Provider.of<NotebooksProvider>(context, listen: false);
-        notebooksProvider.updateList(list);
+
       }
     });
   }

@@ -9,7 +9,7 @@ class ParentIdProvider with ChangeNotifier {
 
   String get parentId => _parentIdStack.top();
   String get parentName => _parentNameStack.top();
-  String get genId => _genId;
+  String get rootId => _genId;
 
   /// [setGenId] 设置根 id
   void setGenId(String id) {

@@ -199,6 +199,9 @@ class _DirectoryPageState extends State<DirectoryPage>
         Provider.of<ConfigIdProvider>(context, listen: false);
     DirAndFileCacheProvider dirCacheModel =
         Provider.of<DirAndFileCacheProvider>(context, listen: false);
+
+    // 这段笔记本根目录的刷新方法,应该移动到笔记本页面
+
     // 在根目录点击了更新
     if (id == "approot" || name == "VNote 根目录") {
       await DocumentListUtil.instance
@@ -354,8 +357,9 @@ class _DirectoryPageState extends State<DirectoryPage>
                     });
                   })
             ],
+            // 因为将笔记本抽离开了, 所以这里应该用 SP 获取当前选择笔记本的 id,判断一下
             leading: parentIdModel.parentId == "approot" ||
-                    parentIdModel.parentId == parentIdModel.genId
+                    parentIdModel.parentId == parentIdModel.rootId
                 ? IconButton(
                     icon: Icon(
                       Icons.dehaze,
@@ -410,7 +414,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     //print("当前的 parentName: " + _parentId.parentName);
 
     if (_parentId.parentName != "VNote 根目录" &&
-        _parentId.parentId != _parentId.genId) {
+        _parentId.parentId != _parentId.rootId) {
       print("不在根目录");
 
       for (Document d in dataListModel.dataList) {
@@ -685,7 +689,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               // 否则
               String configId = configIdModel.configId;
               if (configId == "approot" ||
-                  parentIdModel.parentId == parentIdModel.genId) {
+                  parentIdModel.parentId == parentIdModel.rootId) {
                 print("根目录, 不需要更新 _vnote.json 文件");
               } else {
                 await pr.hide().then((isHidden) async {
@@ -850,7 +854,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                   // 重命名文件和文件夹是不一样的
                   // 根目录则不用修改 _vnote.json
                   if (configIdModel.configId == "approot" ||
-                      parentIdModel.parentId == parentIdModel.genId) {
+                      parentIdModel.parentId == parentIdModel.rootId) {
                     print("根目录, 不需要更新 _vnote.json 文件");
                   } else {
                     print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
