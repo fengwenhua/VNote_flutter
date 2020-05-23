@@ -104,7 +104,7 @@ class _NotebooksPageState extends State<NotebooksPage> {
 
   List<Widget> getListWidget(List<Document> documents) {
     List<Document> childDocuments = new List<Document>();
-
+    TokenModel tokenModel = Provider.of<TokenModel>(context, listen: false);
     documents.forEach((f) {
       childDocuments.add(f);
     });
@@ -126,12 +126,11 @@ class _NotebooksPageState extends State<NotebooksPage> {
             icon: Icons.create,
             onTap: () {
               print("点击了重命名");
-//              showDialog<bool>(
-//                  context: context,
-//                  builder: (context) {
-//                    return _renameDialog(
-//                        context, document, tokenModel, dataListModel);
-//                  });
+              showDialog<bool>(
+                  context: context,
+                  builder: (context) {
+                    return _renameDialog(context, document, tokenModel);
+                  });
             },
           ),
           IconSlideAction(
@@ -266,6 +265,75 @@ class _NotebooksPageState extends State<NotebooksPage> {
     });
   }
 
+  /// [_renameDialog] 重命名对话框
+  Widget _renameDialog(
+      BuildContext context, Document document, TokenModel tokenModel) {
+    String fileOrFolderName = "";
+    NotebooksProvider notebooksProvider =
+        Provider.of<NotebooksProvider>(context, listen: false);
+    return CupertinoAlertDialog(
+      title: document.isFile
+          ? Text(translate("renameDialog.fileTitle"))
+          : Text(translate("renameDialog.dirTitle")),
+      content: Card(
+        elevation: 0.0,
+        child: Column(
+          children: <Widget>[
+            TextField(
+                decoration: InputDecoration(
+                    hintText: translate("renameDialog.hintTips"),
+                    filled: true,
+                    fillColor: Colors.grey.shade50),
+                onChanged: (String value) {
+                  fileOrFolderName = value;
+                },
+                controller: TextEditingController.fromValue(TextEditingValue(
+                    // 设置内容
+                    text: document.name,
+                    // 保持光标在最后
+                    selection: TextSelection.fromPosition(TextPosition(
+                        affinity: TextAffinity.downstream,
+                        offset: document.name.length))))),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        CupertinoDialogAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(translate("renameDialog.cancel")),
+        ),
+        CupertinoDialogAction(
+          onPressed: () async {
+            Navigator.pop(context);
+
+            fileOrFolderName = fileOrFolderName.trim(); //去空
+            if (fileOrFolderName != "") {
+              pr = new ProgressDialog(context, isDismissible: true);
+              pr.style(message: translate("waitTips"));
+              await pr.show().then((_) async {
+                await OneDriveDataDao.rename(
+                        context,
+                        tokenModel.token.accessToken,
+                        document.id,
+                        fileOrFolderName)
+                    .then((data) async {
+                  print("重命名返回的数据: " + data.toString());
+
+                  notebooksProvider.renameEle(document.id, fileOrFolderName);
+                });
+              }).then((_) async {
+                await pr.hide();
+              });
+            }
+          },
+          child: Text(translate("renameDialog.ok")),
+        ),
+      ],
+    );
+  }
+
   /// 添加目录的那个对话框
   Widget _addFolderDialog() {
     DataListProvider dataListModel =
@@ -325,11 +393,8 @@ class _NotebooksPageState extends State<NotebooksPage> {
                 );
                 await pr.show();
 
-                await OneDriveDataDao.createFolder(
-                        context,
-                        tokenModel.token.accessToken,
-                        folderName,
-                        "approot")
+                await OneDriveDataDao.createFolder(context,
+                        tokenModel.token.accessToken, folderName, "approot")
                     .then((value) async {
                   //print("创建目录返回来的数据: " + value.toString());
                   if (value == null) {
@@ -428,7 +493,6 @@ class NotebooksWidget extends StatefulWidget {
 }
 
 class _NotebooksWidgetState extends State<NotebooksWidget> {
-
   @override
   Widget build(BuildContext context) {
     Widget titleWidget = GestureDetector(
@@ -443,13 +507,13 @@ class _NotebooksWidgetState extends State<NotebooksWidget> {
 
     return Card(
         child: ListTile(
-          leading: folderIcon,
-          title: titleWidget,
-          onTap: () {
-            setState(() {
-              widget.onPressedNext();
-            });
-          },
-        ));
+      leading: folderIcon,
+      title: titleWidget,
+      onTap: () {
+        setState(() {
+          widget.onPressedNext();
+        });
+      },
+    ));
   }
 }
