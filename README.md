@@ -154,13 +154,52 @@ class FormData {
 }
 ```
 
-## 为了 android 部署加速
+## build 报错了
+运行flutter 构建时，长时间卡在`Running Gradle task 'assembleDebug'...`
 
-修改 修改Flutter SDK包下的flutter.gradle文件, 如我的目录是: /Users/hua/flutter/packages/flutter_tools/gradle/flutter.gradle`
+```bash
+flutter build apk -v
+```
+
+build 了很久没有反应, 最后报错大概如下:
+
+```info
+[+104793 ms] FAILURE: Build failed with an exception.
+[   +3 ms] * What went wrong:
+[        ] Could not determine the dependencies of task ':app:lintVitalRelease'.
+[        ] > Could not resolve all artifacts for configuration ':app:debugCompileClasspath'.
+[   +1 ms]    > Could not download armeabi_v7a_debug.jar (io.flutter:armeabi_v7a_debug:1.0.0-540786dd51f112885a89792d678296b95e6622e5)
+[        ]       > Could not get resource 'https://storage.googleapis.com/download.flutter.io/io/flutter/armeabi_v7a_debug/1.0.0-540786dd51f112885a89792d678296b95e6622e5/armeabi_v7a_debug-1.0.0-540786dd51f112885a89792d678296b95e6622e5.jar'.
+[        ]          > Could not GET 'https://storage.googleapis.com/download.flutter.io/io/flutter/armeabi_v7a_debug/1.0.0-540786dd51f112885a89792d678296b95e6622e5/armeabi_v7a_debug-1.0.0-540786dd51f112885a89792d678296b95e6622e5.jar'.
+[        ]             > Connect to storage.googleapis.com:443 [storage.googleapis.com/34.64.4.16] failed: Read timed out
+[        ]    > Could not download arm64_v8a_debug.jar (io.flutter:arm64_v8a_debug:1.0.0-540786dd51f112885a89792d678296b95e6622e5)
+[   +1 ms]       > Could not get resource 'https://storage.googleapis.com/download.flutter.io/io/flutter/arm64_v8a_debug/1.0.0-540786dd51f112885a89792d678296b95e6622e5/arm64_v8a_debug-1.0.0-540786dd51f112885a89792d678296b95e6622e5.jar'.
+[        ]          > Could not GET 'https://storage.googleapis.com/download.flutter.io/io/flutter/arm64_v8a_debug/1.0.0-540786dd51f112885a89792d678296b95e6622e5/arm64_v8a_debug-1.0.0-540786dd51f112885a89792d678296b95e6622e5.jar'.
+[        ]             > Connect to storage.googleapis.com:443 [storage.googleapis.com/34.64.4.16] failed: Read timed out
+[        ] * Try:
+[        ] Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+[        ] * Get more help at https://help.gradle.org
+[        ] BUILD FAILED in 1m 51s
+```
+
+### 方法 1
+运行时会卡在`Running 'gradle assembleDebug`, 因为Gradle的Maven仓库在国外, 可以使用阿里云的镜像地址
+
+修改`android`下的`build.gradle`如下:
+
+```gradle
+maven { url 'https://maven.aliyun.com/repository/google' }
+maven { url 'https://maven.aliyun.com/repository/jcenter' }
+maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
+```
+
+![](https://gitee.com/fengwenhua/ImageBed/raw/master/1590277396_20200524073835701_471869241.png)
+
+修改Flutter SDK包下的`flutter.gradle`文件, 如我的目录是: `/Users/hua/flutter/packages/flutter_tools/gradle/flutter.gradle`
 
 将
 
-```
+```gradle
 repositories{
     google()
     gcenter()
@@ -169,8 +208,26 @@ repositories{
 
 改成
 
-```
+```gradle
 maven { url 'https://maven.aliyun.com/repository/google' }
 maven { url 'https://maven.aliyun.com/repository/jcenter' }
-maven { url 'http://maven.aliyun.com/nexus/content/groups/public' }
+maven { url 'https://maven.aliyun.com/nexus/content/groups/public' }
 ```
+
+![](https://gitee.com/fengwenhua/ImageBed/raw/master/1590277395_20200524073749564_744562330.png)
+
+### 方法2
+使用方法 1 还是解决不了, 请继续往下看.
+
+> 解决地址: https://stackoverflow.com/questions/5991194/gradle-proxy-configuration
+
+添加如下到`gradle.properties`, 其中`1087`是我的 v2ray http 监听端口. Android Studio 不用设置代理, 设置了也没用...
+
+```properties
+systemProp.http.proxyHost=127.0.0.1
+systemProp.http.proxyPort=1087
+systemProp.https.proxyHost=127.0.0.1
+systemProp.https.proxyPort=1087
+```
+
+![](https://gitee.com/fengwenhua/ImageBed/raw/master/1590277392_20200524072644755_579676049.png)
