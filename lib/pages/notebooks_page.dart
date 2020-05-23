@@ -271,6 +271,8 @@ class _NotebooksPageState extends State<NotebooksPage> {
     String fileOrFolderName = "";
     NotebooksProvider notebooksProvider =
         Provider.of<NotebooksProvider>(context, listen: false);
+    ParentIdProvider parentIdModel =
+    Provider.of<ParentIdProvider>(context, listen: false);
     return CupertinoAlertDialog(
       title: document.isFile
           ? Text(translate("renameDialog.fileTitle"))
@@ -322,6 +324,7 @@ class _NotebooksPageState extends State<NotebooksPage> {
                   print("重命名返回的数据: " + data.toString());
 
                   notebooksProvider.renameEle(document.id, fileOrFolderName);
+                  parentIdModel.rename(fileOrFolderName);
                 });
               }).then((_) async {
                 await pr.hide();

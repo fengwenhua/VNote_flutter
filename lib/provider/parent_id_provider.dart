@@ -18,9 +18,17 @@ class ParentIdProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// [clear]清空数据
   void clear(){
     _parentIdStack.clear();
     _parentNameStack.clear();
+    notifyListeners();
+  }
+
+  /// [rename]重命名
+  void rename(String newName){
+    _parentNameStack.pop();
+    _parentNameStack.push(newName);
     notifyListeners();
   }
 
