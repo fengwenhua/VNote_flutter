@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vnote/models/onedrive_token_model.dart';
 import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/utils/global.dart';
+import 'package:vnote/utils/log_util.dart';
 import 'package:vnote/utils/net_utils.dart';
 
 const oneDrive_token_url =
@@ -58,8 +59,8 @@ class OneDriveTokenDao {
               OneDriveTokenModel.fromJson(json.decode(data));
 
           print('刷新token, 解析出来的结果如下:');
-          print("access_token: " + model.accessToken);
-
+          //print("access_token: " + model.accessToken);
+          LogUtil.e("access_token: " + model.accessToken);
           TokenModel tokenModel =
               Provider.of<TokenModel>(context, listen: false);
           tokenModel.updateToken(model);

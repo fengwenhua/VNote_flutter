@@ -30,6 +30,7 @@
   },
   "settings": {
     "name": "设置",
+    "token": "点击复制 token",
     "language": "语言设置",
     "tutorial": "简易教程",
     "about": "关于我们",

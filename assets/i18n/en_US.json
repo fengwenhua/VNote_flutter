@@ -30,6 +30,7 @@
   },
   "settings": {
     "name": "Settings",
+    "token": "Copy token",
     "language": "Language",
     "tutorial": "Tutorial",
     "about": "About",

@@ -2,11 +2,14 @@ import 'dart:convert';
 
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_translate/flutter_translate.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:package_info/package_info.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
+import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/res/colors.dart';
 import 'package:vnote/utils/global.dart';
 import 'package:vnote/utils/net_utils.dart';
@@ -38,6 +41,20 @@ class _SettingPageState extends State<SettingPage> {
       body: Column(
         children: <Widget>[
           SizedBox(height: 5),
+          ClickItem(
+              title: translate("settings.token"),
+              onTap: () {
+                print("点击复制 token");
+                TokenModel tokenModel =
+                    Provider.of<TokenModel>(context, listen: false);
+                String refreshToken = tokenModel.token.refreshToken;
+                Clipboard.setData(ClipboardData(text: 'token:' + refreshToken));
+                Fluttertoast.showToast(
+                    msg: "token 已经复制到剪切板, 请直接发送到公众号进行绑定",
+                    toastLength: Toast.LENGTH_LONG,
+                    gravity: ToastGravity.BOTTOM,
+                    textColor: Colors.red);
+              }),
           ClickItem(
               title: translate("settings.language"),
               onTap: () {
