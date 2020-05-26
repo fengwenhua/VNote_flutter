@@ -52,7 +52,7 @@ class DocumentListUtil {
       // 首先要是文件
       if (value.file != null) {
         print("检测名字: " + value.name);
-        if (value.name.toLowerCase().contains(key)) {
+        if (value.name.toLowerCase().contains(key.toLowerCase())) {
           print("名字包含了搜索关键字");
           if (value.name.endsWith(".json")) {
             print("跳过 json 配置文件");
