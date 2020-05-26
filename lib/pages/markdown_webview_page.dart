@@ -100,6 +100,7 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
                     color: Colors.white,
                     onPressed: () async {
                       print("点击刷新了");
+                      pr1 = new ProgressDialog(context, type: ProgressDialogType.Normal);
                       await pr1.show().then((_) {
                         _updateMDFile(widget.id, widget.title, widget.configId,
                             widget.imageFolderId);
