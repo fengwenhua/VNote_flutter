@@ -43,6 +43,7 @@ class _NotePageState extends State<NotePage> {
   ProgressDialog pr;
   @override
   Widget build(BuildContext context) {
+    print("笔记页面重建!");
     pr = new ProgressDialog(this.context, type: ProgressDialogType.Download);
     pr.style(
       message: translate("waitTips"),
