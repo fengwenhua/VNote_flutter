@@ -204,32 +204,41 @@ class _DirectoryPageState extends State<DirectoryPage>
 
     // 在根目录点击了更新
     // 修改完后,这段代码可以不要了
-    if (id == "approot" || name == "VNote 根目录") {
-      await DocumentListUtil.instance
-          .getNotebookList(context, tokenModel.token.accessToken, (data) async {
-        if (data != null) {
-          if (data.length == 0) {
-            Fluttertoast.showToast(
-                msg: translate("noNoteBookTips"),
-                toastLength: Toast.LENGTH_LONG,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 3,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0);
-          } else {
-            dataListModel.updateCurrentDir(data);
 
-            // 可以在这里, 用 Map<String,List<Document>> 的模式, 将 id 和 dataList 对应起来
-            dirCacheModel.updateDirAndFileList(id, data);
+    // update 用于判断在其他目录点击了更新或者进入其他目录
+    await getChildData(tokenModel.token.accessToken, id).then((data) {
+      if (data == null) {
+        print("获取的数据为空, 不处理!");
+      } else {
+        // 显示
+        if (data.length > 0) {
+          if (controller.hasClients) {
+            if (update) {
+              if (position.length > 0) position.removeLast();
+            }
+            //print("此时的 offset 是:");
+            position.add(controller.offset);
           }
+          if (update) {
+            dataListModel.updateCurrentDir(data);
+            dirCacheModel.updateDirAndFileList(id, data);
+          } else {
+            dataListModel.goAheadDataList(data);
+            dirCacheModel.addDirAndFileList(id, data);
+            for (Document d in dataListModel.dataList) {
+              if (d.name == "_vnote.json") {
+                configIdModel.updateConfigId(d.id);
+                break;
+              }
+            }
+          }
+          //initPathFiles(document.childData);
           pr.hide().whenComplete(() {
             jumpToPosition(true);
           });
         } else {
-          print("进来 2");
           Fluttertoast.showToast(
-              msg: translate("noNoteBookTips"),
+              msg: "该文件夹内容为空了, 不可能的!!!",
               toastLength: Toast.LENGTH_LONG,
               gravity: ToastGravity.BOTTOM,
               timeInSecForIosWeb: 3,
@@ -239,60 +248,10 @@ class _DirectoryPageState extends State<DirectoryPage>
           pr.hide().whenComplete(() {
             jumpToPosition(true);
           });
-
-          // 因为点击目录的时候, 已经记录的 parentId , 所以如果当前目录为空, 所以要撤销
           parentIdModel.goBackParentId();
         }
-      });
-    } else {
-      // update 用于判断在其他目录点击了更新或者进入其他目录
-      await getChildData(tokenModel.token.accessToken, id).then((data) {
-        if (data == null) {
-          print("获取的数据为空, 不处理!");
-        } else {
-          // 显示
-          if (data.length > 0) {
-            if (controller.hasClients) {
-              if (update) {
-                if (position.length > 0) position.removeLast();
-              }
-              //print("此时的 offset 是:");
-              position.add(controller.offset);
-            }
-            if (update) {
-              dataListModel.updateCurrentDir(data);
-              dirCacheModel.updateDirAndFileList(id, data);
-            } else {
-              dataListModel.goAheadDataList(data);
-              dirCacheModel.addDirAndFileList(id, data);
-              for (Document d in dataListModel.dataList) {
-                if (d.name == "_vnote.json") {
-                  configIdModel.updateConfigId(d.id);
-                  break;
-                }
-              }
-            }
-            //initPathFiles(document.childData);
-            pr.hide().whenComplete(() {
-              jumpToPosition(true);
-            });
-          } else {
-            Fluttertoast.showToast(
-                msg: "该文件夹内容为空了, 不可能的!!!",
-                toastLength: Toast.LENGTH_LONG,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 3,
-                backgroundColor: Colors.red,
-                textColor: Colors.white,
-                fontSize: 16.0);
-            pr.hide().whenComplete(() {
-              jumpToPosition(true);
-            });
-            parentIdModel.goBackParentId();
-          }
-        }
-      });
-    }
+      }
+    });
   }
 
   @override
@@ -359,9 +318,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                   })
             ],
             // 因为将笔记本抽离开了, 所以这里应该用 SP 获取当前选择笔记本的 id,判断一下
-            leading: parentIdModel.parentId == "VNote" ||
-                    parentIdModel.parentId == "approot" ||
-                    parentIdModel.parentId == parentIdModel.rootId
+            leading: parentIdModel.parentId == parentIdModel.rootId
                 ? IconButton(
                     icon: Icon(
                       Icons.dehaze,
