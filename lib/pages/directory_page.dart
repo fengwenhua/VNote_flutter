@@ -359,7 +359,8 @@ class _DirectoryPageState extends State<DirectoryPage>
                   })
             ],
             // 因为将笔记本抽离开了, 所以这里应该用 SP 获取当前选择笔记本的 id,判断一下
-            leading: parentIdModel.parentId == "VNote" ||parentIdModel.parentId == "approot" ||
+            leading: parentIdModel.parentId == "VNote" ||
+                    parentIdModel.parentId == "approot" ||
                     parentIdModel.parentId == parentIdModel.rootId
                 ? IconButton(
                     icon: Icon(
@@ -854,51 +855,44 @@ class _DirectoryPageState extends State<DirectoryPage>
                   // 更新 _vnote.json
                   // 重命名文件和文件夹是不一样的
                   // 根目录则不用修改 _vnote.json
-                  if (configIdModel.configId == "approot" ||
-                      parentIdModel.parentId == parentIdModel.rootId) {
-                    print("根目录, 不需要更新 _vnote.json 文件");
-                  } else {
-                    print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
-                    await OneDriveDataDao.getFileContent(
-                            context,
-                            tokenModel.token.accessToken,
-                            configIdModel.configId)
-                        .then((value) async {
-                      print("拿到的 _vnote.json 文件数据为: " + value.toString());
-                      print("要修改的文件/文件夹名字: " + oldFileOrFolderName);
-                      DesktopConfigModel desktopConfigModel =
-                          DesktopConfigModel.fromJson(
-                              json.decode(value.toString()));
-                      if (document.isFile) {
-                        desktopConfigModel.renameFile(
-                            oldFileOrFolderName, fileOrFolderName);
+                  print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
+                  await OneDriveDataDao.getFileContent(context,
+                          tokenModel.token.accessToken, configIdModel.configId)
+                      .then((value) async {
+                    print("拿到的 _vnote.json 文件数据为: " + value.toString());
+                    print("要修改的文件/文件夹名字: " + oldFileOrFolderName);
+                    DesktopConfigModel desktopConfigModel =
+                        DesktopConfigModel.fromJson(
+                            json.decode(value.toString()));
+                    if (document.isFile) {
+                      desktopConfigModel.renameFile(
+                          oldFileOrFolderName, fileOrFolderName);
 
-                        PersonalNoteModel personalNoteModel =
-                            await Utils.getPersonalNoteModel();
+                      PersonalNoteModel personalNoteModel =
+                          await Utils.getPersonalNoteModel();
 
-                        personalNoteModel.renameFile(
-                            document.id, fileOrFolderName);
-                        LocalDocumentProvider localDocumentProvider =
-                            Provider.of<LocalDocumentProvider>(this.context,
-                                listen: false);
+                      personalNoteModel.renameFile(
+                          document.id, fileOrFolderName);
+                      LocalDocumentProvider localDocumentProvider =
+                          Provider.of<LocalDocumentProvider>(this.context,
+                              listen: false);
 
-                        Utils.writeModelToFile(personalNoteModel);
-                        await Utils.model2ListDocument().then((data) {
-                          print("directory_page rename 这里拿到 _myNote.json 的数据");
-                          localDocumentProvider.updateList(data);
-                        });
-                      } else {
-                        desktopConfigModel.renameFolder(
-                            oldFileOrFolderName, fileOrFolderName);
-                      }
+                      Utils.writeModelToFile(personalNoteModel);
+                      await Utils.model2ListDocument().then((data) {
+                        print("directory_page rename 这里拿到 _myNote.json 的数据");
+                        localDocumentProvider.updateList(data);
+                      });
+                    } else {
+                      desktopConfigModel.renameFolder(
+                          oldFileOrFolderName, fileOrFolderName);
+                    }
 
-                      await OneDriveDataDao.updateContent(
-                          context,
-                          tokenModel.token.accessToken,
-                          configIdModel.configId,
-                          json.encode(desktopConfigModel));
-                    });
-                  }
+                    await OneDriveDataDao.updateContent(
+                        context,
+                        tokenModel.token.accessToken,
+                        configIdModel.configId,
+                        json.encode(desktopConfigModel));
+                  });
                 });
               }).then((_) async {
                 await pr.hide();
