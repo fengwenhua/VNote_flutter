@@ -504,6 +504,7 @@ class _DirectoryPageState extends State<DirectoryPage>
             icon: Icons.delete,
             closeOnTap: true,
             onTap: () async {
+              print("点击了删除");
               showDialog<bool>(
                   context: context,
                   builder: (context) {
@@ -516,6 +517,7 @@ class _DirectoryPageState extends State<DirectoryPage>
         dismissal: SlidableDismissal(
           child: SlidableDrawerDismissal(),
           onWillDismiss: (actionType) {
+            print("滑动删除");
             return showDialog<bool>(
                 context: context,
                 builder: (context) {
@@ -690,12 +692,31 @@ class _DirectoryPageState extends State<DirectoryPage>
               // 如果是顶层 approot 则不用管
               // 否则
               String configId = configIdModel.configId;
-              if (configId == "approot" ||
-                  parentIdModel.parentId == parentIdModel.rootId) {
-                print("根目录, 不需要更新 _vnote.json 文件");
-              } else {
+
+              await pr.hide().then((isHidden) async {
+                print("0. 开始删除 对话框删除了?");
+                print(isHidden);
+                if (!isHidden) {
+                  Navigator.of(this.context).pop();
+                }
+              });
+              pr = new ProgressDialog(this.context,
+                  type: ProgressDialogType.Download, isDismissible: false);
+              pr.style(
+                message: "1. 下载 _vnote.json",
+                progress: 40,
+              );
+              await pr.show();
+              //Utils.showMyToast("1. 下载 _vnote.json", type: 0);
+              print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
+              await OneDriveDataDao.getFileContent(
+                      context, tokenModel.token.accessToken, configId)
+                  .then((value) async {
+                print("拿到的 _vnote.json 文件数据为: " + value.toString());
+                print("要干掉的文件/文件夹名字: " + document.name);
+
                 await pr.hide().then((isHidden) async {
-                  print("0. 开始删除 对话框删除了?");
+                  print("1. 下载 _vnote.json 对话框删除了?");
                   print(isHidden);
                   if (!isHidden) {
                     Navigator.of(this.context).pop();
@@ -704,67 +725,43 @@ class _DirectoryPageState extends State<DirectoryPage>
                 pr = new ProgressDialog(this.context,
                     type: ProgressDialogType.Download, isDismissible: false);
                 pr.style(
-                  message: "1. 下载 _vnote.json",
-                  progress: 40,
+                  message: "2. 更新 _vnote.json",
+                  progress: 80,
                 );
                 await pr.show();
-                //Utils.showMyToast("1. 下载 _vnote.json", type: 0);
-                print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
-                await OneDriveDataDao.getFileContent(
-                        context, tokenModel.token.accessToken, configId)
-                    .then((value) async {
-                  print("拿到的 _vnote.json 文件数据为: " + value.toString());
-                  print("要干掉的文件/文件夹名字: " + document.name);
+                //Utils.showMyToast("2. 删除本地缓存", type: 0);
+                DesktopConfigModel desktopConfigModel =
+                    DesktopConfigModel.fromJson(json.decode(value.toString()));
+                //print("干掉之前: ");
+                //print(json.encode(desktopConfigModel));
+                if (document.isFile) {
+                  desktopConfigModel.delFile(document.name);
 
-                  await pr.hide().then((isHidden) async {
-                    print("1. 下载 _vnote.json 对话框删除了?");
-                    print(isHidden);
-                    if (!isHidden) {
-                      Navigator.of(this.context).pop();
-                    }
+                  PersonalNoteModel personalNoteModel =
+                      await Utils.getPersonalNoteModel();
+                  personalNoteModel.delFile(document.id);
+                  LocalDocumentProvider localDocumentProvider =
+                      Provider.of<LocalDocumentProvider>(this.context,
+                          listen: false);
+
+                  Utils.writeModelToFile(personalNoteModel);
+                  await Utils.model2ListDocument().then((data) {
+                    print("directory_page del 这里拿到 _myNote.json 的数据");
+                    localDocumentProvider.updateList(data);
                   });
-                  pr = new ProgressDialog(this.context,
-                      type: ProgressDialogType.Download, isDismissible: false);
-                  pr.style(
-                    message: "2. 更新 _vnote.json",
-                    progress: 80,
-                  );
-                  await pr.show();
-                  //Utils.showMyToast("2. 删除本地缓存", type: 0);
-                  DesktopConfigModel desktopConfigModel =
-                      DesktopConfigModel.fromJson(
-                          json.decode(value.toString()));
-                  //print("干掉之前: ");
-                  //print(json.encode(desktopConfigModel));
-                  if (document.isFile) {
-                    desktopConfigModel.delFile(document.name);
-
-                    PersonalNoteModel personalNoteModel =
-                        await Utils.getPersonalNoteModel();
-                    personalNoteModel.delFile(document.id);
-                    LocalDocumentProvider localDocumentProvider =
-                        Provider.of<LocalDocumentProvider>(this.context,
-                            listen: false);
-
-                    Utils.writeModelToFile(personalNoteModel);
-                    await Utils.model2ListDocument().then((data) {
-                      print("directory_page del 这里拿到 _myNote.json 的数据");
-                      localDocumentProvider.updateList(data);
-                    });
-                  } else {
-                    desktopConfigModel.deleteFolder(document.name);
-                  }
-                  print("干掉之后: ");
-                  print(json.encode(desktopConfigModel));
-                  //Utils.showMyToast("3. 更新 _vnote.json", type: 0);
-                  // 修改成功_vnote.json 之后, 就是更新这个文件
-                  await OneDriveDataDao.updateContent(
-                      context,
-                      tokenModel.token.accessToken,
-                      configId,
-                      json.encode(desktopConfigModel));
-                });
-              }
+                } else {
+                  desktopConfigModel.deleteFolder(document.name);
+                }
+                print("干掉之后: ");
+                print(json.encode(desktopConfigModel));
+                //Utils.showMyToast("3. 更新 _vnote.json", type: 0);
+                // 修改成功_vnote.json 之后, 就是更新这个文件
+                await OneDriveDataDao.updateContent(
+                    context,
+                    tokenModel.token.accessToken,
+                    configId,
+                    json.encode(desktopConfigModel));
+              });
             });
             Utils.showMyToast("删除完成");
             await pr.hide().then((isHidden) async {
@@ -998,78 +995,72 @@ class _DirectoryPageState extends State<DirectoryPage>
                     // 下面是更新当前目录的 _vnote.json 文件
                     print("directory_page 此时的 configId: ");
                     print(configId);
-                    if (configId == "approot" ||
-                        configId == null ||
-                        configId == "null") {
-                      print("根目录, 不需要更新 _vnote.json 文件");
-                    } else {
-                      print(
-                          "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 sub_directories 字段");
 
-                      await pr.hide().then((isHidden) {
-                        print("0. 开始新建文件夹 对话框干掉了没?");
-                        print(isHidden);
-                        if (!isHidden) {
-                          Navigator.of(this.context).pop();
-                        }
-                      });
-                      pr = new ProgressDialog(this.context,
-                          type: ProgressDialogType.Download,
-                          isDismissible: true);
-                      pr.style(
-                        message: "1. 下载 _vnote.json",
-                        progress: 40,
-                      );
-                      await pr.show();
-                      // 如果找到当前目录下的 _vnote.json 的 id???
+                    print(
+                        "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 sub_directories 字段");
 
-                      await OneDriveDataDao.getFileContent(
-                              context, tokenModel.token.accessToken, configId)
-                          .then((value) async {
-                        if (value == null) {
-                          errorText = "创建文件夹的请求成功, 但是下载 _vnote.json 失败!";
-                        } else {
-                          print("要添加的文件夹名称: " + newFolderName);
-                          Map<String, dynamic> newFolder =
-                              jsonDecode('{"name":"$newFolderName"}');
-                          DesktopConfigModel desktopConfigModel =
-                              DesktopConfigModel.fromJson(
-                                  json.decode(value.toString()));
-                          //print("添加之前: ");
-                          //print(json.encode(desktopConfigModel));
-                          desktopConfigModel.addNewFolder(newFolder);
-                          print("添加之后: ");
-                          print(json.encode(desktopConfigModel));
+                    await pr.hide().then((isHidden) {
+                      print("0. 开始新建文件夹 对话框干掉了没?");
+                      print(isHidden);
+                      if (!isHidden) {
+                        Navigator.of(this.context).pop();
+                      }
+                    });
+                    pr = new ProgressDialog(this.context,
+                        type: ProgressDialogType.Download, isDismissible: true);
+                    pr.style(
+                      message: "1. 下载 _vnote.json",
+                      progress: 40,
+                    );
+                    await pr.show();
+                    // 如果找到当前目录下的 _vnote.json 的 id???
 
-                          await pr.hide().then((isHidden) {
-                            print("1. 下载 _vnote.json 对话框干掉了没?");
-                            print(isHidden);
-                            if (!isHidden) {
-                              Navigator.of(this.context).pop();
-                            }
-                          });
-                          pr = new ProgressDialog(this.context,
-                              type: ProgressDialogType.Download,
-                              isDismissible: true);
-                          pr.style(
-                            message: "2. 更新 _vnote.json",
-                            progress: 80,
-                          );
-                          await pr.show();
-                          // 添加成功_vnote.json 之后, 就是更新这个文件
-                          await OneDriveDataDao.updateContent(
-                                  context,
-                                  tokenModel.token.accessToken,
-                                  configId,
-                                  json.encode(desktopConfigModel))
-                              .then((value) {
-                            if (value == null) {
-                              errorText = "更新 _vnote.json 失败!";
-                            }
-                          });
-                        }
-                      });
-                    }
+                    await OneDriveDataDao.getFileContent(
+                            context, tokenModel.token.accessToken, configId)
+                        .then((value) async {
+                      if (value == null) {
+                        errorText = "创建文件夹的请求成功, 但是下载 _vnote.json 失败!";
+                      } else {
+                        print("要添加的文件夹名称: " + newFolderName);
+                        Map<String, dynamic> newFolder =
+                            jsonDecode('{"name":"$newFolderName"}');
+                        DesktopConfigModel desktopConfigModel =
+                            DesktopConfigModel.fromJson(
+                                json.decode(value.toString()));
+                        //print("添加之前: ");
+                        //print(json.encode(desktopConfigModel));
+                        desktopConfigModel.addNewFolder(newFolder);
+                        print("添加之后: ");
+                        print(json.encode(desktopConfigModel));
+
+                        await pr.hide().then((isHidden) {
+                          print("1. 下载 _vnote.json 对话框干掉了没?");
+                          print(isHidden);
+                          if (!isHidden) {
+                            Navigator.of(this.context).pop();
+                          }
+                        });
+                        pr = new ProgressDialog(this.context,
+                            type: ProgressDialogType.Download,
+                            isDismissible: true);
+                        pr.style(
+                          message: "2. 更新 _vnote.json",
+                          progress: 80,
+                        );
+                        await pr.show();
+                        // 添加成功_vnote.json 之后, 就是更新这个文件
+                        await OneDriveDataDao.updateContent(
+                                context,
+                                tokenModel.token.accessToken,
+                                configId,
+                                json.encode(desktopConfigModel))
+                            .then((value) {
+                          if (value == null) {
+                            errorText = "更新 _vnote.json 失败!";
+                          }
+                        });
+                      }
+                    });
 
                     await pr.hide().then((isHidden) {
                       print("2. 更新 _vnote.json 对话框干掉了没?");
