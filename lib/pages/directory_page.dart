@@ -415,8 +415,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     //print("当前的 parentId: " + _parentId.parentId);
     //print("当前的 parentName: " + _parentId.parentName);
 
-    if (_parentId.parentName != "VNote 根目录" &&
-        _parentId.parentId != _parentId.rootId) {
+    if (_parentId.parentId != _parentId.rootId) {
       print("不在根目录");
 
       for (Document d in dataListModel.dataList) {
@@ -948,12 +947,12 @@ class _DirectoryPageState extends State<DirectoryPage>
               String errorText = "";
               // 应该先关闭询问对话框
               Navigator.pop(context);
-              pr = new ProgressDialog(context, isDismissible: true);
+              pr = new ProgressDialog(context, isDismissible: false);
               pr.style(message: translate("waitTips"));
               await pr.show().then((_) async {
                 await pr.hide();
                 pr = new ProgressDialog(this.context,
-                    type: ProgressDialogType.Download, isDismissible: true);
+                    type: ProgressDialogType.Download, isDismissible: false);
                 pr.style(
                   message: "0. 开始新建文件夹",
                   progress: 0,
@@ -1007,7 +1006,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                       }
                     });
                     pr = new ProgressDialog(this.context,
-                        type: ProgressDialogType.Download, isDismissible: true);
+                        type: ProgressDialogType.Download, isDismissible: false);
                     pr.style(
                       message: "1. 下载 _vnote.json",
                       progress: 40,
@@ -1070,7 +1069,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                       }
                     });
                     pr = new ProgressDialog(this.context,
-                        type: ProgressDialogType.Download, isDismissible: true);
+                        type: ProgressDialogType.Download, isDismissible: false);
                     pr.style(
                       message: "3. 给新建的目录添加 _vnote.json",
                       progress: 90,

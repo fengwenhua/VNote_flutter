@@ -7,6 +7,12 @@ class ConfigIdProvider with ChangeNotifier {
   String get configId => _configId;
 
   void updateConfigId(String newId) {
+    print("\n\n\n");
+    print("###############################################################");
+    print("更新了 configId 如下: ");
+    print(newId);
+    print("###############################################################");
+    print("\n\n\n");
     _configId = newId;
     notifyListeners();
   }
