@@ -304,10 +304,10 @@ class DocumentListUtil {
         print("在这里拿到 vnote 文件夹的 id, 并且设置好 parentId");
         parentIdModel.goAheadParentId(genId, "VNote 根目录");
         parentIdModel.setGenId(genId);
-        print("同时设置_vnote.json 的 id, 当然, 因为这里是第一层, 没有这文件, 所以设置默认是 approot");
-        ConfigIdProvider configIdModel =
-            Provider.of<ConfigIdProvider>(context, listen: false);
-        configIdModel.updateConfigId("approot");
+//        print("同时设置_vnote.json 的 id, 当然, 因为这里是第一层, 没有这文件, 所以设置默认是 approot");
+//        ConfigIdProvider configIdModel =
+//            Provider.of<ConfigIdProvider>(context, listen: false);
+//        configIdModel.updateConfigId("approot");
       }
     });
     return oneDriveDataModel;

@@ -415,22 +415,14 @@ class _DirectoryPageState extends State<DirectoryPage>
     //print("当前的 parentId: " + _parentId.parentId);
     //print("当前的 parentName: " + _parentId.parentName);
 
-    if (_parentId.parentId != _parentId.rootId) {
-      print("不在根目录");
-
-      for (Document d in dataListModel.dataList) {
-        if (d.name == "_vnote.json") {
-          configIdModel.updateConfigId(d.id);
-          break;
-        }
+    for (Document d in dataListModel.dataList) {
+      if (d.name == "_vnote.json") {
+        configIdModel.updateConfigId(d.id);
+        break;
       }
-      jumpToPosition(false);
-    } else {
-      print("在根目录了, 所有没有返回的操作了, 也不需要给 parentid 弹栈了");
-      print("打开侧滑菜单");
-      configIdModel.updateConfigId("approot");
-      //Navigator.pop(context);
     }
+    jumpToPosition(false);
+
     return false;
   }
 
@@ -1006,7 +998,8 @@ class _DirectoryPageState extends State<DirectoryPage>
                       }
                     });
                     pr = new ProgressDialog(this.context,
-                        type: ProgressDialogType.Download, isDismissible: false);
+                        type: ProgressDialogType.Download,
+                        isDismissible: false);
                     pr.style(
                       message: "1. 下载 _vnote.json",
                       progress: 40,
@@ -1069,7 +1062,8 @@ class _DirectoryPageState extends State<DirectoryPage>
                       }
                     });
                     pr = new ProgressDialog(this.context,
-                        type: ProgressDialogType.Download, isDismissible: false);
+                        type: ProgressDialogType.Download,
+                        isDismissible: false);
                     pr.style(
                       message: "3. 给新建的目录添加 _vnote.json",
                       progress: 90,
