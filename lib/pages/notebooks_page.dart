@@ -151,13 +151,12 @@ class _NotebooksPageState extends State<NotebooksPage> {
         dismissal: SlidableDismissal(
           child: SlidableDrawerDismissal(),
           onWillDismiss: (actionType) {
-          return showDialog<bool>(
-              context: context,
-              builder: (context) {
-                return _deleteDialog(
-                    context, document, tokenModel);
-              });
-        },
+            return showDialog<bool>(
+                context: context,
+                builder: (context) {
+                  return _deleteDialog(context, document, tokenModel);
+                });
+          },
           onDismissed: (actionType) {
             print("actionType: " + actionType.toString());
           },
@@ -170,7 +169,12 @@ class _NotebooksPageState extends State<NotebooksPage> {
       directoryName: document.name,
       onPressedNext: () async {
         print("点开 ${document.name} 笔记本");
-        _chooseNotebook(document);
+        if (Application.sp.getString("choose_notebook_id") == document.id) {
+          print("点击同一个笔记本, 不用管!");
+          Navigator.of(context).pop();
+        } else {
+          _chooseNotebook(document);
+        }
       });
 
   /// [] 选择笔记本
