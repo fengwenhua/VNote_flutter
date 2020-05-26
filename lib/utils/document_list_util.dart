@@ -47,10 +47,13 @@ class DocumentListUtil {
     });
 
     OneDriveDataModel bean = OneDriveDataModel.fromJson(response.data);
+    print("搜索的关键字是: " + key);
     for (Value value in bean.value) {
       // 首先要是文件
       if (value.file != null) {
-        if (value.name.contains(key)) {
+        print("检测名字: " + value.name);
+        if (value.name.toLowerCase().contains(key)) {
+          print("名字包含了搜索关键字");
           if (value.name.endsWith(".json")) {
             print("跳过 json 配置文件");
             continue;
