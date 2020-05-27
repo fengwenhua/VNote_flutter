@@ -148,7 +148,7 @@ class _DirectoryPageState extends State<DirectoryPage>
           ConfigIdProvider configIdModel =
               Provider.of<ConfigIdProvider>(context, listen: false);
           ParentIdProvider parentIdModel =
-          Provider.of<ParentIdProvider>(context, listen: false);
+              Provider.of<ParentIdProvider>(context, listen: false);
           Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
               document.id,
               parentIdModel.parentId,
@@ -364,25 +364,27 @@ class _DirectoryPageState extends State<DirectoryPage>
   Future<bool> onWillPop() async {
     // 退回, 所以要弹栈, 更新 ParentID
     final _parentId = Provider.of<ParentIdProvider>(context, listen: false);
+    if (_parentId.parentId != _parentId.rootId) {
+      DataListProvider dataListModel =
+          Provider.of<DataListProvider>(context, listen: false);
+      ConfigIdProvider configIdModel =
+          Provider.of<ConfigIdProvider>(context, listen: false);
+      _parentId.goBackParentId();
+      dataListModel.goBackDataList();
+      //print("返回的时候判断 genId: "  + _parentId.genId);
+      //print("当前的 parentId: " + _parentId.parentId);
+      //print("当前的 parentName: " + _parentId.parentName);
 
-    DataListProvider dataListModel =
-        Provider.of<DataListProvider>(context, listen: false);
-    ConfigIdProvider configIdModel =
-        Provider.of<ConfigIdProvider>(context, listen: false);
-    _parentId.goBackParentId();
-    dataListModel.goBackDataList();
-    //print("返回的时候判断 genId: "  + _parentId.genId);
-    //print("当前的 parentId: " + _parentId.parentId);
-    //print("当前的 parentName: " + _parentId.parentName);
-
-    for (Document d in dataListModel.dataList) {
-      if (d.name == "_vnote.json") {
-        configIdModel.updateConfigId(d.id);
-        break;
+      for (Document d in dataListModel.dataList) {
+        if (d.name == "_vnote.json") {
+          configIdModel.updateConfigId(d.id);
+          break;
+        }
       }
+      jumpToPosition(false);
+    }else{
+      print("已经在顶层, 不处理");
     }
-    jumpToPosition(false);
-
     return false;
   }
 
