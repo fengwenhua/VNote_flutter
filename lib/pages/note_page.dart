@@ -85,7 +85,7 @@ class _NotePageState extends State<NotePage> {
                     print("directory_page 这里拿到 _myNote.json 的数据");
                     localDocumentProvider.updateList(data);
                     Fluttertoast.showToast(
-                        msg: "本地缓存读取完成!",
+                        msg: translate("readLocalCacheCompleted"),
                         toastLength: Toast.LENGTH_LONG,
                         gravity: ToastGravity.BOTTOM,
                         timeInSecForIosWeb: 3,
@@ -197,7 +197,7 @@ class _NotePageState extends State<NotePage> {
             );
             await pr.show();
             print("点击了删除");
-            pr.update(message: "0. 开始删除", progress: 30);
+            pr.update(message: translate("delDialog.startDelete"), progress: 30);
             // 网络请求删除在线的文件夹
             await OneDriveDataDao.deleteFile(
                 context, tokenModel.token.accessToken, document.id);
@@ -209,7 +209,7 @@ class _NotePageState extends State<NotePage> {
             // 如果是顶层 approot 则不用管
             // 否则
 
-            pr.update(message: "1. 下载 _vnote.json", progress: 60);
+            pr.update(message: translate("delDialog.downloadConfig"), progress: 60);
             print("接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的字段");
             await OneDriveDataDao.getFileContent(
                     context, tokenModel.token.accessToken, document.configId)
@@ -269,7 +269,7 @@ class _NotePageState extends State<NotePage> {
               pr = new ProgressDialog(this.context,
                   type: ProgressDialogType.Download,isDismissible: false);
               pr.style(
-                message: "3. 更新 _vnote.json",
+                message: translate("delDialog.updateConfig"),
                 progress: 90,
               );
               await OneDriveDataDao.updateContent(

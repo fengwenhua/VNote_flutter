@@ -62,7 +62,11 @@
     "dirTitle": "Make sure to delete the folder?",
     "fileTitle": "Make sure to delete the document?",
     "ok": "ok",
-    "cancel": "cancel"
+    "cancel": "cancel",
+    "processing": "Deleting...",
+    "startDelete": "0. Start deleting",
+    "downloadConfig":"1. Download _vnote.json",
+    "updateConfig": "2. Update _vnote.json"
   },
   "giveUpDialog": {
     "title": "Warning",
@@ -74,12 +78,19 @@
     "delete": "Delete",
     "rename": "Rename"
   },
+  "readLocalCacheCompleted": "Local cache read completed!",
+  "AddConfigToFolder": "Adding _vnote.json to a new directory",
+  "startNewFolder": "Start a new folder",
+  "startDownloadConfig": "Start downloading _vnote.json",
+  "updateConfig": "Updating _vnote.json",
   "waitTips": "Just wait...",
   "createFileTips": "File creation in progress...",
   "noNoteBookTips": "No notebooks!",
   "updateContentTips": "Content being updated",
   "uploadTips": "Start uploading",
   "uploadingTips": "Uploading...",
+  "uploadFail": "Upload failed! Try again! Still left ",
+  "times": " times",
   "networkErrorTips": "Network anomaly, try again.",
   "requestsTips": "Requesting, please wait.",
   "requestLogin": "Requesting login, please wait.",

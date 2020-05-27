@@ -141,8 +141,8 @@ class _CreatePageState extends State<CreatePage> {
                       fileName = fileName.trim();
                       content = content.trim();
                       //pr.update(message: "开始创建...");
-                      Utils.showMyToast("上传内容到 onedrive 中...");
-                      pr = new ProgressDialog(context,isDismissible: false);
+                      //Utils.showMyToast("上传内容到 onedrive 中...");
+                      pr = new ProgressDialog(context, isDismissible: false);
                       pr.style(message: translate("createFileTips"));
                       await pr.show().then((_) async {
                         // 应该先找图片
@@ -268,9 +268,9 @@ class _CreatePageState extends State<CreatePage> {
 
                                 if (repeatCount > 0) {
                                   Fluttertoast.showToast(
-                                      msg: "上传失败了! 重试! 还剩 " +
+                                      msg: translate("uploadFail") +
                                           repeatCount.toString() +
-                                          " 次",
+                                          translate("times"),
                                       toastLength: Toast.LENGTH_LONG,
                                       gravity: ToastGravity.BOTTOM,
                                       timeInSecForIosWeb: 3,
@@ -365,7 +365,7 @@ class _CreatePageState extends State<CreatePage> {
                           dirAndFileCacheModel.addDirOrFileEle(
                               parentIdModel.parentId, doc);
                           // 下面是更新当前目录的 _vnote.json 文件
-                          Utils.showMyToast("开始下载 _vnote.json");
+                          //Utils.showMyToast("开始下载 _vnote.json");
                           //pr.update(message: "开始下载_vnote.json");
                           await uploadPR.hide().then((isHidden) {
                             print("2. 上传 对话框干掉了没?");
@@ -377,7 +377,7 @@ class _CreatePageState extends State<CreatePage> {
                           uploadPR = new ProgressDialog(context,
                               type: ProgressDialogType.Normal,
                               isDismissible: false);
-                          uploadPR.style(message: "开始下载 _vnote.json");
+                          uploadPR.style(message: translate("startDownloadConfig"));
                           await uploadPR.show();
                           print(
                               "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 files 字段");
@@ -409,10 +409,10 @@ class _CreatePageState extends State<CreatePage> {
                             uploadPR = new ProgressDialog(context,
                                 type: ProgressDialogType.Normal,
                                 isDismissible: false);
-                            uploadPR.style(message: "更新 _vnote.json");
+                            uploadPR.style(message: translate("updateConfig"));
                             await uploadPR.show();
 
-                            Utils.showMyToast("更新 _vnote.json");
+                            // Utils.showMyToast("更新 _vnote.json");
                             await OneDriveDataDao.updateContent(
                                     context,
                                     tokenModel.token.accessToken,

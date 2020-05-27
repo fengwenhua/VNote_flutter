@@ -613,7 +613,7 @@ class _DirectoryPageState extends State<DirectoryPage>
           onPressed: () async {
             Navigator.of(context).pop(true);
             pr = new ProgressDialog(context, isDismissible: false);
-            pr.style(message: "删除中...");
+            pr.style(message: translate("delDialog.processing"));
             await pr.show().then((_) async {
               print("点击了删除");
 
@@ -628,7 +628,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               pr = new ProgressDialog(this.context,
                   type: ProgressDialogType.Download, isDismissible: false);
               pr.style(
-                message: "0. 开始删除",
+                message: translate("delDialog.startDelete"),
                 progress: 0,
               );
               await pr.show();
@@ -654,7 +654,7 @@ class _DirectoryPageState extends State<DirectoryPage>
               pr = new ProgressDialog(this.context,
                   type: ProgressDialogType.Download, isDismissible: false);
               pr.style(
-                message: "1. 下载 _vnote.json",
+                message: translate("delDialog.downloadConfig"),
                 progress: 40,
               );
               await pr.show();
@@ -676,7 +676,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                 pr = new ProgressDialog(this.context,
                     type: ProgressDialogType.Download, isDismissible: false);
                 pr.style(
-                  message: "2. 更新 _vnote.json",
+                  message: translate("delDialog.updateConfig"),
                   progress: 80,
                 );
                 await pr.show();
@@ -906,7 +906,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                 pr = new ProgressDialog(this.context,
                     type: ProgressDialogType.Download, isDismissible: false);
                 pr.style(
-                  message: "0. 开始新建文件夹",
+                  message: translate("startNewFolder"),
                   progress: 0,
                 );
                 await pr.show();
@@ -961,7 +961,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                         type: ProgressDialogType.Download,
                         isDismissible: false);
                     pr.style(
-                      message: "1. 下载 _vnote.json",
+                      message: translate("startDownloadConfig"),
                       progress: 40,
                     );
                     await pr.show();
@@ -996,7 +996,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                             type: ProgressDialogType.Download,
                             isDismissible: true);
                         pr.style(
-                          message: "2. 更新 _vnote.json",
+                          message: translate("updateConfig"),
                           progress: 80,
                         );
                         await pr.show();
@@ -1025,7 +1025,7 @@ class _DirectoryPageState extends State<DirectoryPage>
                         type: ProgressDialogType.Download,
                         isDismissible: false);
                     pr.style(
-                      message: "3. 给新建的目录添加 _vnote.json",
+                      message: translate("AddConfigToFolder"),
                       progress: 90,
                     );
                     await pr.show();
