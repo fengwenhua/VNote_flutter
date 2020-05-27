@@ -18,11 +18,15 @@ class Document {
   /// [imageFolderId] 为文档对应的 _v_images 文件夹的 id
   String imageFolderId;
 
+  /// [parentId] 在点开文件的时候赋值, 主要用于"笔记"tab 的缓存删除
+  String parentId;
+
   Document(
       {this.id,
       this.configId,
       this.name,
       this.dateModified,
       this.isFile = false,
-      this.imageFolderId});
+      this.imageFolderId,
+      this.parentId});
 }

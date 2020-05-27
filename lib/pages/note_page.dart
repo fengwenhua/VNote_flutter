@@ -203,7 +203,8 @@ class _NotePageState extends State<NotePage> {
                 context, tokenModel.token.accessToken, document.id);
             // 删除本地缓存的文件夹
             dataListModel.removeEle(document);
-            dirCacheModel.delDirOrFileEle(parentIdModel.parentId, document);
+            // 这里不应该使用 parentIdModel.parentId
+            dirCacheModel.delDirOrFileEle(document.parentId, document);
             // 同时要修改配置文件
             // 如果是顶层 approot 则不用管
             // 否则

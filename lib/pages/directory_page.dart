@@ -147,8 +147,11 @@ class _DirectoryPageState extends State<DirectoryPage>
               await Utils.getPersonalNoteModel();
           ConfigIdProvider configIdModel =
               Provider.of<ConfigIdProvider>(context, listen: false);
+          ParentIdProvider parentIdModel =
+          Provider.of<ParentIdProvider>(context, listen: false);
           Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
               document.id,
+              parentIdModel.parentId,
               configIdModel.configId,
               _imageFolderIdModel.imageFolderId,
               document.name));

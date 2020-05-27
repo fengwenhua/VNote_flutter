@@ -31,6 +31,7 @@ class DirAndFileCacheProvider with ChangeNotifier {
   }
 
   void removeDirAndFileList(String id) {
+    print("删除本地缓存中, 文件夹对应的所有文件");
     if (this._dirCache.containsKey(id)) {
       this._dirCache.remove(id);
     }
@@ -78,10 +79,19 @@ class DirAndFileCacheProvider with ChangeNotifier {
 
   /// 给某个列表删除一个元素(文件/文件夹)
   void delDirOrFileEle(String id, Document delELe) {
+    print("\n\n\n");
+    print("###############################################################");
+    print("删除本地缓存中, 某个文件夹下的一个文件");
     List<Document> cur = this._dirCache[id];
     if (cur != null) {
-      cur.remove(delELe);
-      this._dirCache[id] = cur;
+      print("删除了缓存文件: " + delELe.name);
+//      cur.remove(delELe);
+//      this._dirCache[id] = cur;
+      this._dirCache[id].removeWhere((element) => element.id==delELe.id);
+
+      this._dirCache[id].forEach((element) {print(element.name);});
+      print("###############################################################");
+      print("\n\n\n");
       notifyListeners();
     }
   }

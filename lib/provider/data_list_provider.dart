@@ -29,7 +29,7 @@ class DataListProvider with ChangeNotifier {
   void removeEle(Document document) {
     List<Document> list = _dataListStack.pop();
     print("要干掉的是" + document.name);
-    list.removeWhere((test) => test.name == document.name);
+    list.removeWhere((test) => test.id == document.id);
     _dataListStack.push(list);
     notifyListeners();
   }

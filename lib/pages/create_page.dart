@@ -455,6 +455,7 @@ class _CreatePageState extends State<CreatePage> {
                         Map<String, dynamic> newFileMap = jsonDecode(
                             Utils.newLocalFileJson(
                                 fileId,
+                                parentIdModel.parentId,
                                 configIdModel.configId,
                                 _imageFolderId.imageFolderId,
                                 fileName));

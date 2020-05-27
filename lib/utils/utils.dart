@@ -69,10 +69,11 @@ class Utils {
 
   /// 用于点击文件的时候, 记录该内容到 _myNote.json
   static String newLocalFileJson(
-      String id, String configId, String imageFolderId, String fileName) {
+      String id, String parentId,String configId, String imageFolderId, String fileName) {
     String time = Utils.getFormattedDateTimeForJson(dateTime: DateTime.now());
     String jsonData = '''{
     "id":"$id",
+    "parent_id":"$parentId",
     "config_id":"$configId",
     "image_folder_id":"$imageFolderId",
     "name":"$fileName",
@@ -288,6 +289,7 @@ class Utils {
       print(file.imageFolderId);
       Document temp = new Document(
           id: file.id,
+          parentId: file.parentId,
           imageFolderId: file.imageFolderId,
           configId: file.configId,
           name: file.name,

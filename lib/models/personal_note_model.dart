@@ -50,6 +50,9 @@ class Files {
   /// [id] 是唯一标识
   String id;
 
+  /// [parentId] 这篇笔记对应的 爸爸文件夹的 id, 用于笔记 tab 的删除
+  String parentId;
+
   /// [imageFolderId] 这篇笔记对应的 _v_images 文件夹的 id
   String imageFolderId;
 
@@ -66,6 +69,7 @@ class Files {
 
   Files.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    parentId = json['parent_id'];
     imageFolderId = json['image_folder_id'];
     configId = json['config_id'];
     modifiedTime = json['modified_time'];
@@ -75,6 +79,7 @@ class Files {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
+    data['parent_id'] = this.parentId;
     data['image_folder_id'] = this.imageFolderId;
     data['config_id'] = this.configId;
     data['modified_time'] = this.modifiedTime;

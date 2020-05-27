@@ -235,6 +235,7 @@ class DocumentListUtil {
       if (value.folder != null) {
         Document temp = new Document(
             id: value.id,
+            parentId: id,
             name: value.name,
             isFile: false,
             dateModified: DateTime.parse(value.lastModifiedDateTime));
@@ -262,6 +263,7 @@ class DocumentListUtil {
 
         Document temp = new Document(
             id: value.id,
+            parentId: id,
             name: value.name,
             isFile: true,
             dateModified: DateTime.parse(value.lastModifiedDateTime));
