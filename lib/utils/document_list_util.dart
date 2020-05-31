@@ -16,6 +16,7 @@ import 'package:vnote/provider/dir_and_file_cache_provider.dart';
 import 'package:vnote/provider/image_folder_id_provider.dart';
 import 'package:vnote/provider/parent_id_provider.dart';
 import 'package:vnote/provider/token_provider.dart';
+import 'package:vnote/utils/log_util.dart';
 import 'package:vnote/utils/utils.dart';
 
 import 'global.dart';
@@ -42,7 +43,8 @@ class DocumentListUtil {
     Response response = await OneDriveDataDao.searchText(
             context, tokenModel.token.accessToken, key)
         .then((data) {
-      print("搜索拿到数据: " + data.toString());
+      LogUtil.e("搜索拿到数据: " + data.toString());
+
       return data;
     });
 

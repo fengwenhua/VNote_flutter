@@ -411,7 +411,14 @@ class _DirectoryPageState extends State<DirectoryPage>
 
     // 在黑名单之中, 都不显示
     childDocuments.removeWhere((s) {
-      return BLACK_NAME.contains(s.name);
+      bool remove = false;
+      for(String t in BLACK_NAME){
+        if(s.name.contains(t)){
+          remove =true;
+          break;
+        }
+      }
+      return remove;
     });
 
     //print("去掉黑名单中不显示的, 还剩多少?");
