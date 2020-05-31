@@ -3,7 +3,9 @@
 用 Flutter 写的 Android 移动端!
 
 ## 为了能够正常下载图片
-`dio` 要修改`form_data.dart`, 才能成功上传
+`dio` 要修改`form_data.dart`, 才能成功上传, 可以通过点击如下图来找到`form_data.dart`
+
+![](https://gitee.com/fengwenhua/ImageBed/raw/master/1590918605_20200531175002355_1595626590.png)
 
 ```dart
 import 'dart:async';
