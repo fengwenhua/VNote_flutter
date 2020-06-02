@@ -87,16 +87,16 @@ class _SettingPageState extends State<SettingPage> {
                 print(version);
 
                 await NetUtils.instance.get(context,
-                    "https://api.github.com/repos/fengwenhua/android_release/releases/latest",
+                    "https://gitee.com/api/v5/repos/fengwenhua/vnote_flutter_release/releases/latest",
                     (data) async {
-                  print('返回 github 版本相关 json 如下:');
+                  print('返回版本相关 json 如下:');
                   print(data);
 
                   Map<String, dynamic> json = jsonDecode(data.toString());
-                  String githubVersion =
+                  String remoteVersion =
                       json["tag_name"].toString().substring(1);
-                  print("服务器的版本是: " + githubVersion);
-                  if (githubVersion.compareTo(version) == 1) {
+                  print("服务器的版本是: " + remoteVersion);
+                  if (remoteVersion.compareTo(version) == 1) {
                     print("需要更新");
                     String updateContent = json["body"];
                     print("更新的内容是: " + updateContent);
@@ -112,10 +112,7 @@ class _SettingPageState extends State<SettingPage> {
                         assets[0]['name'],
                         assets[0]['browser_download_url'],
                         updateContent,
-                        "v" + githubVersion);
-
-//                        Application.router.navigateTo(this.context, "/update",
-//                            transition: TransitionType.fadeIn);
+                        "v" + remoteVersion);
                   } else {
                     print("不需要更新");
                     await pr.hide();
