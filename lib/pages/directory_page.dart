@@ -94,6 +94,34 @@ class _DirectoryPageState extends State<DirectoryPage>
       print("使用本地文章缓存");
       String configId = configIdModel.configId;
       String imageFolderId = _imageFolderIdModel.imageFolderId;
+
+      // 防止 Android 会干掉 _myNote.json 文件, 这里需要加入一个判断该缓存是否还在
+      // _myNote.json , 不在则需要加上
+      PersonalNoteModel personalNoteModel = await Utils.getPersonalNoteModel();
+      ParentIdProvider parentIdModel =
+          Provider.of<ParentIdProvider>(context, listen: false);
+      if (!personalNoteModel.checkDocument(document.id)) {
+        print("_myNote.json 中没有 " + document.name);
+        print("应该是 _myNote.json 被干掉了, 需要重新加入");
+
+        // 写到 _myNote.json, 同时更新"笔记"tab
+        Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
+            document.id,
+            parentIdModel.parentId,
+            configIdModel.configId,
+            _imageFolderIdModel.imageFolderId,
+            document.name));
+        personalNoteModel.addNewFile(newFileMap);
+        LocalDocumentProvider localDocumentProvider =
+            Provider.of<LocalDocumentProvider>(context, listen: false);
+
+        Utils.writeModelToFile(personalNoteModel);
+        await Utils.model2ListDocument().then((data) {
+          print("directory_page 这里拿到 _myNote.json 的数据");
+          localDocumentProvider.updateList(data);
+        });
+      }
+
       await Future.delayed(Duration(milliseconds: 100), () {
         prt.hide().whenComplete(() async {
           // 下面使用 markdown_webview
@@ -149,6 +177,8 @@ class _DirectoryPageState extends State<DirectoryPage>
               Provider.of<ConfigIdProvider>(context, listen: false);
           ParentIdProvider parentIdModel =
               Provider.of<ParentIdProvider>(context, listen: false);
+
+          // 写到 _myNote.json, 同时更新"笔记"tab
           Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
               document.id,
               parentIdModel.parentId,
@@ -382,7 +412,7 @@ class _DirectoryPageState extends State<DirectoryPage>
         }
       }
       jumpToPosition(false);
-    }else{
+    } else {
       print("已经在顶层, 不处理");
     }
     return false;
@@ -412,9 +442,9 @@ class _DirectoryPageState extends State<DirectoryPage>
     // 在黑名单之中, 都不显示
     childDocuments.removeWhere((s) {
       bool remove = false;
-      for(String t in BLACK_NAME){
-        if(s.name.contains(t)){
-          remove =true;
+      for (String t in BLACK_NAME) {
+        if (s.name.contains(t)) {
+          remove = true;
           break;
         }
       }

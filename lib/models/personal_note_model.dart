@@ -1,4 +1,4 @@
-/// [PersonalNoteModel] 类用于缓存笔记，将笔记必备的字段存入 json 文件
+/// [PersonalNoteModel] 类用于缓存笔记，将笔记必备的字段存入 json 文件. 解析 _myNote.sjon
 class PersonalNoteModel {
   List<Files> files;
 
@@ -11,6 +11,18 @@ class PersonalNoteModel {
         files.add(new Files.fromJson(v));
       });
     }
+  }
+
+  /// [checkDocument] 根据 [id] 检查这篇文章是否在 _myNote.json 文件中
+  bool checkDocument(String id) {
+    for (Files file in this.files) {
+      if (file.id == id) {
+        print("文章在 _myNote.json 中");
+        return true;
+      }
+    }
+    print("文章不在 _myNote.json 中");
+    return false;
   }
 
   /// [addNewFile] 添加笔记
