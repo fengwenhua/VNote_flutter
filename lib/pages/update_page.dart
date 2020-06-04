@@ -128,7 +128,8 @@ class _UpdatePageState extends State<UpdatePage> {
 
               if (!await canReadStorage()) return;
               String url = widget.downloadUrl;
-              //url = url.replaceAll("github.com", "github.strcpy.cn");
+              // 这是临时解决方案
+              url = url.replaceAll("github.com", "github.strcpy.cn");
               id = await RUpgrade.upgrade(url,
                   apkName: widget.name,
                   isAutoRequestInstall: isAutoRequestInstall,

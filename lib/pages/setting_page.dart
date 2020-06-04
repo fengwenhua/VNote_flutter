@@ -12,6 +12,7 @@ import 'package:vnote/application.dart';
 import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/res/colors.dart';
 import 'package:vnote/utils/global.dart';
+import 'package:vnote/utils/log_util.dart';
 import 'package:vnote/utils/net_utils.dart';
 import 'package:vnote/widgets/click_item.dart';
 import 'package:vnote/widgets/update_dialog.dart';
@@ -87,10 +88,10 @@ class _SettingPageState extends State<SettingPage> {
                 print(version);
 
                 await NetUtils.instance.get(context,
-                    "https://gitee.com/api/v5/repos/fengwenhua/vnote_flutter_release/releases/latest",
+                    "https://api.github.com/repos/fengwenhua/vnote_flutter_release/releases/latest",
                     (data) async {
                   print('返回版本相关 json 如下:');
-                  print(data);
+                  LogUtil.e(data);
 
                   Map<String, dynamic> json = jsonDecode(data.toString());
                   String remoteVersion =
@@ -101,16 +102,30 @@ class _SettingPageState extends State<SettingPage> {
                     String updateContent = json["body"];
                     print("更新的内容是: " + updateContent);
                     List assets = json["assets"];
-                    print(assets[0]);
+                    print("类型: ");
+                    print(assets[0].runtimeType.toString());
+                    String download_name = "";
+                    String download_link = "";
+
+                    for(Map<String, dynamic> asset in assets){
+                      if(asset['name'].endsWith(".apk")){
+                        print(asset);
+                        download_name = asset['name'];
+                        download_link = asset['browser_download_url'];
+                        break;
+                      }
+                    }
+
                     print("下载链接: ");
-                    print(assets[0]['browser_download_url']);
+                    print(download_link);
                     print("下载名字");
-                    print(assets[0]['name']);
+                    print(download_name);
+
                     await pr.hide();
 
                     _showUpdateDialog(
-                        assets[0]['name'],
-                        assets[0]['browser_download_url'],
+                        download_name,
+                        download_link,
                         updateContent,
                         "v" + remoteVersion);
                   } else {
