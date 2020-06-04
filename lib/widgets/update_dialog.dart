@@ -137,7 +137,8 @@ class _UpdateDialogState extends State<UpdateDialog> {
                                           TargetPlatform.iOS) {
                                         FocusScope.of(context).unfocus();
                                         Navigator.pop(context);
-                                        Fluttertoast.showToast(msg: "苹果平台, 请自行前往仓库下载...");
+                                        Fluttertoast.showToast(
+                                            msg: "苹果平台, 请自行前往仓库下载...");
                                       } else {
 //                                        setState(() {
 //                                          _isDownload = true;

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
@@ -8,9 +10,12 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/document_model.dart';
 import 'package:vnote/models/onedrive_data_model.dart';
+import 'package:vnote/models/personal_note_model.dart';
 import 'package:vnote/provider/config_id_provider.dart';
 import 'package:vnote/provider/data_list_provider.dart';
 import 'package:vnote/provider/image_folder_id_provider.dart';
+import 'package:vnote/provider/local_document_provider.dart';
+import 'package:vnote/provider/parent_id_provider.dart';
 import 'package:vnote/provider/token_provider.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/utils.dart';
@@ -175,36 +180,60 @@ class SearchBarDelegate extends SearchDelegate<String> {
     // 这里
     DataListProvider dataListModel =
         Provider.of<DataListProvider>(context, listen: false);
-
+    ConfigIdProvider configIdModel =
+        Provider.of<ConfigIdProvider>(context, listen: false);
     bool hasImageFolder = false;
-    final _imageFolderIdAndConfigIdModel =
+    final _imageFolderIdModel =
         Provider.of<ImageFolderIdProvider>(context, listen: false);
     for (Document d in dataListModel.dataList) {
       if (d.name == "_v_images") {
         // 在这里拿到了 imageFolder 的 id, 即是 _v_images的 id
-        _imageFolderIdAndConfigIdModel.updateImageFolderId(d.id);
+        _imageFolderIdModel.updateImageFolderId(d.id);
         hasImageFolder = true;
         break;
       }
     }
 
     if (!hasImageFolder) {
-      _imageFolderIdAndConfigIdModel.updateImageFolderId("noimagefolder");
+      _imageFolderIdModel.updateImageFolderId("noimagefolder");
     }
 
     // 测试 Application.sp.containsKey(document.id)
     if (Application.sp.containsKey(document.id)) {
       // 本地有文档缓存
       print("使用本地文章缓存");
+      String configId = configIdModel.configId;
+      String imageFolderId = _imageFolderIdModel.imageFolderId;
+
+      // 防止 Android 会干掉 _myNote.json 文件, 这里需要加入一个判断该缓存是否还在
+      // _myNote.json , 不在则需要加上
+      PersonalNoteModel personalNoteModel = await Utils.getPersonalNoteModel();
+      ParentIdProvider parentIdModel =
+          Provider.of<ParentIdProvider>(context, listen: false);
+      if (!personalNoteModel.checkDocument(document.id)) {
+        print("_myNote.json 中没有 " + document.name);
+        print("应该是 _myNote.json 被干掉了, 需要重新加入");
+
+        // 写到 _myNote.json, 同时更新"笔记"tab
+        Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
+            document.id,
+            parentIdModel.parentId,
+            configIdModel.configId,
+            _imageFolderIdModel.imageFolderId,
+            document.name));
+        personalNoteModel.addNewFile(newFileMap);
+        LocalDocumentProvider localDocumentProvider =
+            Provider.of<LocalDocumentProvider>(context, listen: false);
+
+        Utils.writeModelToFile(personalNoteModel);
+        await Utils.model2ListDocument().then((data) {
+          print("directory_page 这里拿到 _myNote.json 的数据");
+          localDocumentProvider.updateList(data);
+        });
+      }
+
       await Future.delayed(Duration(milliseconds: 100), () {
         prt.hide().whenComplete(() async {
-          ConfigIdProvider configIdModel =
-              Provider.of<ConfigIdProvider>(context, listen: false);
-          ImageFolderIdProvider _imageFolderIdModel =
-              Provider.of<ImageFolderIdProvider>(context, listen: false);
-          String configId = configIdModel.configId;
-          String imageFolderId = _imageFolderIdModel.imageFolderId;
-
 //          String route =
 //              '/preview?content=${Uri.encodeComponent(Application.sp.getString(document.id))}&name=${Uri.encodeComponent(document.name)}&id=${Uri.encodeComponent(document.id)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
 //          Application.router
@@ -226,7 +255,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
       await DocumentListUtil.instance
           .getMDFileContentFromNetwork(
               context, tokenModel.token.accessToken, document.id, prt)
-          .then((data) {
+          .then((data) async {
         print("看看这玩意张啥样:");
         print(data);
         if (data == null) {
@@ -245,18 +274,39 @@ class SearchBarDelegate extends SearchDelegate<String> {
         } else {
           // 这里需要跳转到预览页面
           print("跳转到预览页面");
+
+          print("同时也要写进 _myNote.json");
+          // 先更新 model
+          // 先写到文件
+          // 然后再更新provider
+          PersonalNoteModel personalNoteModel =
+              await Utils.getPersonalNoteModel();
+          ConfigIdProvider configIdModel =
+              Provider.of<ConfigIdProvider>(context, listen: false);
+          ParentIdProvider parentIdModel =
+              Provider.of<ParentIdProvider>(context, listen: false);
+
+          // 写到 _myNote.json, 同时更新"笔记"tab
+          Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
+              document.id,
+              parentIdModel.parentId,
+              configIdModel.configId,
+              _imageFolderIdModel.imageFolderId,
+              document.name));
+          personalNoteModel.addNewFile(newFileMap);
+          LocalDocumentProvider localDocumentProvider =
+              Provider.of<LocalDocumentProvider>(context, listen: false);
+
+          Utils.writeModelToFile(personalNoteModel);
+          await Utils.model2ListDocument().then((data) {
+            print("directory_page 这里拿到 _myNote.json 的数据");
+            localDocumentProvider.updateList(data);
+          });
+
           prt.hide().whenComplete(() async {
-            ConfigIdProvider configIdModel =
-                Provider.of<ConfigIdProvider>(context, listen: false);
-            ImageFolderIdProvider _imageFolderIdModel =
-                Provider.of<ImageFolderIdProvider>(context, listen: false);
             String configId = configIdModel.configId;
             String imageFolderId = _imageFolderIdModel.imageFolderId;
-//            String route =
-//                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
-//            Application.router
-//                .navigateTo(context, route, transition: TransitionType.fadeIn);
-
+            // 下面是用 markdown_webveiw
             await Utils.getMarkdownHtml(document.name, data.toString())
                 .then((htmlPath) {
               String route =
@@ -264,6 +314,12 @@ class SearchBarDelegate extends SearchDelegate<String> {
               Application.router.navigateTo(context, route,
                   transition: TransitionType.fadeIn);
             });
+
+            // 下面是用 flutter_markdown
+//            String route =
+//                '/preview?content=${Uri.encodeComponent(data.toString())}&id=${Uri.encodeComponent(document.id)}&name=${Uri.encodeComponent(document.name)}&configId=${Uri.encodeComponent(configId)}&imageFolderId=${Uri.encodeComponent(imageFolderId)}';
+//            Application.router
+//                .navigateTo(context, route, transition: TransitionType.fadeIn);
           });
         }
       });
