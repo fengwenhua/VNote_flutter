@@ -66,7 +66,7 @@ class DocumentListUtil {
             print("跳过图片");
             continue;
           }
-          if(value.name.endsWith(".vswp")){
+          if (value.name.endsWith(".vswp")) {
             print("跳过中间文件");
             continue;
           }

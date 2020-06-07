@@ -187,7 +187,7 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
             context, tokenModel.token.accessToken, id, pr1)
         .then((value) {
       if (value == null) {
-        print("gg, 拿不到更新的数据");
+        print("gg, 拿不到更新的数据1");
         if (pr1.isShowing()) {
           pr1.hide();
         }

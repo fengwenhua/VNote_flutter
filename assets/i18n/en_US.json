@@ -78,7 +78,7 @@
     "delete": "Delete",
     "rename": "Rename"
   },
-  "createNotebookTips": "Please create a new notebook",
+  "createNotebookTips": "Please create or choose a notebook",
   "readLocalCacheCompleted": "Local cache read completed!",
   "AddConfigToFolder": "Adding _vnote.json to a new directory",
   "startNewFolder": "Start a new folder",

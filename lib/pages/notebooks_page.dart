@@ -406,6 +406,46 @@ class _NotebooksPageState extends State<NotebooksPage> {
               dataListModel.clear();
               dirCacheModel.clear();
             });
+
+            // 删完笔记本，需要重新选择笔记本
+            List<Document> notebookList = notebooksProvider.list;
+            String chooseNotebookId;
+            String chooseNotebookName;
+            if(notebookList.length>0){
+              // 还有其他笔记本
+              print("还有其他笔记本，选择第一个");
+              chooseNotebookId = notebookList[0].id;
+              chooseNotebookName = notebookList[0].name;
+              Application.sp.setString("choose_notebook_id",chooseNotebookId);
+              Application.sp.setString("choose_notebook_name",chooseNotebookName);
+
+              await DocumentListUtil.instance
+                  .getChildList(context, tokenModel.token.accessToken, chooseNotebookId, (list) {})
+                  .then((data) {
+                if (data == null) {
+                  print("获取的儿子为空, 不处理!");
+                } else {
+                  print("在 notebooks_page 页面, 获取的儿子有数据");
+                  parentIdModel.goAheadParentId(chooseNotebookId, chooseNotebookName);
+                  parentIdModel.setGenId(chooseNotebookId);
+
+                  dataListModel.goAheadDataList(data);
+                  for (Document d in dataListModel.dataList) {
+                    if (d.name == "_vnote.json") {
+                      configIdModel.updateConfigId(d.id);
+                      break;
+                    }
+                  }
+                  dirCacheModel.addDirAndFileList(chooseNotebookId, data);
+                }
+              });
+            }else{
+              // 没有笔记本了
+              print("没有笔记本了！");
+              parentIdModel.goAheadParentId("approot", "VNote 根目录");
+              parentIdModel.setGenId("approot");
+            }
+
             Utils.showMyToast("删除完成");
             await pr.hide().then((isHidden) async {
               print(isHidden);

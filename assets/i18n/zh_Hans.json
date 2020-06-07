@@ -78,7 +78,7 @@
     "delete": "删除",
     "rename": "重命名"
   },
-  "createNotebookTips": "请新建笔记本",
+  "createNotebookTips": "请新建或选择笔记本",
   "readLocalCacheCompleted": "本地缓存读取完成!",
   "AddConfigToFolder": "给新建的目录添加 _vnote.json",
   "startNewFolder": "开始新建文件夹",
