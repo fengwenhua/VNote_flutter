@@ -218,6 +218,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
         Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
             document.id,
             parentIdModel.parentId,
+            Application.sp.getString("choose_notebook_id"),
             configIdModel.configId,
             _imageFolderIdModel.imageFolderId,
             document.name));
@@ -290,6 +291,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
           Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
               document.id,
               parentIdModel.parentId,
+              Application.sp.getString("choose_notebook_id"),
               configIdModel.configId,
               _imageFolderIdModel.imageFolderId,
               document.name));

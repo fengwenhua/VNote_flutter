@@ -68,12 +68,13 @@ class Utils {
   }
 
   /// 用于点击文件的时候, 记录该内容到 _myNote.json
-  static String newLocalFileJson(
-      String id, String parentId,String configId, String imageFolderId, String fileName) {
+  static String newLocalFileJson(String id, String parentId, String notebookId,
+      String configId, String imageFolderId, String fileName) {
     String time = Utils.getFormattedDateTimeForJson(dateTime: DateTime.now());
     String jsonData = '''{
     "id":"$id",
     "parent_id":"$parentId",
+    "notebook_id":"$notebookId",
     "config_id":"$configId",
     "image_folder_id":"$imageFolderId",
     "name":"$fileName",
@@ -290,6 +291,7 @@ class Utils {
       Document temp = new Document(
           id: file.id,
           parentId: file.parentId,
+          notebookId: file.notebookId,
           imageFolderId: file.imageFolderId,
           configId: file.configId,
           name: file.name,
@@ -306,7 +308,7 @@ class Utils {
       final file = await loadPersonalNoteConfig();
       print("写进 _myNote.json 的内容是: ");
       print(json.encode(personalNoteModel));
-      return file.writeAsString(json.encode(personalNoteModel)); // 这是覆盖, 还是附加?
+      await file.writeAsString(json.encode(personalNoteModel)); // 这是覆盖, 还是附加?
     } catch (err) {
       print(err);
     }

@@ -27,11 +27,14 @@ class DataListProvider with ChangeNotifier {
 
   /// [removeEle] 删除栈顶 list 中的某个元素, 干掉某个文件/目录时要调用的
   void removeEle(Document document) {
-    List<Document> list = _dataListStack.pop();
-    print("要干掉的是" + document.name);
-    list.removeWhere((test) => test.id == document.id);
-    _dataListStack.push(list);
-    notifyListeners();
+    if (_dataListStack.isNotEmpty) {
+      List<Document> list = _dataListStack.pop();
+
+      print("要干掉的是" + document.name);
+      list.removeWhere((test) => test.id == document.id);
+      _dataListStack.push(list);
+      notifyListeners();
+    }
   }
 
   /// [addEle] 给栈顶 list 添加新元素
@@ -71,10 +74,11 @@ class DataListProvider with ChangeNotifier {
   }
 
   /// [clear] 清空数据
-  void clear(){
+  void clear() {
     _dataListStack.clear();
     notifyListeners();
   }
+
   /// [goAheadDataList] 点开来目录, 所以要压栈
   void goAheadDataList(List<Document> newDataList) {
     _dataListStack.push(newDataList);

@@ -456,6 +456,7 @@ class _CreatePageState extends State<CreatePage> {
                             Utils.newLocalFileJson(
                                 fileId,
                                 parentIdModel.parentId,
+                                Application.sp.getString("choose_notebook_id"),
                                 configIdModel.configId,
                                 _imageFolderId.imageFolderId,
                                 fileName));

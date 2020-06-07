@@ -11,10 +11,12 @@ import 'package:vnote/application.dart';
 import 'package:vnote/dao/onedrive_data_dao.dart';
 import 'package:vnote/models/desktop_config_model.dart';
 import 'package:vnote/models/document_model.dart';
+import 'package:vnote/models/personal_note_model.dart';
 import 'package:vnote/provider/config_id_provider.dart';
 import 'package:vnote/provider/data_list_provider.dart';
 import 'package:vnote/provider/dir_and_file_cache_provider.dart';
 import 'package:vnote/provider/image_folder_id_provider.dart';
+import 'package:vnote/provider/local_document_provider.dart';
 import 'package:vnote/provider/notebooks_list_provider.dart';
 import 'package:vnote/provider/parent_id_provider.dart';
 import 'package:vnote/provider/token_provider.dart';
@@ -395,56 +397,82 @@ class _NotebooksPageState extends State<NotebooksPage> {
               // 网络请求删除在线的文件夹
               //Utils.showMyToast("0. 开始删除", type: 0);
               await OneDriveDataDao.deleteFile(
-                  context, tokenModel.token.accessToken, document.id);
+                      context, tokenModel.token.accessToken, document.id)
+                  .then((data) async {
+                if (data == null) {
+                  print("笔记本删除结果返回为空");
+                  // 直接删除那一项即可
+                  notebooksProvider.removeEle(document);
+                } else {
 //              // 删除本地缓存的文件夹
 //              dataListModel.removeEle(document);
 //              dirCacheModel.delDirOrFileEle(parentIdModel.parentId, document);
-              // 1. 删除笔记本 list对应 document
-              notebooksProvider.removeEle(document);
-              // 2. 参考点击文件夹(记得清空 dataListModel 和 dirCacheModel)
-              parentIdModel.clear();
-              dataListModel.clear();
-              dirCacheModel.clear();
-            });
+                  // 1. 删除笔记本 list对应 document
+                  notebooksProvider.removeEle(document);
+                  // 2. 参考点击文件夹(记得清空 dataListModel 和 dirCacheModel)
+                  parentIdModel.clear();
+                  dataListModel.clear();
+                  dirCacheModel.clear();
 
-            // 删完笔记本，需要重新选择笔记本
-            List<Document> notebookList = notebooksProvider.list;
-            String chooseNotebookId;
-            String chooseNotebookName;
-            if(notebookList.length>0){
-              // 还有其他笔记本
-              print("还有其他笔记本，选择第一个");
-              chooseNotebookId = notebookList[0].id;
-              chooseNotebookName = notebookList[0].name;
-              Application.sp.setString("choose_notebook_id",chooseNotebookId);
-              Application.sp.setString("choose_notebook_name",chooseNotebookName);
+                  // 这里要级联删除"笔记"tab
+                  PersonalNoteModel personalNoteModel =
+                  await Utils.getPersonalNoteModel();
+                  personalNoteModel.delForNotebookId(document.id);
+                  LocalDocumentProvider localDocumentProvider =
+                  Provider.of<LocalDocumentProvider>(this.context,
+                      listen: false);
 
-              await DocumentListUtil.instance
-                  .getChildList(context, tokenModel.token.accessToken, chooseNotebookId, (list) {})
-                  .then((data) {
-                if (data == null) {
-                  print("获取的儿子为空, 不处理!");
-                } else {
-                  print("在 notebooks_page 页面, 获取的儿子有数据");
-                  parentIdModel.goAheadParentId(chooseNotebookId, chooseNotebookName);
-                  parentIdModel.setGenId(chooseNotebookId);
+                  Utils.writeModelToFile(personalNoteModel);
+                  await Utils.model2ListDocument().then((data) {
+                    print("notebooks_page 级联删除 这里拿到 _myNote.json 的数据");
+                    localDocumentProvider.updateList(data);
+                  });
 
-                  dataListModel.goAheadDataList(data);
-                  for (Document d in dataListModel.dataList) {
-                    if (d.name == "_vnote.json") {
-                      configIdModel.updateConfigId(d.id);
-                      break;
-                    }
+                  // 删完笔记本，需要重新选择笔记本
+                  List<Document> notebookList = notebooksProvider.list;
+                  String chooseNotebookId;
+                  String chooseNotebookName;
+                  if (notebookList.length > 0) {
+                    // 还有其他笔记本
+                    print("还有其他笔记本，选择第一个");
+                    chooseNotebookId = notebookList[0].id;
+                    chooseNotebookName = notebookList[0].name;
+                    Application.sp
+                        .setString("choose_notebook_id", chooseNotebookId);
+                    Application.sp
+                        .setString("choose_notebook_name", chooseNotebookName);
+
+                    await DocumentListUtil.instance
+                        .getChildList(context, tokenModel.token.accessToken,
+                            chooseNotebookId, (list) {})
+                        .then((data) {
+                      if (data == null) {
+                        print("获取的儿子为空, 不处理!");
+                      } else {
+                        print("在 notebooks_page 页面, 获取的儿子有数据");
+                        parentIdModel.goAheadParentId(
+                            chooseNotebookId, chooseNotebookName);
+                        parentIdModel.setGenId(chooseNotebookId);
+
+                        dataListModel.goAheadDataList(data);
+                        for (Document d in dataListModel.dataList) {
+                          if (d.name == "_vnote.json") {
+                            configIdModel.updateConfigId(d.id);
+                            break;
+                          }
+                        }
+                        dirCacheModel.addDirAndFileList(chooseNotebookId, data);
+                      }
+                    });
+                  } else {
+                    // 没有笔记本了
+                    print("没有笔记本了！");
+                    parentIdModel.goAheadParentId("approot", "VNote 根目录");
+                    parentIdModel.setGenId("approot");
                   }
-                  dirCacheModel.addDirAndFileList(chooseNotebookId, data);
                 }
               });
-            }else{
-              // 没有笔记本了
-              print("没有笔记本了！");
-              parentIdModel.goAheadParentId("approot", "VNote 根目录");
-              parentIdModel.setGenId("approot");
-            }
+            });
 
             Utils.showMyToast("删除完成");
             await pr.hide().then((isHidden) async {

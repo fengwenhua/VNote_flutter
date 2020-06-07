@@ -21,6 +21,9 @@ class Document {
   /// [parentId] 在点开文件的时候赋值, 主要用于"笔记"tab 的缓存删除
   String parentId;
 
+  /// [notebookId] 这篇文章所属笔记本的 id，用于文件夹、笔记本删除时候，级联删除笔记 tab
+  String notebookId;
+
   Document(
       {this.id,
       this.configId,
@@ -28,5 +31,6 @@ class Document {
       this.dateModified,
       this.isFile = false,
       this.imageFolderId,
-      this.parentId});
+      this.parentId,
+      this.notebookId});
 }
