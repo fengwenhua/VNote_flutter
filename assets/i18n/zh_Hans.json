@@ -78,6 +78,7 @@
     "delete": "删除",
     "rename": "重命名"
   },
+  "createNotebookTips": "请新建笔记本",
   "readLocalCacheCompleted": "本地缓存读取完成!",
   "AddConfigToFolder": "给新建的目录添加 _vnote.json",
   "startNewFolder": "开始新建文件夹",
@@ -85,6 +86,7 @@
   "updateConfig": "更新 _vnote.json",
   "waitTips": "慢慢等吧...",
   "noNoteBookTips": "没有笔记本!",
+  "noFolderOrFileTips": "没有文件夹或文件！",
   "createFileTips": "文件创建中...",
   "updateContentTips": "更新内容中...",
   "uploadTips": "开始上传...",

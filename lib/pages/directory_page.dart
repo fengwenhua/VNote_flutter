@@ -313,42 +313,49 @@ class _DirectoryPageState extends State<DirectoryPage>
       onWillPop: onWillPop,
       child: Scaffold(
         appBar: AppBar(
-            title: Text(parentIdModel.parentName,
+            title: Text(
+                parentIdModel.parentName == "VNote 根目录"
+                    ? translate("createNotebookTips")
+                    : parentIdModel.parentName,
                 style: TextStyle(fontSize: fontSize40)),
             actions: <Widget>[
               // 非隐藏起来的菜单
               new IconButton(
                   icon: new Icon(Icons.add),
                   tooltip: 'Add Folder',
-                  onPressed: () {
-                    print("点击添加文件夹的按钮");
+                  onPressed: parentIdModel.parentName == "VNote 根目录"
+                      ? null
+                      : () {
+                          print("点击添加文件夹的按钮");
 
-                    // 1. 弹框输入文件夹名字
-                    // 2. 调用接口上传(文件夹新建, _vnote.json 新建)
-                    // 3. 修改当前目录的 _vnote.json
-                    // 4. 都 ok 后更新本地 dataList
+                          // 1. 弹框输入文件夹名字
+                          // 2. 调用接口上传(文件夹新建, _vnote.json 新建)
+                          // 3. 修改当前目录的 _vnote.json
+                          // 4. 都 ok 后更新本地 dataList
 
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return _addFolderDialog();
-                        });
-                  }),
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return _addFolderDialog();
+                              });
+                        }),
               new IconButton(
                   icon: new Icon(Icons.refresh),
                   tooltip: "Update",
-                  onPressed: () async {
-                    // 手动点击更新按钮
-                    pr = new ProgressDialog(context, isDismissible: true);
-                    pr.style(message: translate("waitTips"));
-                    await pr.show().then((_) {
-                      String parentId = parentIdModel.parentId;
-                      String parentName = parentIdModel.parentName;
-                      // 接下来是根据这个 id 刷新获取数据
+                  onPressed: parentIdModel.parentName == "VNote 根目录"
+                      ? null
+                      : () async {
+                          // 手动点击更新按钮
+                          pr = new ProgressDialog(context, isDismissible: true);
+                          pr.style(message: translate("waitTips"));
+                          await pr.show().then((_) {
+                            String parentId = parentIdModel.parentId;
+                            String parentName = parentIdModel.parentName;
+                            // 接下来是根据这个 id 刷新获取数据
 
-                      _postData(parentId, parentName, update: true);
-                    });
-                  })
+                            _postData(parentId, parentName, update: true);
+                          });
+                        })
             ],
             // 因为将笔记本抽离开了, 所以这里应该用 SP 获取当前选择笔记本的 id,判断一下
             leading: parentIdModel.parentId == parentIdModel.rootId
@@ -374,7 +381,9 @@ class _DirectoryPageState extends State<DirectoryPage>
                 dataListModel.dataList.length == 0 ||
                 dataListModel.getLength() == 0
             ? Center(
-                child: Text(translate("noNoteBookTips")),
+                child: parentIdModel.parentName == "VNote 根目录"
+                    ? Text(translate("noNoteBookTips"))
+                    : Text(translate("noFolderOrFileTips")),
               )
             : Scrollbar(
                 child: ListView.builder(

@@ -444,14 +444,17 @@ _getMDFile(BuildContext context, Document document, ProgressDialog prt) async {
   bool hasImageFolder = false;
   final _imageFolderIdAndConfigIdModel =
       Provider.of<ImageFolderIdProvider>(context, listen: false);
-  for (Document d in dataListModel.dataList) {
-    if (d.name == "_v_images") {
-      // 在这里拿到了 imageFolder 的 id, 即是 _v_images的 id
-      _imageFolderIdAndConfigIdModel.updateImageFolderId(d.id);
-      hasImageFolder = true;
-      break;
+  if(dataListModel.dataList!=null){
+    for (Document d in dataListModel.dataList) {
+      if (d.name == "_v_images") {
+        // 在这里拿到了 imageFolder 的 id, 即是 _v_images的 id
+        _imageFolderIdAndConfigIdModel.updateImageFolderId(d.id);
+        hasImageFolder = true;
+        break;
+      }
     }
   }
+
 
   if (!hasImageFolder) {
     _imageFolderIdAndConfigIdModel.updateImageFolderId("noimagefolder");

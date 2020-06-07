@@ -3,7 +3,7 @@ import 'package:vnote/models/document_model.dart';
 
 /// [NotebooksProvider] 类用于记录笔记本
 class NotebooksProvider with ChangeNotifier {
-  List<Document> _list;
+  List<Document> _list = new List<Document>();
 
   List<Document> get list => _list;
 

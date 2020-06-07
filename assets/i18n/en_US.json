@@ -78,6 +78,7 @@
     "delete": "Delete",
     "rename": "Rename"
   },
+  "createNotebookTips": "Please create a new notebook",
   "readLocalCacheCompleted": "Local cache read completed!",
   "AddConfigToFolder": "Adding _vnote.json to a new directory",
   "startNewFolder": "Start a new folder",
@@ -86,6 +87,7 @@
   "waitTips": "Just wait...",
   "createFileTips": "File creation in progress...",
   "noNoteBookTips": "No notebooks!",
+  "noFolderOrFileTips": "No folder or file!",
   "updateContentTips": "Content being updated",
   "uploadTips": "Start uploading",
   "uploadingTips": "Uploading...",
