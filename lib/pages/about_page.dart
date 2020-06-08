@@ -101,16 +101,25 @@ class _AboutPageState extends State<AboutPage> {
           ),
           SizedBox(height: 10),
           ClickItem(
-              title: 'Github',
+              title: 'Mobile Github',
               content: 'Go Star',
               onTap: () {
                 String route =
-                    '/webview?url=${Uri.encodeComponent("https://github.com/fengwenhua/VNote_flutter")}&title=${Uri.encodeComponent("VNote_flutter")}';
+                    '/webview?url=${Uri.encodeComponent("https://github.com/fengwenhua/vnote_flutter_release")}&title=${Uri.encodeComponent("VNote_flutter")}';
                 Application.router.navigateTo(context, route,
                     transition: TransitionType.fadeIn);
               }),
           ClickItem(
-              title: 'developer',
+              title: 'PC Github',
+              content: 'Go Star',
+              onTap: () {
+                String route =
+                    '/webview?url=${Uri.encodeComponent("https://github.com/tamlok/vnote")}&title=${Uri.encodeComponent("VNote_flutter")}';
+                Application.router.navigateTo(context, route,
+                    transition: TransitionType.fadeIn);
+              }),
+          ClickItem(
+              title: 'Developer blog',
               onTap: () {
                 String route =
                     '/webview?url=${Uri.encodeComponent("https://fengwenhua.top/")}&title=${Uri.encodeComponent("作者博客")}';
