@@ -214,8 +214,8 @@ class DocumentListUtil {
   }
 
   // 根据 id 获得儿子们
-  Future<List<Document>> getChildList(
-      BuildContext context, String token, String id, Function callBack,
+  Future<List<Document>> getChildList(BuildContext context, String token,
+      String id, String parentName, Function callBack,
       {bool fromNetwork = false}) async {
     List<Document> result = new List<Document>();
     OneDriveDataModel oneDriveDataModel;
@@ -269,9 +269,9 @@ class DocumentListUtil {
 
         // print(value.id);
         print(value.name);
-
         Document temp = new Document(
             id: value.id,
+            parentName: parentName,
             parentId: id,
             name: value.name,
             isFile: true,

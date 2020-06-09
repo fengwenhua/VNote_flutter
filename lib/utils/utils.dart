@@ -21,9 +21,13 @@ class Utils {
     String year = '${dateTime.year}';
 
     String hour = '${dateTime.hour}';
+    // 不知道为啥差八个小时, 这里加上
+    hour = (int.parse(hour) + 8).toString();
     String minute = '${dateTime.minute}';
     String second = '${dateTime.second}';
-    return '$day/$month/$year $hour/$minute/$second';
+    // 不显示时分秒了
+    //  $hour:$minute:$second
+    return '$year-$month-$day';
   }
 
   static String getFormattedDateTimeForJson({@required DateTime dateTime}) {
@@ -68,12 +72,19 @@ class Utils {
   }
 
   /// 用于点击文件的时候, 记录该内容到 _myNote.json
-  static String newLocalFileJson(String id, String parentId, String notebookId,
-      String configId, String imageFolderId, String fileName) {
+  static String newLocalFileJson(
+      String id,
+      String parentId,
+      String parentName,
+      String notebookId,
+      String configId,
+      String imageFolderId,
+      String fileName) {
     String time = Utils.getFormattedDateTimeForJson(dateTime: DateTime.now());
     String jsonData = '''{
     "id":"$id",
     "parent_id":"$parentId",
+    "parent_name":"$parentName",
     "notebook_id":"$notebookId",
     "config_id":"$configId",
     "image_folder_id":"$imageFolderId",
@@ -291,6 +302,7 @@ class Utils {
       Document temp = new Document(
           id: file.id,
           parentId: file.parentId,
+          parentName: file.parentName,
           notebookId: file.notebookId,
           imageFolderId: file.imageFolderId,
           configId: file.configId,

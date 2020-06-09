@@ -45,9 +45,10 @@ class _DirectoryPageState extends State<DirectoryPage>
   final SlidableController slidableController = SlidableController();
 
   /// 根据点击的 id 来查找目录
-  Future<List<Document>> getChildData(String accessToken, String id) async {
+  Future<List<Document>> getChildData(
+      String accessToken, String id, String parentName) async {
     return await DocumentListUtil.instance
-        .getChildList(context, accessToken, id, (list) {
+        .getChildList(context, accessToken, id, parentName, (list) {
 //      print("根据 id 获取了List, 如下:");
 //      list.forEach((i) {
 //        print(i.name);
@@ -108,6 +109,7 @@ class _DirectoryPageState extends State<DirectoryPage>
         Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
             document.id,
             parentIdModel.parentId,
+            parentIdModel.parentName,
             Application.sp.getString("choose_notebook_id"),
             configIdModel.configId,
             _imageFolderIdModel.imageFolderId,
@@ -183,6 +185,7 @@ class _DirectoryPageState extends State<DirectoryPage>
           Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
               document.id,
               parentIdModel.parentId,
+              parentIdModel.parentName,
               Application.sp.getString("choose_notebook_id"),
               configIdModel.configId,
               _imageFolderIdModel.imageFolderId,
@@ -241,7 +244,7 @@ class _DirectoryPageState extends State<DirectoryPage>
     // 修改完后,这段代码可以不要了
 
     // update 用于判断在其他目录点击了更新或者进入其他目录
-    await getChildData(tokenModel.token.accessToken, id).then((data) {
+    await getChildData(tokenModel.token.accessToken, id, name).then((data) {
       if (data == null) {
         print("获取的数据为空, 不处理!");
       } else {
@@ -575,6 +578,7 @@ class _DirectoryPageState extends State<DirectoryPage>
       });
 
   FileWidget _getFileWidget({@required Document document}) => FileWidget(
+        parentName: document.parentName,
         fileName: document.name,
         lastModified: document.dateModified,
         onPressedNext: () async {
@@ -715,11 +719,11 @@ class _DirectoryPageState extends State<DirectoryPage>
                   if (!document.isFile) {
                     print("删掉的是文件夹，需要删除笔记 tab 的关联的笔记");
                     PersonalNoteModel personalNoteModel =
-                    await Utils.getPersonalNoteModel();
+                        await Utils.getPersonalNoteModel();
                     personalNoteModel.delForParentId(document.id);
                     LocalDocumentProvider localDocumentProvider =
-                    Provider.of<LocalDocumentProvider>(this.context,
-                        listen: false);
+                        Provider.of<LocalDocumentProvider>(this.context,
+                            listen: false);
 
                     Utils.writeModelToFile(personalNoteModel);
                     await Utils.model2ListDocument().then((data) {

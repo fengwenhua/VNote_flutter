@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vnote/application.dart';
 import 'package:vnote/utils/utils.dart';
 
-class DirectoryWidget extends StatefulWidget{
+class DirectoryWidget extends StatefulWidget {
   final String directoryName;
   final DateTime lastModified;
   final VoidCallback onPressedNext;
@@ -12,15 +12,13 @@ class DirectoryWidget extends StatefulWidget{
     @required this.directoryName,
     @required this.lastModified,
     this.onPressedNext,
-  }):super(key:key);
+  }) : super(key: key);
 
   @override
   _DirectoryWidgetState createState() => _DirectoryWidgetState();
-
 }
 
 class _DirectoryWidgetState extends State<DirectoryWidget> {
-
   @override
   Widget build(BuildContext context) {
     Widget titleWidget = GestureDetector(
@@ -41,12 +39,12 @@ class _DirectoryWidgetState extends State<DirectoryWidget> {
     );
 
     return Card(
-      child: ListTile(
-        leading: folderIcon,
-        title: titleWidget,
-        subtitle: lastModifiedWidget,
-        onTap: widget.onPressedNext,
-      )
-    );
+        elevation: 1.0,
+        child: ListTile(
+          leading: folderIcon,
+          title: titleWidget,
+          subtitle: lastModifiedWidget,
+          onTap: widget.onPressedNext,
+        ));
   }
 }

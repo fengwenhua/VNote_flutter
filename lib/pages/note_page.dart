@@ -466,6 +466,8 @@ class _NotePageState extends State<NotePage> {
 
 FileWidget getFileWidget(BuildContext context, {@required Document document}) =>
     FileWidget(
+      isNote: true,
+      parentName: document.parentName,
       fileName: document.name,
       lastModified: document.dateModified,
       onPressedNext: () async {

@@ -107,7 +107,8 @@ class _SplashScreenPageState extends State<SplashScreenPage>
         }
 
         await DocumentListUtil.instance
-            .getChildList(context, accessToken, chooseNotebookId, (list) {})
+            .getChildList(context, accessToken, chooseNotebookId,
+                chooseNotebookName, (list) {})
             .then((data) {
           if (data == null) {
             print("获取的儿子为空, 不处理!");

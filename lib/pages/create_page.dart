@@ -377,7 +377,8 @@ class _CreatePageState extends State<CreatePage> {
                           uploadPR = new ProgressDialog(context,
                               type: ProgressDialogType.Normal,
                               isDismissible: false);
-                          uploadPR.style(message: translate("startDownloadConfig"));
+                          uploadPR.style(
+                              message: translate("startDownloadConfig"));
                           await uploadPR.show();
                           print(
                               "接下来开始下载当前目录下的 _vnote.json 文件, 然后更新它的 files 字段");
@@ -456,6 +457,7 @@ class _CreatePageState extends State<CreatePage> {
                             Utils.newLocalFileJson(
                                 fileId,
                                 parentIdModel.parentId,
+                                parentIdModel.parentName,
                                 Application.sp.getString("choose_notebook_id"),
                                 configIdModel.configId,
                                 _imageFolderId.imageFolderId,

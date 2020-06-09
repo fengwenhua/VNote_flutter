@@ -159,6 +159,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
   FileWidget getFileWidget(BuildContext context,
           {@required Document document}) =>
       FileWidget(
+        parentName: document.parentName,
         fileName: document.name,
         lastModified: document.dateModified,
         onPressedNext: () async {
@@ -218,6 +219,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
         Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
             document.id,
             parentIdModel.parentId,
+            parentIdModel.parentName,
             Application.sp.getString("choose_notebook_id"),
             configIdModel.configId,
             _imageFolderIdModel.imageFolderId,
@@ -291,6 +293,7 @@ class SearchBarDelegate extends SearchDelegate<String> {
           Map<String, dynamic> newFileMap = jsonDecode(Utils.newLocalFileJson(
               document.id,
               parentIdModel.parentId,
+              parentIdModel.parentName,
               Application.sp.getString("choose_notebook_id"),
               configIdModel.configId,
               _imageFolderIdModel.imageFolderId,

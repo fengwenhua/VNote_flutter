@@ -55,7 +55,6 @@ class PersonalNoteModel {
     });
   }
 
-
   /// [renameFile] 根据 [id] 和 [newName] 重命名笔记
   /// 必须要修改成根据 id 来, 不然缓存下来的笔记中重名就 gg 了
   void renameFile(String id, String newName) {
@@ -86,6 +85,9 @@ class Files {
   /// [parentId] 这篇笔记对应的 爸爸文件夹的 id, 用于笔记 tab 的删除
   String parentId;
 
+  /// [parentName] 这篇笔记赌赢的 爸爸文件夹的 name, 用于区分同名文件
+  String parentName;
+
   /// [notebookId] 这篇文章所属笔记本的 id，用于文件夹、笔记本删除时候，级联删除笔记 tab
   String notebookId;
 
@@ -106,6 +108,7 @@ class Files {
   Files.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     parentId = json['parent_id'];
+    parentName = json['parent_name'];
     notebookId = json['notebook_id'];
     imageFolderId = json['image_folder_id'];
     configId = json['config_id'];
@@ -117,6 +120,7 @@ class Files {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['parent_id'] = this.parentId;
+    data['parent_name'] = this.parentName;
     data['notebook_id'] = this.notebookId;
     data['image_folder_id'] = this.imageFolderId;
     data['config_id'] = this.configId;

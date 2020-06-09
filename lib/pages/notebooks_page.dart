@@ -201,8 +201,8 @@ class _NotebooksPageState extends State<NotebooksPage> {
     await pr.show();
 
     await DocumentListUtil.instance
-        .getChildList(
-            context, tokenModel.token.accessToken, document.id, (list) {})
+        .getChildList(context, tokenModel.token.accessToken, document.id,
+            document.name, (list) {})
         .then((data) {
       if (data == null) {
         print("获取的儿子为空, 不处理!");
@@ -416,11 +416,11 @@ class _NotebooksPageState extends State<NotebooksPage> {
 
                   // 这里要级联删除"笔记"tab
                   PersonalNoteModel personalNoteModel =
-                  await Utils.getPersonalNoteModel();
+                      await Utils.getPersonalNoteModel();
                   personalNoteModel.delForNotebookId(document.id);
                   LocalDocumentProvider localDocumentProvider =
-                  Provider.of<LocalDocumentProvider>(this.context,
-                      listen: false);
+                      Provider.of<LocalDocumentProvider>(this.context,
+                          listen: false);
 
                   Utils.writeModelToFile(personalNoteModel);
                   await Utils.model2ListDocument().then((data) {
@@ -444,7 +444,7 @@ class _NotebooksPageState extends State<NotebooksPage> {
 
                     await DocumentListUtil.instance
                         .getChildList(context, tokenModel.token.accessToken,
-                            chooseNotebookId, (list) {})
+                            chooseNotebookId, chooseNotebookName, (list) {})
                         .then((data) {
                       if (data == null) {
                         print("获取的儿子为空, 不处理!");
