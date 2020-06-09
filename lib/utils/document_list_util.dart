@@ -252,7 +252,14 @@ class DocumentListUtil {
         bool skip = true;
         for (String tmp in WHILE_NAME) {
           if (value.name.endsWith(tmp)) {
-            skip = false;
+            // 虽然是.json 结尾,但是要排除.json 的冲突文件
+            if (tmp == ".json") {
+              if (value.name == "_vnote.json") {
+                skip = false;
+              }
+            } else {
+              skip = false;
+            }
           }
         }
         // 虽然是文件, 但是不在白名单之内, 跳过
