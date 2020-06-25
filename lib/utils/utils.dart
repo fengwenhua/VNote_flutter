@@ -414,6 +414,9 @@ var md = window.markdownit({
     typographer:true,
   // markdown-it 高亮配置
   highlight: function (str, lang) {
+      // 添加这两行才能正确显示 <>
+    str = str.replace(/&lt;/g, "<");
+    str = str.replace(/&gt;/g, ">");
     if (lang && hljs.getLanguage(lang)) {
       try {
         return '<pre class="hljs"><code>' +
