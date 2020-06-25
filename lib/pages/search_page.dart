@@ -17,6 +17,8 @@ import 'package:vnote/provider/image_folder_id_provider.dart';
 import 'package:vnote/provider/local_document_provider.dart';
 import 'package:vnote/provider/parent_id_provider.dart';
 import 'package:vnote/provider/token_provider.dart';
+import 'package:vnote/res/colors.dart';
+import 'package:vnote/res/styles.dart';
 import 'package:vnote/utils/document_list_util.dart';
 import 'package:vnote/utils/utils.dart';
 import 'package:vnote/widgets/file_widget.dart';
@@ -57,8 +59,8 @@ List<String> searchList = [
 List<String> recentSuggest = ["搜索推荐 1", "搜索推荐 2"];
 
 class SearchBarDelegate extends SearchDelegate<String> {
-  //初始化加载
-  //重写右侧的图标
+  // 初始化加载
+  // 重写右侧的图标, 这里放清除按钮
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -337,12 +339,11 @@ class SearchBarDelegate extends SearchDelegate<String> {
 
   @override
   ThemeData appBarTheme(BuildContext context) {
+    String themeStr = Application.sp?.getString('AppTheme');
+
     ThemeData theme = Theme.of(context);
     return theme.copyWith(
-      primaryColor: Colors.blue,
-      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.white),
-      primaryColorBrightness: Brightness.light,
-      primaryTextTheme: theme.textTheme,
+      primaryColor: themeStr == 'Dark' ? Colours.dark_line : Colors.blue,
     );
   }
 

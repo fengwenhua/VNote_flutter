@@ -49,8 +49,11 @@ class ThemeProvider extends ChangeNotifier {
     //print("夜间模式?" + isDarkMode.toString());
     return ThemeData(
         errorColor: isDarkMode ? Colours.dark_red : Colours.red,
+        // 深色还是浅色
         brightness: isDarkMode ? Brightness.dark : Brightness.light,
+        // 导航栏颜色
         primaryColor: isDarkMode ? Colours.dark_app_main : Colours.app_main,
+        // 决定大多数Widget的颜色，如进度条、开关等。
         accentColor: isDarkMode ? Colours.dark_app_main : Colours.app_main,
         // Tab指示器颜色
         indicatorColor: isDarkMode ? Colours.dark_app_main : Colours.app_main,
@@ -76,7 +79,7 @@ class ThemeProvider extends ChangeNotifier {
         ),
         appBarTheme: AppBarTheme(
           elevation: 0.0,
-          color: isDarkMode ? Colours.dark_bg_color : Colors.blue,
+          color: isDarkMode ? Colours.dark_line : Colors.blue,
           brightness: isDarkMode ? Brightness.dark : Brightness.light,
         ),
         dividerTheme: DividerThemeData(
