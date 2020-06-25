@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:vnote/application.dart';
-import 'package:vnote/dao/onedrive_data_dao.dart';
-import 'package:vnote/pages/create_page.dart';
 import 'package:vnote/pages/directory_page.dart';
 import 'package:vnote/pages/note_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -88,7 +86,10 @@ class _TabNavigatorState extends State<TabNavigator> {
                 children: <Widget>[
                   DrawerHeader(
                     decoration: BoxDecoration(
-                      color: Colors.lightBlue,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: ExactAssetImage('assets/images/draw_bg.jpg')
+                      ),
                     ),
                     child: Center(
                       child: SizedBox(
