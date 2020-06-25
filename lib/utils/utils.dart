@@ -354,7 +354,6 @@ class Utils {
     String high_js;
     String footnote_js;
     String toc_js;
-    String imsize_js;
     String htmlString;
     String cssString;
     await loadJS("highlight.min.js").then((data) {
@@ -372,10 +371,6 @@ class Utils {
     await loadJS("markdown-it-toc.min.js").then((data) {
       toc_js = data;
       print("toc_js 赋值了");
-    });
-    await loadJS("markdown-it-imsize.min.js").then((data) {
-      imsize_js = data;
-      print("imsize_js 赋值了");
     });
     await loadCss("monokai.css").then((data) {
       cssString = data;
@@ -405,7 +400,6 @@ class Utils {
 
     <script type="text/javascript">$footnote_js</script>
     <script type="text/javascript">$toc_js</script>
-    <script type="text/javascript">$imsize_js</script>
      <style type="text/css">$cssString</style>
      <style type="text/css">img{max-width:100%;} </style>
     <script type="text/javascript">
@@ -431,8 +425,7 @@ var md = window.markdownit({
     return '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
   }
 }).use(window.markdownitFootnote)
-.use(window.markdownitTOC)
-.use(window.MarkdownItImsize);
+.use(window.markdownitTOC);
 
     </script>
 </head>
