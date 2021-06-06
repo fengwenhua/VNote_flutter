@@ -131,7 +131,7 @@ class _UpdatePageState extends State<UpdatePage> {
               // 这是临时解决方案
               url = url.replaceAll("github.com", "github.strcpy.cn");
               id = await RUpgrade.upgrade(url,
-                  apkName: widget.name,
+                  fileName: widget.name,
                   isAutoRequestInstall: isAutoRequestInstall,
                   useDownloadManager: false);
               setState(() {});

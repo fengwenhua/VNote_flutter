@@ -310,12 +310,12 @@ class _NoteEditPageState extends State<NoteEditPage> {
             content = value;
             if (mounted && oldContent != content) {
               print("提交");
-              changes.add(Change.property(
+              changes.add(new Change(
                 oldContent,
                 () => content = value,
                 (oldContent) => content = oldContent,
               ));
-              changes.commit();
+              //changes.commit();
             }
           });
         },

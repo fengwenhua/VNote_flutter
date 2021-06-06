@@ -23,7 +23,7 @@ class Routes {
   static String markdownWebView = "/markdownWebView";
   static String update = "/update";
 
-  static void configureRoutes(Router router) {
+  static void configureRoutes(FluroRouter router) {
     router.notFoundHandler = new Handler(
         handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       print("Route was not found!!");

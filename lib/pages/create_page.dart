@@ -551,12 +551,12 @@ class _CreatePageState extends State<CreatePage> {
                     content = value;
                     if (mounted && oldContent != content) {
                       print("提交");
-                      changes.add(Change.property(
+                      changes.add(new Change(
                         oldContent,
                         () => content = value,
                         (oldContent) => content = oldContent,
                       ));
-                      changes.commit();
+                      // changes.commit();
                     }
                   });
                 },
@@ -584,6 +584,7 @@ class _CreatePageState extends State<CreatePage> {
                   fontWeight: FontWeight.bold),
             )),
             actions: <Widget>[
+              // 需要替换成TextButton
               FlatButton(
                   onPressed: () {
                     print("点击了放弃修改的确定");

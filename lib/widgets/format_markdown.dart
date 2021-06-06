@@ -243,10 +243,10 @@ Future<String> _showPhotoInputDialog(BuildContext context) async {
                           textColor: Colors.white,
                           onPressed: () async {
                             try {
-                              File image = await ImagePicker.pickImage(
+                              PickedFile picked = await ImagePicker().getImage(
                                   source: ImageSource.camera);
                               setState(() {
-                                _image = image;
+                                _image = File(picked.path);
                               });
                             } catch (e) {
                               print("异常是: " + e.toString());
@@ -272,10 +272,10 @@ Future<String> _showPhotoInputDialog(BuildContext context) async {
                           textColor: Colors.white,
                           onPressed: () async {
                             try {
-                              File image = await ImagePicker.pickImage(
+                              PickedFile picked = await ImagePicker().getImage(
                                   source: ImageSource.gallery);
                               setState(() {
-                                _image = image;
+                                _image = File(picked.path);
                               });
                             } catch (e) {
                               print("异常是: " + e.toString());

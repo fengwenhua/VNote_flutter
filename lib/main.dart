@@ -23,7 +23,7 @@ import 'package:vnote/utils/translate_preferences.dart';
 
 void main() async {
   // 初始化路由
-  final router = new Router();
+  final router = new FluroRouter();
   Routes.configureRoutes(router);
   Application.router = router;
 

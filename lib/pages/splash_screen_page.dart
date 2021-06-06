@@ -23,6 +23,7 @@ import 'package:vnote/utils/utils.dart';
 
 class SplashScreenPage extends StatefulWidget {
   SplashScreenPage({Key key}) : super(key: key);
+
   @override
   _SplashScreenPageState createState() => _SplashScreenPageState();
 }
@@ -30,6 +31,7 @@ class SplashScreenPage extends StatefulWidget {
 class _SplashScreenPageState extends State<SplashScreenPage>
     with TickerProviderStateMixin {
   AnimationController _logoController;
+
   //double类型动画
   Animation<double> _logoAnimation;
   Tween _scaleTween;
@@ -208,23 +210,25 @@ class _SplashScreenPageState extends State<SplashScreenPage>
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.init(context, width: 750, height: 1334);
+    //ScreenUtil.init(context, width: 750, height: 1334);
     final size = MediaQuery.of(context).size;
     Application.screenWidth = size.width;
     Application.screenHeight = size.height;
     Application.statusBarHeight = MediaQuery.of(context).padding.top;
     Application.bottomBarHeight = MediaQuery.of(context).padding.bottom;
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        child: ScaleTransition(
-          scale: _logoAnimation,
-          child: Image.asset('assets/images/vnote.png'),
-        ),
-      ),
-    );
+    return ScreenUtilInit(
+        designSize: Size(750, 1334),
+        builder: () => Scaffold(
+              backgroundColor: Colors.white,
+              body: Container(
+                height: double.infinity,
+                width: double.infinity,
+                child: ScaleTransition(
+                  scale: _logoAnimation,
+                  child: Image.asset('assets/images/vnote.png'),
+                ),
+              ),
+            ));
   }
 }

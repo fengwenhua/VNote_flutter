@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vnote/route/navigate_service.dart';
 
 class Application{
-  static Router router;
+  static FluroRouter router;
   static GlobalKey<NavigatorState> key = GlobalKey();
   static SharedPreferences sp;
 

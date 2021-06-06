@@ -169,7 +169,7 @@ class _NotePreviewPageState extends State<NotePreviewPage> {
         body: Material(
           child: Markdown(
               data: content,
-              onTapLink: (link) async {
+              onTapLink: (text, link, title) async {
                 print("点击了链接!!!");
                 print(link);
                 if (await canLaunch(link)) {
