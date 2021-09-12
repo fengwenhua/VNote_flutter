@@ -662,6 +662,7 @@ var md = window.markdownit({
     await okFile.writeAsString(htmlString);
     print("写完了");
     //print(htmlString);
+    print("file://$path/image/$filename");
     // 这里直接返回那个 html 的地址算了
     return "file://$path/image/$filename";
   }

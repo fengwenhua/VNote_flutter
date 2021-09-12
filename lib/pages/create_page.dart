@@ -503,6 +503,7 @@ class _CreatePageState extends State<CreatePage> {
 //                              (route) => route == null);
                           String route =
                               '/markdownWebView?htmlPath=${Uri.encodeComponent(htmlPath.toString())}&title=${Uri.encodeComponent(fileName)}&id=${Uri.encodeComponent(fileId)}&configId=${Uri.encodeComponent(configIdModel.configId)}&imageFolderId=${Uri.encodeComponent(_imageFolderId.imageFolderId)}';
+                          print(route);
                           Application.router
                               .navigateTo(this.context, route,
                                   transition: TransitionType.fadeIn)
