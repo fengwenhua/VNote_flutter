@@ -660,6 +660,7 @@ var md = window.markdownit({
       docsDir = await getApplicationDocumentsDirectory();
     } else {
       docsDir = await getApplicationSupportDirectory();
+      //docsDir = await getApplicationDocumentsDirectory();
     }
 
     String path = docsDir.path;

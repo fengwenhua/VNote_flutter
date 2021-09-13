@@ -138,6 +138,7 @@ class _MarkdownWebViewPageState extends State<MarkdownWebViewPage> {
                 onWebViewCreated: (WebViewController webViewController) {
                   print("创建webview");
                   this.webViewController = webViewController;
+
                   //_controller.complete(webViewController);
                   //this.webViewController.loadUrl('data:text/html;charset=utf-8;base64,${base64Encode(const Utf8Encoder().convert(content))}');
 

@@ -411,3 +411,12 @@ systemProp.https.proxyPort=1087
 ```
 
 ![](https://gitee.com/fengwenhua/ImageBed/raw/master/1590277392_20200524072644755_579676049.png)
+
+## Android SDK 30的问题
+在预览markdown的时候，会提示"ERR_ACCESS_DENIED"
+
+https://github.com/flutter/flutter/issues/71822
+
+![](https://gitee.com/fengwenhua/ImageBed/raw/master/1631526041_20210913174038003_1203540973.png)
+
+![](https://gitee.com/fengwenhua/ImageBed/raw/master/1631525835_20210913173409068_667558643.png)
