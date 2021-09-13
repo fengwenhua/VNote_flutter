@@ -2,12 +2,16 @@
 class OneDriveDataModel {
   String odataContext;
   String odataDeltaLink;
+  String odataNextLink;
+  int odataCount;
   List<Value> value;
 
   OneDriveDataModel({this.odataContext, this.odataDeltaLink, this.value});
 
   OneDriveDataModel.fromJson(Map<String, dynamic> json) {
+    odataNextLink = json['@odata.nextLink'];
     odataContext = json['@odata.context'];
+    odataCount = json['@odata.count'];
     odataDeltaLink = json['@odata.deltaLink'];
     if (json['value'] != null) {
       value = new List<Value>();
@@ -19,6 +23,8 @@ class OneDriveDataModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['@odata.nextLink'] = this.odataNextLink;
+    data['@odata.count'] = this.odataCount;
     data['@odata.context'] = this.odataContext;
     data['@odata.deltaLink'] = this.odataDeltaLink;
     if (this.value != null) {

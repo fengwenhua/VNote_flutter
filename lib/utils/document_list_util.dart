@@ -217,7 +217,7 @@ class DocumentListUtil {
   Future<List<Document>> getChildList(BuildContext context, String token,
       String id, String parentName, Function callBack,
       {bool fromNetwork = false}) async {
-    List<Document> result = new List<Document>();
+    List<Document> result = [];
     OneDriveDataModel oneDriveDataModel;
 
     oneDriveDataModel = await _getChildFromNetwork(context, token, id);
@@ -340,6 +340,8 @@ class DocumentListUtil {
         oneDriveDataModel =
             OneDriveDataModel.fromJson(json.decode(value.toString()));
         print("get 到Model内容");
+        print("还有其他的吗？");
+        print(oneDriveDataModel.odataNextLink);
         //print(json.encode(oneDriveDataModel));
       }
     });
@@ -367,7 +369,7 @@ class DocumentListUtil {
     return oneDriveDataModel;
   }
 
-  // 根据 id 从网路下载 md 文件, 返回其内容
+  /// 根据 id 从网路下载 md 文件, 返回其内容
   Future<String> getMDFileContentFromNetwork(
       BuildContext context, String token, String id, ProgressDialog prt) async {
     String content;
