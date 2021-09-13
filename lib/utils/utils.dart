@@ -354,6 +354,7 @@ class Utils {
     String high_js;
     String footnote_js;
     String toc_js;
+    String math_js;
     String htmlString;
     String cssString;
     await loadJS("highlight.min.js").then((data) {
@@ -376,6 +377,10 @@ class Utils {
       cssString = data;
     });
 
+    await loadJS("MathJax.js").then((data){
+      math_js=data;
+    });
+
     await getBase64Content(content).then((data) {
       content = data;
       print("替换成功!!!!");
@@ -395,9 +400,10 @@ class Utils {
       MathJax.Hub.Config({tex2jax: {inlineMath: [['\$','\$'], ['\\\\(','\\\\)']]}});
     </script>
     <script type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+      src="https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
-
+    
+  <!--<script type="text/javascript">$math_js</script>-->
     <script type="text/javascript">$footnote_js</script>
     <script type="text/javascript">$toc_js</script>
      <style type="text/css">$cssString</style>

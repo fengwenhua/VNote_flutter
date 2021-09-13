@@ -14,7 +14,7 @@ class OneDriveDataModel {
     odataCount = json['@odata.count'];
     odataDeltaLink = json['@odata.deltaLink'];
     if (json['value'] != null) {
-      value = new List<Value>();
+      value = [];
       json['value'].forEach((v) {
         value.add(new Value.fromJson(v));
       });

@@ -30,12 +30,12 @@ class OneDriveDataDao {
         });
   }
 
-  /// [getChildData] 是根据 [id] 获取该文件夹下面的文件和文件夹
+  /// [getChildData] 是根据 [url] 获取该文件夹下面的文件和文件夹
   static Future<Response> getChildData(
-      BuildContext context, String token, String id) {
+      BuildContext context, String token, String url) {
     Map<String, dynamic> headers = {"Authorization": token};
-    String url =
-        "https://graph.microsoft.com/v1.0/me/drive/items/$id/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
+    // String url =
+    //     "https://graph.microsoft.com/v1.0/me/drive/items/$id/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
 
     return NetUtils.instance.get(
         context,

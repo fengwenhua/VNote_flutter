@@ -327,27 +327,67 @@ class DocumentListUtil {
     return oneDriveDataModel;
   }
 
+  /// 循环获取，直到odataNextLink为null
+  Future<OneDriveDataModel> _cycleGetChildData(
+      BuildContext context, String token, String url) async {
+    OneDriveDataModel oneDriveDataModel;
+    bool firstFlag = true;
+    String newUrl = url;
+    while (true) {
+      var value = await OneDriveDataDao.getChildData(context, token, newUrl);
+      if (value == null) {
+        LogUtil.e("可能因为超时等原因, 没有数据");
+      }
+      OneDriveDataModel tempOneDriveDataModel =
+          OneDriveDataModel.fromJson(json.decode(value.toString()));
+      if (firstFlag) {
+        oneDriveDataModel =
+            OneDriveDataModel.fromJson(json.decode(value.toString()));
+      }
+      String nextLink = tempOneDriveDataModel.odataNextLink;
+      if (nextLink == null) {
+        if (!firstFlag) {
+          oneDriveDataModel.value.addAll(tempOneDriveDataModel.value);
+        }
+        break;
+      } else {
+        print("NextLink: ");
+        print(nextLink);
+        if (!firstFlag) {
+          oneDriveDataModel.value.addAll(tempOneDriveDataModel.value);
+        }
+
+        newUrl = nextLink;
+      }
+      firstFlag = false;
+    }
+    print("返回 oneDriveDataModel");
+    return oneDriveDataModel;
+  }
+
   /// 根据 id 从网络获取目录
   Future<OneDriveDataModel> _getChildFromNetwork(
       BuildContext context, String token, String id) async {
     print("根据 id 从网络获取文件夹");
     OneDriveDataModel oneDriveDataModel;
-
-    await OneDriveDataDao.getChildData(context, token, id).then((value) {
-      if (value == null) {
-        print("可能因为超时等原因, 没有数据");
-      } else {
-        oneDriveDataModel =
-            OneDriveDataModel.fromJson(json.decode(value.toString()));
-        print("get 到Model内容");
-        print("还有其他的吗？");
-        print(oneDriveDataModel.odataNextLink);
-        //print(json.encode(oneDriveDataModel));
-      }
-    });
-    // 返回 model
-    print("返回 oneDriveDataModel");
-    return oneDriveDataModel;
+    String url =
+        "https://graph.microsoft.com/v1.0/me/drive/items/$id/children?select=id,name,lastModifiedDateTime,parentReference,file,folder";
+    // await OneDriveDataDao.getChildData(context, token, url).then((value) {
+    //   if (value == null) {
+    //     print("可能因为超时等原因, 没有数据");
+    //   } else {
+    //     oneDriveDataModel =
+    //         OneDriveDataModel.fromJson(json.decode(value.toString()));
+    //     print("get 到Model内容");
+    //     print("还有其他的吗？");
+    //     print(oneDriveDataModel.odataNextLink);
+    //     //print(json.encode(oneDriveDataModel));
+    //   }
+    // });
+    // // 返回 model
+    // print("返回 oneDriveDataModel");
+    // return oneDriveDataModel;
+    return _cycleGetChildData(context, token, url);
   }
 
   /// 根据 image id 从网络获取图片列表
@@ -581,6 +621,7 @@ class DocumentListUtil {
 
 class Item {
   Item({this.id = '', this.path = '', this.name = '', this.fullPath = ''});
+
   String id;
   String path;
   String name;
