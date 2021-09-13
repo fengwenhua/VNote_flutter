@@ -9,6 +9,8 @@
 
 ![](https://gitee.com/fengwenhua/ImageBed/raw/master/1590918605_20200531175002355_1595626590.png)
 
+老版本修改如下：
+
 ```dart
 import 'dart:async';
 import 'dart:convert';
@@ -425,5 +427,14 @@ https://github.com/flutter/flutter/issues/71822
 ### ios
 https://blog.csdn.net/A807296772/article/details/106493492
 
+```bash
+flutter build ios --release
+```
 ### Android
 https://www.jianshu.com/p/0f48ec10fd32
+
+```bash
+flutter build apk
+```
+
+apk在`build/app/outputs/flutter-apk/app-release.apk`
