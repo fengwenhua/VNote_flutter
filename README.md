@@ -420,3 +420,10 @@ https://github.com/flutter/flutter/issues/71822
 ![](https://gitee.com/fengwenhua/ImageBed/raw/master/1631526041_20210913174038003_1203540973.png)
 
 ![](https://gitee.com/fengwenhua/ImageBed/raw/master/1631525835_20210913173409068_667558643.png)
+
+## 打包
+### ios
+https://blog.csdn.net/A807296772/article/details/106493492
+
+### Android
+https://www.jianshu.com/p/0f48ec10fd32
