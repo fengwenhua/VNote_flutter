@@ -11,7 +11,7 @@
 
     <application
         android:usesCleartextTraffic="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:label="vnote"
         tools:targetApi="m">
         <activity

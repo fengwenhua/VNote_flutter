@@ -88,7 +88,7 @@ class _SettingPageState extends State<SettingPage> {
                 print(version);
 
                 await NetUtils.instance.get(context,
-                    "https://api.github.com/repos/fengwenhua/vnote_flutter_release/releases/latest",
+                    "https://api.github.com/repos/fengwenhua/VNote_flutter/releases/latest",
                     (data) async {
                   print('返回版本相关 json 如下:');
                   LogUtil.e(data);
