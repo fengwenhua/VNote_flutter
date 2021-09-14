@@ -1,0 +1,37 @@
+Target dependency graph (13 targets)
+Flutter in Pods
+Toast in Pods
+flutter_webview_plugin in Pods, depends on:
+Flutter in Pods (explicit)
+fluttertoast in Pods, depends on:
+Flutter in Pods (explicit)
+Toast in Pods (explicit)
+image_picker in Pods, depends on:
+Flutter in Pods (explicit)
+package_info in Pods, depends on:
+Flutter in Pods (explicit)
+path_provider in Pods, depends on:
+Flutter in Pods (explicit)
+permission_handler in Pods, depends on:
+Flutter in Pods (explicit)
+r_upgrade in Pods, depends on:
+Flutter in Pods (explicit)
+shared_preferences in Pods, depends on:
+Flutter in Pods (explicit)
+url_launcher in Pods, depends on:
+Flutter in Pods (explicit)
+webview_flutter in Pods, depends on:
+Flutter in Pods (explicit)
+Pods-Runner in Pods, depends on:
+Flutter in Pods (explicit)
+Toast in Pods (explicit)
+flutter_webview_plugin in Pods (explicit)
+fluttertoast in Pods (explicit)
+image_picker in Pods (explicit)
+package_info in Pods (explicit)
+path_provider in Pods (explicit)
+permission_handler in Pods (explicit)
+r_upgrade in Pods (explicit)
+shared_preferences in Pods (explicit)
+url_launcher in Pods (explicit)
+webview_flutter in Pods (explicit)
